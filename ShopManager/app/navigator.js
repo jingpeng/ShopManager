@@ -7,10 +7,12 @@ import {
 
 import LoginScreen from './screens/login-screen';
 import MainScreen from './screens/main-screen';
+import SettingScreen from './screens/setting-screen';
 
 export const Navigator = StackNavigator({
   Login: { screen: LoginScreen },
   Main: { screen: MainScreen },
+  Setting: { screen: SettingScreen}
 });
 
 const Dispatcher = ({ dispatch, nav }) => (
