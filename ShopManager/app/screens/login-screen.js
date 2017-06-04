@@ -54,7 +54,7 @@ export default LoginScreen = ({ navigation }) => (
 );
 
 LoginScreen.navigationOptions = {
-  title: 'Log In',
+  header: null
 };
 
 const styles = StyleSheet.create({
