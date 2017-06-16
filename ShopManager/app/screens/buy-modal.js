@@ -11,24 +11,35 @@ import {
 
 export default BuyModal = ({ navigation }) => (
   <View>
-  <Modal
-          animationType={"slide"}
-          transparent={true}
-          visible={true}
-          onRequestClose={() => {alert("Modal has been closed.")}}
-          >
-         <View style={styles.container}>
-          <Text>广告名称</Text>
+    <Modal 
+    animationType={"slide"}
+    transparent={true}
+    visible={true}
+    onRequestClose={() => {alert("Modal has been closed.")}}
+    >
+      <View style={styles.container}>
+        <View style={styles.innerContainer}>
+          <Text style={styles.topTitle} numberOfLines={1} >广告名称</Text>
           <View style={styles.line}></View>
           <Text>广告描述 广告描述 广告描述 广告描述 广告描述广告描述广告描述 广告描述 广告描述 广告描述</Text>
-          
-         </View>
-  <TouchableNativeFeedback onPress={() => {
-          alert("Modal need to close.")
-        }}>
-          <Text>close Modal</Text>
-        </TouchableNativeFeedback>
-  </Modal>
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLeftText}>单价:</Text>
+            <TextInput style={styles.inputText}> 1212</TextInput>
+          </View>
+          <View style={styles.countContainer}>
+            <Text style={styles.countLeftText}>购买数量:</Text>
+            <TextInput style={styles.inputText}> 1212</TextInput>
+            <Text style={styles.countRightText}>合计:</Text>
+            <Text style={styles.countTotalText}>1233</Text>
+          </View>
+          <TouchableNativeFeedback onPress={() => {
+              alert("Modal need to close.")
+            }}>
+            <Text style={styles.confirmButton}>确定</Text>
+          </TouchableNativeFeedback>
+        </View>
+      </View>
+    </Modal>
   </View>
 );
 
@@ -40,31 +51,64 @@ export default BuyModal = ({ navigation }) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width:200,
-    height:100,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(181, 181, 181, 255)',
+    padding: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  innerContainer: {
+    width:200,
+    borderRadius: 10,
+    alignItems: 'stretch',
+    backgroundColor: 'white',
+    padding: 10,
   },
   line: {
     height: 1,
     backgroundColor: 'rgba(88, 88, 88, 255)',
-    width:170,
+  },
+  topTitle: {
+    alignItems: 'stretch',
+    textAlign: 'left',
+    // backgroundColor: 'red',
   },
   inputContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    // justifyContent: 'center',
     alignItems: 'center',
-    width: Dimensions.get('window').width - 254,
   },
+  inputLeftText: {
+    
+  },
+  inputText: {
+    color: 'rgba(88, 88, 88, 255)',
+    fontSize: 14,
+    padding: 0,
+  },
+  countContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  countLeftText: {
+    
+  },
+  inputText: {
+    color: 'rgba(88, 88, 88, 255)',
+    fontSize: 14,
+    padding: 0,
+  },
+  countRightText: {
+    paddingLeft: 10,
+  },
+  countTotalText: {
+    color: 'rgba(88, 88, 88, 255)',
+    fontSize: 14,
+  },
+
   space1: {
     marginTop: 30
   },
   inputTitle: {
-    color: 'rgba(88, 88, 88, 255)',
-    fontSize: 14,
-    padding: 0,
-    width: 70
   },
   inputContent: {
     flex: 1,
@@ -81,7 +125,7 @@ const styles = StyleSheet.create({
   space2: {
     marginTop: 65
   },
-  loginButton: {
+  confirmButton: {
     height: 30,
     width: 150,
     backgroundColor: 'rgba(233, 84, 18, 255)',
