@@ -99,10 +99,17 @@ export default class PlaylistScreen extends React.Component {
                           source={require('../resources/start-play-small.png')}/>
                       </Image>
                       <View style={styles.adDescContainer}>
-                        <Text style={styles.adTitle}>广告名称</Text>
+                        <Text
+                          style={[
+                            styles.adTitle,
+                            {color: rowData.selected ? '#fff' : '#333'}
+                          ]}>广告名称</Text>
                         <Text
                           numberOfLines={2}
-                          style={styles.adDesc}>广告描述广告描述广告描述广告描述广告描述广告描述广告描述广告描述广告描述
+                          style={[
+                            styles.adDesc,
+                            {color: rowData.selected ? '#fff' : '#999'}
+                          ]}>广告描述广告描述广告描述广告描述广告描述广告描述广告描述广告描述广告描述
                         </Text>
                       </View>
                     </View>
@@ -206,12 +213,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   adTitle: {
-    color: '#333',
     fontWeight: 'bold',
     fontSize: 14
   },
   adDesc: {
-    color: '#999',
     fontSize: 11,
     width: Dimensions.get('window').width - Dimensions.get('window').height - 95 - 10,
     height: 50,
