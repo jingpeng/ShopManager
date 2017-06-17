@@ -6,6 +6,7 @@ import {
 } from 'react-navigation'
 
 import AdScreen from './screens/ad-screen'
+import GameScreen from './screens/game-screen'
 import LoginScreen from './screens/login-screen'
 import MainScreen from './screens/main-screen'
 import PlaylistScreen from './screens/playlist-screen'
@@ -13,7 +14,8 @@ import SettingScreen from './screens/setting-screen'
 
 export const Navigator = StackNavigator({
   Ad: { screen: AdScreen },
-  Login: { screen: PlaylistScreen },
+  Game: { screen: GameScreen },
+  Login: { screen: GameScreen },
   Main: { screen: MainScreen },
   Playlist: { screen: PlaylistScreen },
   Setting: { screen: SettingScreen }
