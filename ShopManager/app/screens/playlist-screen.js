@@ -60,19 +60,24 @@ export default class PlaylistScreen extends React.Component {
       <View style={styles.container}>
         <Image
           style={styles.leftPanel}
-          source={require('../resources/ad-large.png')}
-          >
+          source={require('../resources/ad-large.png')}>
           <Image
             style={styles.playButtonLarge}
-            source={require('../resources/start-play-large.png')}
-          />
+            source={require('../resources/start-play-large.png')}/>
+          <View style={styles.trolleyContainer}>
+            <Text style={styles.trolleyText}>下单</Text>
+            <View style={styles.trolleyImageContainer}>
+              <Image
+                style={styles.trolleyImage}
+                source={require('../resources/trolley.png')}/>
+            </View>
+          </View>
         </Image>
         <View>
           <View style={styles.arrowContainer}>
             <Image
               style={styles.backArrow}
-              source={require('../resources/back-arrow.png')}
-            />
+              source={require('../resources/back-arrow.png')}/>
           </View>
           <ListView
             dataSource={this.state.dataSource}
@@ -106,8 +111,7 @@ export default class PlaylistScreen extends React.Component {
                   <View style={{height: 10}}/>
                 </View>
               )
-            }}
-          />
+            }}/>
         </View>
       </View>
     )
@@ -131,6 +135,34 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     alignSelf: 'center'
+  },
+  trolleyContainer: {
+    width: 90,
+    height: 30,
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    flexDirection: 'row'
+  },
+  trolleyText: {
+    color: '#fff',
+    fontSize: 14,
+    width: 60,
+    height: 30,
+    textAlign: 'center',
+    textAlignVertical: "center",
+    backgroundColor: '#e95412'
+  },
+  trolleyImageContainer: {
+    width: 30,
+    height: 30,
+    backgroundColor: '#ff7132',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  trolleyImage: {
+    width: 18,
+    height: 18
   },
   arrowContainer: {
     height: 48,
