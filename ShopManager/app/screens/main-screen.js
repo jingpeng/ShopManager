@@ -1,23 +1,27 @@
-import React from 'react';
+import React from 'react'
 import {
   StyleSheet,
   View
-} from 'react-native';
+} from 'react-native'
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-});
+    backgroundColor: '#F5FCFF'
+  }
+})
 
-export default MainScreen = () => (
-  <View style={styles.container}>
-  </View>
-);
+export default class MainScreen extends React.Component {
+  static navigationOptions = {
+    title: 'Home Screen',
+  }
 
-MainScreen.navigationOptions = {
-  title: 'Home Screen',
-};
+  render() {
+    return (
+      <View style={styles.container}>
+      </View>
+    )
+  }
+}

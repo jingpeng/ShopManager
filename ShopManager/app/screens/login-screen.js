@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import {
   Dimensions,
   StyleSheet,
@@ -6,56 +6,61 @@ import {
   TextInput,
   TouchableNativeFeedback,
   View
-} from 'react-native';
+} from 'react-native'
 
-export default LoginScreen = ({ navigation }) => (
-  <View style={styles.container}>
+export default class LoginScreen extends React.Component {
 
-    <View style={styles.inputContainer}>
-      <TextInput
-        style={styles.inputTitle}
-        editable={false}
-        placeholder={'商铺账号：'}
-        underlineColorAndroid={'transparent'}
-      />
-      <TextInput
-        style={styles.inputContent}
-        underlineColorAndroid={'transparent'}
-      />
-    </View>
-    <View style={styles.divider}/>
+  static navigationOptions = {
+    header: null
+  }
 
-    <View style={styles.space1}/>
+  render() {
+    return (
+      <View style={styles.container}>
 
-    <View style={styles.inputContainer}>
-      <TextInput
-        style={styles.inputTitle}
-        editable={false}
-        placeholder={'商铺密码：'}
-        underlineColorAndroid={'transparent'}
-      />
-      <TextInput
-        style={styles.inputContent}
-        underlineColorAndroid={'transparent'}
-      />
-    </View>
-    <View style={styles.divider}/>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputTitle}
+            editable={false}
+            placeholder={'商铺账号：'}
+            underlineColorAndroid={'transparent'}
+          />
+          <TextInput
+            style={styles.inputContent}
+            underlineColorAndroid={'transparent'}
+          />
+        </View>
+        <View style={styles.divider}/>
 
-    <View style={styles.space2}/>
+        <View style={styles.space1}/>
 
-    <TouchableNativeFeedback
-      onPress={() => navigation.dispatch({ type: 'Login' })}
-      background={TouchableNativeFeedback.SelectableBackground()}>
-      <View style={styles.loginButton}>
-        <Text style={styles.loginText}>确定</Text>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputTitle}
+            editable={false}
+            placeholder={'商铺密码：'}
+            underlineColorAndroid={'transparent'}
+          />
+          <TextInput
+            style={styles.inputContent}
+            underlineColorAndroid={'transparent'}
+          />
+        </View>
+        <View style={styles.divider}/>
+
+        <View style={styles.space2}/>
+
+        <TouchableNativeFeedback
+          onPress={() => this.props.navigation.dispatch({ type: 'Login' })}
+          background={TouchableNativeFeedback.SelectableBackground()}>
+          <View style={styles.loginButton}>
+            <Text style={styles.loginText}>确定</Text>
+          </View>
+        </TouchableNativeFeedback>
       </View>
-    </TouchableNativeFeedback>
-  </View>
-);
-
-LoginScreen.navigationOptions = {
-  header: null
-};
+    )
+  }
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -67,7 +72,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    width: Dimensions.get('window').width - 254,
+    width: Dimensions.get('window').width - 254
   },
   space1: {
     marginTop: 30
@@ -105,4 +110,4 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 14
   }
-});
+})
