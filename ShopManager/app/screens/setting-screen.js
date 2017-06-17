@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import {
   Dimensions,
   StyleSheet,
@@ -6,7 +6,7 @@ import {
   TextInput,
   TouchableNativeFeedback,
   View
-} from 'react-native';
+} from 'react-native'
 
 export default class SettingScreen extends React.Component {
 
