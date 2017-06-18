@@ -4,12 +4,21 @@ import {
   Image,
   StyleSheet,
   Text,
+  TouchableNativeFeedback,
   View
 } from 'react-native'
 
 export default class AdScreen extends React.Component {
   static navigationOptions = {
     header: null
+  }
+
+  launchGame() {
+    this.props.navigation.dispatch({ type: 'Game' })
+  }
+
+  launchPlaylist() {
+    this.props.navigation.dispatch({ type: 'Playlist' })
   }
 
   render() {
@@ -26,16 +35,22 @@ export default class AdScreen extends React.Component {
               source={require('../resources/trolley.png')}/>
           </View>
         </View>
-        <View style={styles.gameContainer}>
-          <Image
-            style={styles.gameImage}
-            source={require('../resources/game.png')}/>
-        </View>
-        <View style={styles.billContainer}>
-          <Image
-            style={styles.billImage}
-            source={require('../resources/bill.png')}/>
-        </View>
+        <TouchableNativeFeedback
+          onPress={this.launchGame.bind(this)}>
+          <View style={styles.gameContainer}>
+            <Image
+              style={styles.gameImage}
+              source={require('../resources/game.png')}/>
+          </View>
+        </TouchableNativeFeedback>
+        <TouchableNativeFeedback
+          onPress={this.launchPlaylist.bind(this)}>
+          <View style={styles.billContainer}>
+            <Image
+              style={styles.billImage}
+              source={require('../resources/bill.png')}/>
+          </View>
+        </TouchableNativeFeedback>
       </View>
     )
   }

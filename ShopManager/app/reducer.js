@@ -17,6 +17,8 @@ const navStateSetting2Login = Navigator.router.getStateForAction(
   actionLogin,
   navStateAd2Setting
 )
+const actionGame = Navigator.router.getActionForPathAndParams('Game')
+const actionPlaylist = Navigator.router.getActionForPathAndParams('Playlist')
 
 function nav(state = navStateSetting2Login, action) {
   let nextState
@@ -30,6 +32,18 @@ function nav(state = navStateSetting2Login, action) {
     case 'Setting':
       nextState = Navigator.router.getStateForAction(
         NavigationActions.back(),
+        state
+      )
+      break
+    case 'Game':
+      nextState = Navigator.router.getStateForAction(
+        actionGame,
+        state
+      )
+      break
+    case 'Playlist':
+      nextState = Navigator.router.getStateForAction(
+        actionPlaylist,
         state
       )
       break
