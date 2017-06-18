@@ -8,6 +8,8 @@ import {
   View
 } from 'react-native'
 
+import OrderSuccessModal from './order-success-modal'
+
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 
 export default class GameScreen extends React.Component {
@@ -28,6 +30,7 @@ export default class GameScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
+        <OrderSuccessModal/>
         <Image
           style={styles.leftPanel}
           source={require('../resources/ad-large.png')}>
