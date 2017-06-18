@@ -1,17 +1,58 @@
 import React from 'react'
 import {
+  Alert,
   Dimensions,
   StyleSheet,
   Text,
   TextInput,
+  ToastAndroid,
   TouchableNativeFeedback,
   View
 } from 'react-native'
+
+import ApiClient from '../api/api-client'
+import ApiInterface from '../api/api-interface'
+import ApiConstant from '../api/api-constant'
 
 export default class LoginScreen extends React.Component {
 
   static navigationOptions = {
     header: null
+  }
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      userName: "",
+      password: ""
+    }
+  }
+
+  userNameOnChange(text) {
+    this.setState({userName: text})
+  }
+
+  passwordOnChange(text) {
+    this.setState({password: text})
+  }
+
+  login() {
+    ApiClient
+    .access(ApiInterface.userLogin(this.state.userName, this.state.password))
+    .then((response) => {
+      return response.json()
+    })
+    .then((json) => {
+      console.log(json)
+      if(json.callStatus == ApiConstant.SUCCEED) {
+        this.props.navigation.dispatch({ type: 'Login' })
+      } else {
+        ToastAndroid.show(json.errorCode, ToastAndroid.SHORT)
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    })
   }
 
   render() {
@@ -26,6 +67,7 @@ export default class LoginScreen extends React.Component {
             underlineColorAndroid={'transparent'}
           />
           <TextInput
+            onChangeText = {this.userNameOnChange.bind(this)}
             style={styles.inputContent}
             underlineColorAndroid={'transparent'}
           />
@@ -42,6 +84,7 @@ export default class LoginScreen extends React.Component {
             underlineColorAndroid={'transparent'}
           />
           <TextInput
+            onChangeText = {this.passwordOnChange.bind(this)}
             style={styles.inputContent}
             underlineColorAndroid={'transparent'}
           />
@@ -51,7 +94,7 @@ export default class LoginScreen extends React.Component {
         <View style={styles.space2}/>
 
         <TouchableNativeFeedback
-          onPress={() => this.props.navigation.dispatch({ type: 'Login' })}
+          onPress={this.login.bind(this)}
           background={TouchableNativeFeedback.SelectableBackground()}>
           <View style={styles.loginButton}>
             <Text style={styles.loginText}>确定</Text>
