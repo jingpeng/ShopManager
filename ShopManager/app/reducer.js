@@ -4,18 +4,30 @@ import { NavigationActions } from 'react-navigation'
 import { Navigator } from './navigator'
 
 // Start with two routes: The Main screen, with the Login screen on top.
-const firstAction = Navigator.router.getActionForPathAndParams('Main')
-const tempNavState = Navigator.router.getStateForAction(firstAction)
-const secondAction = Navigator.router.getActionForPathAndParams('Login')
-const initialNavState = Navigator.router.getStateForAction(
-  secondAction,
-  tempNavState
+const actionAd = Navigator.router.getActionForPathAndParams('Ad')
+const navStateAd = Navigator.router.getStateForAction(actionAd)
+const actionSetting = Navigator.router.getActionForPathAndParams('Setting')
+const navStateSetting = Navigator.router.getStateForAction(actionSetting)
+const actionLogin = Navigator.router.getActionForPathAndParams('Login')
+const navStateAd2Setting = Navigator.router.getStateForAction(
+  actionSetting,
+  navStateAd
+)
+const navStateSetting2Login = Navigator.router.getStateForAction(
+  actionLogin,
+  navStateAd2Setting
 )
 
-function nav(state = initialNavState, action) {
+function nav(state = navStateSetting2Login, action) {
   let nextState
   switch (action.type) {
     case 'Login':
+      nextState = Navigator.router.getStateForAction(
+        NavigationActions.back(),
+        state
+      )
+      break
+    case 'Setting':
       nextState = Navigator.router.getStateForAction(
         NavigationActions.back(),
         state
