@@ -15,7 +15,7 @@ import SettingScreen from './screens/setting-screen'
 export const Navigator = StackNavigator({
   Ad: { screen: AdScreen },
   Game: { screen: GameScreen },
-  Login: { screen: GameScreen },
+  Login: { screen: PlaylistScreen },
   Main: { screen: MainScreen },
   Playlist: { screen: PlaylistScreen },
   Setting: { screen: SettingScreen }

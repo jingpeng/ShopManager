@@ -49,6 +49,7 @@ export default class GameScreen extends React.Component {
           </View>
           <ListView
             dataSource={this.state.dataSource}
+            showsVerticalScrollIndicator={false}
             renderRow={(rowData, sectionId, rowId) => {
               return (
                 <View>
