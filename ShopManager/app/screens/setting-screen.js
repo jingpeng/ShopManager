@@ -14,6 +14,10 @@ export default class SettingScreen extends React.Component {
     header: null
   }
 
+  setting() {
+    this.props.navigation.dispatch({ type: 'Setting' })
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -83,7 +87,7 @@ export default class SettingScreen extends React.Component {
         <View style={styles.space2}/>
 
         <TouchableNativeFeedback
-          onPress={() => this.props.navigation.dispatch({ type: 'Setting' })}
+          onPress={this.setting.bind(this)}
           background={TouchableNativeFeedback.SelectableBackground()}>
           <View style={styles.confirmButton}>
             <Text style={styles.confirmText}>确定</Text>
