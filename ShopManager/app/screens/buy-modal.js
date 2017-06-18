@@ -9,44 +9,79 @@ import {
   Dimensions
 } from 'react-native';
 
-export default BuyModal = ({ navigation }) => (
-  <View>
-    <Modal 
-    animationType={"slide"}
-    transparent={true}
-    visible={true}
-    onRequestClose={() => {alert("Modal has been closed.")}}
-    >
-      <View style={styles.container}>
-        <View style={styles.innerContainer}>
-          <Text style={styles.topTitle} numberOfLines={1} >广告名称</Text>
-          <View style={styles.line}></View>
-          <Text>广告描述 广告描述 广告描述 广告描述 广告描述广告描述广告描述 广告描述 广告描述 广告描述</Text>
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputLeftText}>单价:</Text>
-            <TextInput style={styles.inputText}> 1212</TextInput>
+export default class BuyModal extends React.Component {
+  static navigationOptions = {
+    header: null,
+  }
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      modalVisible: true,
+      adTitle: '广告标题',
+      adDescription: '广告描述 广告描述 广告描述 广告描述 广告描述广告描述广告描述 广告描述 广告描述 广告描述',
+      adPrice: 1212,
+      adBuyCount: 1,
+    }
+  }
+
+  render() {
+    return (      
+      <Modal 
+      animationType={"none"}
+      transparent={true}
+      visible={this.state.modalVisible}
+      onRequestClose={() => {alert("Modal has been closed.")}}
+      >
+        <View style={styles.container}>
+          <View style={styles.innerContainer}>
+            <Text style={styles.topTitle} numberOfLines={1} >{this.state.adTitle}</Text>
+            <View style={styles.line}></View>
+            <Text style={styles.descTitle} >{this.state.adDescription}</Text>
+            <View style={styles.priceContainer}>
+              <Text style={styles.priceLeftText}>单价: </Text>
+              <Text style={styles.priceText}>{this.state.adPrice}</Text>
+            </View>
+            <View style={styles.countContainer}>
+              <Text style={styles.countLeftText}>购买数量:</Text>
+              <View style={styles.countInputContainer}>
+                <TouchableNativeFeedback onPress={this.onMinuesButtonPress.bind(this)}>
+                  <View style={styles.changeNumButton}><Text style={styles.changeNumText}>-</Text></View>
+                </TouchableNativeFeedback>
+                <TextInput style={styles.inputCount} keyboardType='numeric' underlineColorAndroid="transparent"> {this.state.adBuyCount}</TextInput>
+                <TouchableNativeFeedback onPress={this.onAddButtonPress.bind(this)}>
+                  <View style={styles.changeNumButton}><Text style={styles.changeNumText}>+</Text></View>
+                </TouchableNativeFeedback>
+              </View>
+              <Text style={styles.countRightText}>合计:</Text>
+              <Text style={styles.countTotalText}>{this.state.adPrice*this.state.adBuyCount}</Text>
+            </View>
+            <View style={styles.confirmContainer}>
+              <TouchableNativeFeedback onPress={() => {
+                  alert("Modal need to close.")
+                }}>
+                <View style={styles.confirmButton}>
+                  <Text style={styles.confirmText}>确定</Text>
+                </View>
+              </TouchableNativeFeedback>
+            </View>
           </View>
-          <View style={styles.countContainer}>
-            <Text style={styles.countLeftText}>购买数量:</Text>
-            <TextInput style={styles.inputText}> 1212</TextInput>
-            <Text style={styles.countRightText}>合计:</Text>
-            <Text style={styles.countTotalText}>1233</Text>
-          </View>
-          <TouchableNativeFeedback onPress={() => {
-              alert("Modal need to close.")
-            }}>
-            <Text style={styles.confirmButton}>确定</Text>
-          </TouchableNativeFeedback>
         </View>
-      </View>
-    </Modal>
-  </View>
-);
+      </Modal>
+    );
+  }
 
+  onMinuesButtonPress(){
+    if (this.state.adBuyCount>1) {
+      this.setState({adBuyCount: this.state.adBuyCount-1})
+    }
+  }
 
-// BuyModal.navigationOptions = {
-//   header: null
-// };
+  onAddButtonPress(){
+    this.setState({adBuyCount: this.state.adBuyCount+1})
+  }
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -57,7 +92,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   innerContainer: {
-    width:200,
+    width: 250,
     borderRadius: 10,
     alignItems: 'stretch',
     backgroundColor: 'white',
@@ -65,76 +100,95 @@ const styles = StyleSheet.create({
   },
   line: {
     height: 1,
-    backgroundColor: 'rgba(88, 88, 88, 255)',
+    backgroundColor: 'rgba(181, 181, 181, 255)',
   },
   topTitle: {
     alignItems: 'stretch',
     textAlign: 'left',
+    color: '#333',
+    padding: 15,
+    fontSize: 12,
     // backgroundColor: 'red',
   },
-  inputContainer: {
+  descTitle: {
+    color: '#666',
+    padding: 15,
+    fontSize: 10,
+    lineHeight: 20,
+  },
+  priceContainer: {
     flexDirection: 'row',
-    // justifyContent: 'center',
     alignItems: 'center',
+    paddingLeft: 15,
+    paddingTop: 5,
   },
-  inputLeftText: {
-    
+  priceLeftText: {
+    color: '#333',
+    fontSize: 12,
   },
-  inputText: {
+  priceText: {
     color: 'rgba(88, 88, 88, 255)',
-    fontSize: 14,
+    fontSize: 12,
     padding: 0,
   },
   countContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingLeft: 15,
+    paddingTop: 15,
   },
   countLeftText: {
-    
+    color: '#666',
+    fontSize: 12,
   },
-  inputText: {
-    color: 'rgba(88, 88, 88, 255)',
-    fontSize: 14,
+  priceText: {
+    color: 'rgba(233, 84, 18, 255)',
+    fontSize: 12,
     padding: 0,
   },
   countRightText: {
+    color: '#333',
+    fontSize: 12,
     paddingLeft: 10,
   },
+  countInputContainer:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 2,
+    borderWidth: 0.5,
+    borderColor: '#d6d7da',
+  },
+  inputCount: {
+    textAlign: 'center',
+    padding: 0,
+  },
   countTotalText: {
-    color: 'rgba(88, 88, 88, 255)',
-    fontSize: 14,
+    color: 'rgba(233, 84, 18, 255)',
+    fontSize: 12,
   },
-
-  space1: {
-    marginTop: 30
+  changeNumButton: {
+    width: 30,
+    borderRadius: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  inputTitle: {
+  changeNumText: {
+    color: '#333',
   },
-  inputContent: {
-    flex: 1,
-    fontSize: 14,
-    color: 'rgba(88, 88, 88, 255)',
-    padding: 0
-  },
-  divider: {
-    height: 1,
-    backgroundColor: 'rgba(181, 181, 181, 255)',
-    width: Dimensions.get('window').width - 254,
-    marginTop: -5
-  },
-  space2: {
-    marginTop: 65
+  confirmContainer: {
+    alignItems: 'center',
   },
   confirmButton: {
     height: 30,
-    width: 150,
+    width: 80,
     backgroundColor: 'rgba(233, 84, 18, 255)',
     borderRadius: 2,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
-  loginText: {
-    color: '#ffffff',
+  confirmText: {
+    color: 'white',
     fontSize: 14
   }
+
 });
