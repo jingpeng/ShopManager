@@ -58,9 +58,7 @@ export default class BuyModal extends React.Component {
               <Text style={styles.countTotalText}>{this.state.adPrice*this.state.adBuyCount}</Text>
             </View>
             <View style={styles.confirmContainer}>
-              <TouchableNativeFeedback onPress={() => {
-                  alert("Modal need to close.")
-                }}>
+              <TouchableNativeFeedback onPress={this.onConfrimButtonPress.bind(this)}>
                 <View style={styles.confirmButton}>
                   <Text style={styles.confirmText}>确定</Text>
                 </View>
@@ -81,6 +79,10 @@ export default class BuyModal extends React.Component {
   onAddButtonPress(){
     this.setState({adBuyCount: this.state.adBuyCount+1})
   }
+
+  onConfrimButtonPress(){
+    this.setState({modalVisible: false});
+  }
 }
 
 const styles = StyleSheet.create({
@@ -92,7 +94,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   innerContainer: {
-    width: 250,
+    width: Dimensions.get('window').width - 326,
     borderRadius: 10,
     alignItems: 'stretch',
     backgroundColor: 'white',
@@ -154,13 +156,16 @@ const styles = StyleSheet.create({
   countInputContainer:{
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 2,
+    borderRadius: 4,
     borderWidth: 0.5,
     borderColor: '#d6d7da',
+    alignItems: 'stretch',
   },
   inputCount: {
     textAlign: 'center',
     padding: 0,
+    width: 40,
+    height: 30,
   },
   countTotalText: {
     color: 'rgba(233, 84, 18, 255)',
@@ -168,15 +173,18 @@ const styles = StyleSheet.create({
   },
   changeNumButton: {
     width: 30,
-    borderRadius: 2,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 4,
+    borderWidth: 0.5,
+    borderColor: '#d6d7da',
   },
   changeNumText: {
     color: '#333',
   },
   confirmContainer: {
     alignItems: 'center',
+    paddingTop: 10,
   },
   confirmButton: {
     height: 30,
