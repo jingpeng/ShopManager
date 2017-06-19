@@ -26,6 +26,9 @@ export default class LoginScreen extends React.Component {
       userName: "",
       password: ""
     }
+
+    this.userLogin.bind(this)
+    this.deviceAdd.bind(this)
   }
 
   userNameOnChange(text) {
@@ -36,7 +39,7 @@ export default class LoginScreen extends React.Component {
     this.setState({password: text})
   }
 
-  login() {
+  userLogin() {
     ApiClient
     .access(ApiInterface.userLogin(this.state.userName, this.state.password))
     .then((response) => {
@@ -44,10 +47,29 @@ export default class LoginScreen extends React.Component {
     })
     .then((json) => {
       console.log(json)
-      if(json.callStatus == ApiConstant.SUCCEED) {
+      if (json.callStatus == ApiConstant.SUCCEED) {
+        this.deviceAdd(json.token)
+      } else {
+        ToastAndroid.show(json.data, ToastAndroid.SHORT)
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+  }
+
+  deviceAdd(token) {
+    ApiClient
+    .access(ApiInterface.deviceAdd(token, '', ''))
+    .then((response) => {
+      return response.json()
+    })
+    .then((json) => {
+      console.log(json)
+      if (json.callStatus == ApiConstant.SUCCEED) {
         this.props.navigation.dispatch({ type: 'Login' })
       } else {
-        ToastAndroid.show(json.errorCode, ToastAndroid.SHORT)
+        ToastAndroid.show(json.data, ToastAndroid.SHORT)
       }
     })
     .catch((error) => {
@@ -94,7 +116,7 @@ export default class LoginScreen extends React.Component {
         <View style={styles.space2}/>
 
         <TouchableNativeFeedback
-          onPress={this.login.bind(this)}
+          onPress={() => {this.userLogin()}}
           background={TouchableNativeFeedback.SelectableBackground()}>
           <View style={styles.loginButton}>
             <Text style={styles.loginText}>确定</Text>
