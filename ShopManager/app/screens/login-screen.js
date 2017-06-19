@@ -9,6 +9,7 @@ import {
   TouchableNativeFeedback,
   View
 } from 'react-native'
+import DeviceInfo from 'react-native-device-info'
 
 import ApiClient from '../api/api-client'
 import ApiInterface from '../api/api-interface'
@@ -60,7 +61,7 @@ export default class LoginScreen extends React.Component {
 
   deviceAdd(token) {
     ApiClient
-    .access(ApiInterface.deviceAdd(token, '', ''))
+    .access(ApiInterface.deviceAdd(token, '尚未填写', DeviceInfo.getUniqueID()))
     .then((response) => {
       return response.json()
     })
