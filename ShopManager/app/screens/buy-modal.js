@@ -18,10 +18,10 @@ export default class BuyModal extends React.Component {
     super(props)
 
     this.state = {
-      modalVisible: false,
-      adTitle: '广告标题',
-      adDescription: '广告描述 广告描述 广告描述 广告描述 广告描述广告描述广告描述 广告描述 广告描述 广告描述',
-      adPrice: 1212,
+      modalVisible: props.modalVisible,
+      adTitle: props.adTitle,
+      adDescription: props.adDescription,
+      adPrice: props.adPrice,
       adBuyCount: 1,
     }
   }

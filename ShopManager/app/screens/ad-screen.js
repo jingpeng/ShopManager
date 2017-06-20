@@ -13,7 +13,13 @@ export default class AdScreen extends React.Component {
   static navigationOptions = {
     header: null
   }
+  constructor(props) {
+    super(props)
 
+    this.state = {
+      modalVisible: false,
+    }
+  }
   launchGame() {
     this.props.navigation.dispatch({ type: 'Game' })
   }
@@ -23,7 +29,7 @@ export default class AdScreen extends React.Component {
   }
 
   showBuyModal() {
-    //这里要怎么修改BuyModal的属性让他显示？？
+    this.setState({modalVisible: true})
   }
 
   render() {
@@ -60,7 +66,7 @@ export default class AdScreen extends React.Component {
               source={require('../resources/bill.png')}/>
           </View>
         </TouchableNativeFeedback>
-        <BuyModal />
+        <BuyModal modalVisible={true} adTitle={'ad-screen给的广告标题'} adDescription={'ad-screen给的广告描述'} adPrice={9991} />
       </View>
     )
   }
