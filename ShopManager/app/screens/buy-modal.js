@@ -18,7 +18,7 @@ export default class BuyModal extends React.Component {
     super(props)
 
     this.state = {
-      modalVisible: true,
+      modalVisible: false,
       adTitle: '广告标题',
       adDescription: '广告描述 广告描述 广告描述 广告描述 广告描述广告描述广告描述 广告描述 广告描述 广告描述',
       adPrice: 1212,
@@ -43,7 +43,7 @@ export default class BuyModal extends React.Component {
               <Text style={styles.priceText}>{this.state.adPrice}</Text>
             </View>
             <View style={styles.countContainer}>
-              <Text style={styles.countLeftText}>购买数量:</Text>
+              <Text style={styles.countLeftText}>购买数量: </Text>
               <View style={styles.countInputContainer}>
                 <TouchableNativeFeedback onPress={this.onMinuesButtonPress.bind(this)}>
                   <View style={styles.changeNumButton}><Text style={styles.changeNumText}>-</Text></View>
@@ -53,7 +53,7 @@ export default class BuyModal extends React.Component {
                   <View style={styles.changeNumButton}><Text style={styles.changeNumText}>+</Text></View>
                 </TouchableNativeFeedback>
               </View>
-              <Text style={styles.countRightText}>合计:</Text>
+              <Text style={styles.countRightText}>合计: </Text>
               <Text style={styles.countTotalText}>{this.state.adPrice*this.state.adBuyCount}</Text>
             </View>
             <View style={styles.confirmContainer}>
@@ -159,12 +159,15 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#d6d7da',
     alignItems: 'stretch',
+    marginLeft: 5,
   },
   inputCount: {
+    fontSize: 12,
     textAlign: 'center',
-    padding: 0,
+    paddingTop: 10,
+    paddingBottom: 10,
     width: 40,
-    height: 30,
+    color: '#333',
   },
   countTotalText: {
     color: 'rgba(233, 84, 18, 255)',

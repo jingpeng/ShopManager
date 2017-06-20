@@ -1,4 +1,5 @@
 import React from 'react'
+import BuyModal from './buy-modal'
 import {
   Dimensions,
   Image,
@@ -21,14 +22,22 @@ export default class AdScreen extends React.Component {
     this.props.navigation.dispatch({ type: 'Playlist' })
   }
 
+  showBuyModal() {
+    //这里要怎么修改BuyModal的属性让他显示？？
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <Image
           style={styles.adBackground}
           source={require('../resources/ad-background.png')}/>
+        
         <View style={styles.trolleyContainer}>
-          <Text style={styles.trolleyText}>下单</Text>
+          <TouchableNativeFeedback
+            onPress={this.showBuyModal.bind(this)}>
+            <Text style={styles.trolleyText}>下单</Text>
+          </TouchableNativeFeedback>
           <View style={styles.trolleyImageContainer}>
             <Image
               style={styles.trolleyImage}
@@ -51,6 +60,7 @@ export default class AdScreen extends React.Component {
               source={require('../resources/bill.png')}/>
           </View>
         </TouchableNativeFeedback>
+        <BuyModal />
       </View>
     )
   }
