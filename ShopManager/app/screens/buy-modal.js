@@ -29,15 +29,14 @@ export default class BuyModal extends React.Component {
   render() {
     return (      
       <Modal 
-      animationType={"none"}
-      transparent={true}
-      visible={this.state.modalVisible}
-      onRequestClose={() => {alert("Modal has been closed.")}}
-      >
+        animationType={"none"}
+        transparent={true}
+        visible={this.state.modalVisible}
+        onRequestClose={() => {alert("Modal has been closed.")}}>
         <View style={styles.container}>
           <View style={styles.innerContainer}>
             <Text style={styles.topTitle} numberOfLines={1} >{this.state.adTitle}</Text>
-            <View style={styles.line}></View>
+            <View style={styles.line}/>
             <Text style={styles.descTitle} >{this.state.adDescription}</Text>
             <View style={styles.priceContainer}>
               <Text style={styles.priceLeftText}>单价: </Text>
@@ -49,7 +48,7 @@ export default class BuyModal extends React.Component {
                 <TouchableNativeFeedback onPress={this.onMinuesButtonPress.bind(this)}>
                   <View style={styles.changeNumButton}><Text style={styles.changeNumText}>-</Text></View>
                 </TouchableNativeFeedback>
-                <TextInput style={styles.inputCount} keyboardType='numeric' underlineColorAndroid="transparent"> {this.state.adBuyCount}</TextInput>
+                <Text style={styles.inputCount}> {this.state.adBuyCount}</Text>
                 <TouchableNativeFeedback onPress={this.onAddButtonPress.bind(this)}>
                   <View style={styles.changeNumButton}><Text style={styles.changeNumText}>+</Text></View>
                 </TouchableNativeFeedback>
