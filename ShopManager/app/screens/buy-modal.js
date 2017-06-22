@@ -25,7 +25,13 @@ export default class BuyModal extends React.Component {
     }
   }
   componentWillReceiveProps(props){
-    this.setState({modalVisible: props.modalVisible});
+    this.setState({
+      modalVisible: props.modalVisible,
+      adTitle: props.adTitle,
+      adDescription: props.adDescription,
+      adPrice: props.adPrice,
+      adBuyCount: 1,
+    });
   }
 
   render() {
