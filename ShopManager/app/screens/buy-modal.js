@@ -16,7 +16,6 @@ export default class BuyModal extends React.Component {
 
   constructor(props) {
     super(props)
-
     this.state = {
       modalVisible: props.modalVisible,
       adTitle: props.adTitle,
@@ -24,6 +23,9 @@ export default class BuyModal extends React.Component {
       adPrice: props.adPrice,
       adBuyCount: 1,
     }
+  }
+  componentWillReceiveProps(props){
+    this.setState({modalVisible: props.modalVisible});
   }
 
   render() {
