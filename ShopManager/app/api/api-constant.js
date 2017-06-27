@@ -3,4 +3,6 @@ export default class ApiConstant {
 
   static SUCCEED = "SUCCEED"
   static FAILED = "FAILED"
+
+  static DEFAULT_DEVICE_PLACE = "null"
 }

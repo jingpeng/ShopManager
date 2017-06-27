@@ -35,7 +35,11 @@ export default class WelcomeScreen extends React.Component {
         if (json.data == null) {
           this.props.navigation.dispatch({ type: 'Welcome' })
         } else {
-          this.props.navigation.dispatch({ type: 'Ad' })
+          if (json.data.place == ApiConstant.DEFAULT_DEVICE_PLACE) {
+            this.props.navigation.dispatch({ type: 'Welcome', defaultPlace: true })
+          } else {
+            this.props.navigation.dispatch({ type: 'Ad' })
+          }
         }
       } else {
         ToastAndroid.show(json.data, ToastAndroid.SHORT)

@@ -25,13 +25,11 @@ function nav(state = navStateWelcome, action) {
   let nextState
   switch (action.type) {
     case 'Welcome':
-      nextState = navStateSetting2Login
+      nextState = { ...navStateSetting2Login, defaultPlace: action.defaultPlace }
       break
     case 'Login':
-      nextState = Navigator.router.getStateForAction(
-        NavigationActions.back(),
-        state
-      )
+      nextState = { ...navStateAd2Setting, userData: action.userData, deviceData: action.deviceData }
+      console.log(nextState)
       break
     case 'Ad':
       nextState = navStateAd

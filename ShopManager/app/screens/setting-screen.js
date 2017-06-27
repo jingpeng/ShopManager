@@ -4,21 +4,58 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  ToastAndroid,
   TouchableNativeFeedback,
   View
 } from 'react-native'
+import { connect } from 'react-redux'
 
-export default class SettingScreen extends React.Component {
+import ApiClient from '../api/api-client'
+import ApiInterface from '../api/api-interface'
+import ApiConstant from '../api/api-constant'
+
+class SettingScreen extends React.Component {
 
   static navigationOptions = {
     header: null
   }
 
+  constructor(props) {
+    super(props)
+    this.state = {
+      place: ""
+    }
+  }
+
+  placeOnChange(text) {
+    this.setState({place: text})
+  }
+
   setting() {
-    this.props.navigation.dispatch({ type: 'Setting' })
+    var deviceData = this.props.deviceData
+    var userData = this.props.userData
+    ApiClient
+    .access(ApiInterface.deviceUpdate(userData.token, deviceData.id, this.state.place))
+    .then((response) => {
+      return response.json()
+    })
+    .then((json) => {
+      console.log(json)
+      if (json.callStatus == ApiConstant.SUCCEED) {
+        this.props.navigation.dispatch({ type: 'Setting' })
+      } else {
+        ToastAndroid.show(json.data, ToastAndroid.SHORT)
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    })
   }
 
   render() {
+    var deviceData = this.props.deviceData
+    var userData = this.props.userData
+    console.log(userData)
     return (
       <View style={styles.container}>
 
@@ -31,6 +68,8 @@ export default class SettingScreen extends React.Component {
           />
           <TextInput
             style={styles.inputContent}
+            editable={false}
+            value={(userData == undefined) ? '' : userData.data.allName}
             underlineColorAndroid={'transparent'}
           />
         </View>
@@ -47,6 +86,8 @@ export default class SettingScreen extends React.Component {
           />
           <TextInput
             style={styles.inputContent}
+            editable={false}
+            value={(deviceData == undefined) ? '' : deviceData.id.toString()}
             underlineColorAndroid={'transparent'}
           />
         </View>
@@ -63,6 +104,8 @@ export default class SettingScreen extends React.Component {
           />
           <TextInput
             style={styles.inputContent}
+            editable={false}
+            value={(deviceData == undefined) ? '' : deviceData.mac}
             underlineColorAndroid={'transparent'}
           />
         </View>
@@ -79,6 +122,7 @@ export default class SettingScreen extends React.Component {
           />
           <TextInput
             style={styles.inputContent}
+            onChangeText = {this.placeOnChange.bind(this)}
             underlineColorAndroid={'transparent'}
           />
         </View>
@@ -147,3 +191,10 @@ const styles = StyleSheet.create({
     fontSize: 14
   }
 })
+
+const mapStateToProps = state => ({
+  deviceData: state.nav.deviceData,
+  userData: state.nav.userData
+})
+
+export default connect(mapStateToProps)(SettingScreen)

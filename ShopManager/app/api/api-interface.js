@@ -25,6 +25,12 @@ export default class APIInterface {
     return BaseRequest.post(ApiConstant.BASE_URL + '/device/add', {'token': token}, formData)
   }
 
+  static deviceDelete(token, deviceId) {
+    let formData = new FormData();
+    formData.append("deviceId", deviceId)
+    return BaseRequest.post(ApiConstant.BASE_URL + '/device/delete', {'token': token}, formData)
+  }
+
   static deviceGetDetailsByMac(mac) {
     var params = {
       "mac": mac
@@ -32,5 +38,12 @@ export default class APIInterface {
     var esc = encodeURIComponent;
     var query = Object.keys(params).map(k => esc(k) + '=' + esc(params[k])).join('&');
     return BaseRequest.get(ApiConstant.BASE_URL + '/device/getDeviceDetailsByMac?' + query, {})
+  }
+
+  static deviceUpdate(token, deviceId, place) {
+    let formData = new FormData();
+    formData.append("deviceId", deviceId)
+    formData.append("place", place)
+    return BaseRequest.post(ApiConstant.BASE_URL + '/device/update', {'token': token}, formData)
   }
 }

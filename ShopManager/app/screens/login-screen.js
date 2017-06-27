@@ -9,13 +9,14 @@ import {
   TouchableNativeFeedback,
   View
 } from 'react-native'
+import { connect } from 'react-redux'
 import DeviceInfo from 'react-native-device-info'
 
 import ApiClient from '../api/api-client'
 import ApiInterface from '../api/api-interface'
 import ApiConstant from '../api/api-constant'
 
-export default class LoginScreen extends React.Component {
+class LoginScreen extends React.Component {
 
   static navigationOptions = {
     header: null
@@ -30,6 +31,11 @@ export default class LoginScreen extends React.Component {
 
     this.userLogin.bind(this)
     this.deviceAdd.bind(this)
+    this.deviceGetDetailsByMac.bind(this)
+  }
+
+  componentDidMount() {
+    console.log(this.props.defaultPlace)
   }
 
   userNameOnChange(text) {
@@ -49,7 +55,11 @@ export default class LoginScreen extends React.Component {
     .then((json) => {
       console.log(json)
       if (json.callStatus == ApiConstant.SUCCEED) {
-        this.deviceAdd(json.token)
+        if (!this.props.defaultPlace) {
+          this.deviceAdd(json)
+        } else {
+          this.deviceGetDetailsByMac(json)
+        }
       } else {
         ToastAndroid.show(json.data, ToastAndroid.SHORT)
       }
@@ -59,16 +69,55 @@ export default class LoginScreen extends React.Component {
     })
   }
 
-  deviceAdd(token) {
+  deviceAdd(loginResponse) {
     ApiClient
-    .access(ApiInterface.deviceAdd(token, '尚未填写', DeviceInfo.getUniqueID()))
+    .access(ApiInterface.deviceAdd(loginResponse.token, ApiConstant.DEFAULT_DEVICE_PLACE, DeviceInfo.getUniqueID()))
     .then((response) => {
       return response.json()
     })
     .then((json) => {
       console.log(json)
       if (json.callStatus == ApiConstant.SUCCEED) {
-        this.props.navigation.dispatch({ type: 'Login' })
+        this.props.navigation.dispatch({ type: 'Login', userData: loginResponse, deviceData: json.data })
+      } else {
+        ToastAndroid.show(json.data, ToastAndroid.SHORT)
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+  }
+
+  deviceGetDetailsByMac(loginResponse) {
+    ApiClient
+    .access(ApiInterface.deviceGetDetailsByMac(DeviceInfo.getUniqueID()))
+    .then((response) => {
+      return response.json()
+    })
+    .then((json) => {
+      console.log(json)
+      if (json.callStatus == ApiConstant.SUCCEED) {
+        this.props.navigation.dispatch({ type: 'Login', userData: loginResponse, deviceData: json.data })
+      } else {
+        ToastAndroid.show(json.data, ToastAndroid.SHORT)
+      }
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+  }
+
+  // 删除设备的方法用于测试
+  deviceDelete(token) {
+    ApiClient
+    .access(ApiInterface.deviceDelete(token, 3))
+    .then((response) => {
+      return response.json()
+    })
+    .then((json) => {
+      console.log(json)
+      if (json.callStatus == ApiConstant.SUCCEED) {
+        ToastAndroid.show(json.data, ToastAndroid.SHORT)
       } else {
         ToastAndroid.show(json.data, ToastAndroid.SHORT)
       }
@@ -177,3 +226,9 @@ const styles = StyleSheet.create({
     fontSize: 14
   }
 })
+
+const mapStateToProps = state => ({
+  defaultPlace: state.nav.defaultPlace,
+})
+
+export default connect(mapStateToProps)(LoginScreen)
