@@ -46,4 +46,26 @@ export default class APIInterface {
     formData.append("place", place)
     return BaseRequest.post(ApiConstant.BASE_URL + '/device/update', {'token': token}, formData)
   }
+
+  static playAdvGetList(userId, numberPerPage, currentPage) {
+    var params = {
+      "userId": userId,
+      "numberPerPage": numberPerPage,
+      "currentPage": currentPage
+    }
+    var esc = encodeURIComponent;
+    var query = Object.keys(params).map(k => esc(k) + '=' + esc(params[k])).join('&');
+    return BaseRequest.get(ApiConstant.BASE_URL + '/playAdv/getPlayAdvList?' + query, {})
+  }
+
+  static playAdvGetListFromAdmin(userId, numberPerPage, currentPage) {
+    var params = {
+      "userId": userId,
+      "numberPerPage": numberPerPage,
+      "currentPage": currentPage
+    }
+    var esc = encodeURIComponent;
+    var query = Object.keys(params).map(k => esc(k) + '=' + esc(params[k])).join('&');
+    return BaseRequest.get(ApiConstant.BASE_URL + '/playAdv/getPlayAdvListFromAdmin?' + query, {})
+  }
 }
