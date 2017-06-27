@@ -11,6 +11,7 @@ import LoginScreen from './screens/login-screen'
 import MainScreen from './screens/main-screen'
 import PlaylistScreen from './screens/playlist-screen'
 import SettingScreen from './screens/setting-screen'
+import WelcomeScreen from './screens/welcome-screen'
 
 export const Navigator = StackNavigator({
   Ad: { screen: AdScreen },
@@ -18,7 +19,8 @@ export const Navigator = StackNavigator({
   Login: { screen: LoginScreen },
   Main: { screen: MainScreen },
   Playlist: { screen: PlaylistScreen },
-  Setting: { screen: SettingScreen }
+  Setting: { screen: SettingScreen },
+  Welcome: { screen: WelcomeScreen }
 })
 
 const Dispatcher = ({ dispatch, nav }) => (

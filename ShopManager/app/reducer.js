@@ -3,7 +3,8 @@ import { NavigationActions } from 'react-navigation'
 
 import { Navigator } from './navigator'
 
-// Start with two routes: The Main screen, with the Login screen on top.
+const actionWelcome = Navigator.router.getActionForPathAndParams('Welcome')
+const navStateWelcome = Navigator.router.getStateForAction(actionWelcome)
 const actionAd = Navigator.router.getActionForPathAndParams('Ad')
 const navStateAd = Navigator.router.getStateForAction(actionAd)
 const actionSetting = Navigator.router.getActionForPathAndParams('Setting')
@@ -20,14 +21,20 @@ const navStateSetting2Login = Navigator.router.getStateForAction(
 const actionGame = Navigator.router.getActionForPathAndParams('Game')
 const actionPlaylist = Navigator.router.getActionForPathAndParams('Playlist')
 
-function nav(state = navStateSetting2Login, action) {
+function nav(state = navStateWelcome, action) {
   let nextState
   switch (action.type) {
+    case 'Welcome':
+      nextState = navStateSetting2Login
+      break
     case 'Login':
       nextState = Navigator.router.getStateForAction(
         NavigationActions.back(),
         state
       )
+      break
+    case 'Ad':
+      nextState = navStateAd
       break
     case 'Setting':
       nextState = Navigator.router.getStateForAction(
