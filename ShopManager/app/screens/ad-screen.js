@@ -8,18 +8,52 @@ import {
   TouchableNativeFeedback,
   View
 } from 'react-native'
+import { connect } from 'react-redux'
 
-export default class AdScreen extends React.Component {
+import ApiClient from '../api/api-client'
+import ApiInterface from '../api/api-interface'
+import ApiConstant from '../api/api-constant'
+
+class AdScreen extends React.Component {
   static navigationOptions = {
     header: null
   }
+
   constructor(props) {
     super(props)
 
     this.state = {
       modalVisible: false,
     }
+
+    this.getAdList.bind(this)
   }
+
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      this.getAdList()
+      .then(responses =>
+        Promise.all(responses.map(response => response.json()))
+      )
+      .then((jsons) => {
+        console.log(jsons)
+      })
+      clearTimeout(this.timer)
+    }, 500)
+  }
+
+  componentWillUnmount() {
+    this.timer && clearTimeout(this.timer)
+  }
+
+  getAdList() {
+    var deviceData = this.props.deviceData
+    var promiseAds = ApiClient.access(ApiInterface.playAdvGetList(deviceData.userId, ApiConstant.DEFAULT_NUMBER_PER_PAGE, 1))
+    var promiseAdsFromAdmin = ApiClient.access(ApiInterface.playAdvGetListFromAdmin(deviceData.userId, ApiConstant.DEFAULT_NUMBER_PER_PAGE, 1))
+
+    return Promise.all([promiseAds, promiseAdsFromAdmin])
+  }
+
   launchGame() {
     this.props.navigation.dispatch({ type: 'Game' })
   }
@@ -38,7 +72,7 @@ export default class AdScreen extends React.Component {
         <Image
           style={styles.adBackground}
           source={require('../resources/ad-background.png')}/>
-        
+
         <View style={styles.trolleyContainer}>
           <TouchableNativeFeedback
             onPress={this.showBuyModal.bind(this)}>
@@ -140,3 +174,9 @@ const styles = StyleSheet.create({
     height: 20,
   }
 })
+
+const mapStateToProps = state => ({
+  deviceData: state.nav.deviceData
+})
+
+export default connect(mapStateToProps)(AdScreen)

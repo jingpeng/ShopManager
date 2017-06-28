@@ -5,4 +5,5 @@ export default class ApiConstant {
   static FAILED = "FAILED"
 
   static DEFAULT_DEVICE_PLACE = "null"
+  static DEFAULT_NUMBER_PER_PAGE = 100
 }

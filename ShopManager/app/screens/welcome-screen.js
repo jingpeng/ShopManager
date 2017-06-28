@@ -38,7 +38,7 @@ export default class WelcomeScreen extends React.Component {
           if (json.data.place == ApiConstant.DEFAULT_DEVICE_PLACE) {
             this.props.navigation.dispatch({ type: 'Welcome', defaultPlace: true })
           } else {
-            this.props.navigation.dispatch({ type: 'Ad' })
+            this.props.navigation.dispatch({ type: 'Ad', deviceData: json.data })
           }
         }
       } else {

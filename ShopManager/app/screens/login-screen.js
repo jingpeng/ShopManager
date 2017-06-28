@@ -34,10 +34,6 @@ class LoginScreen extends React.Component {
     this.deviceGetDetailsByMac.bind(this)
   }
 
-  componentDidMount() {
-    console.log(this.props.defaultPlace)
-  }
-
   userNameOnChange(text) {
     this.setState({userName: text})
   }

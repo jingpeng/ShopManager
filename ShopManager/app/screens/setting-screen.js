@@ -55,7 +55,6 @@ class SettingScreen extends React.Component {
   render() {
     var deviceData = this.props.deviceData
     var userData = this.props.userData
-    console.log(userData)
     return (
       <View style={styles.container}>
 

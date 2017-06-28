@@ -32,7 +32,7 @@ function nav(state = navStateWelcome, action) {
       console.log(nextState)
       break
     case 'Ad':
-      nextState = navStateAd
+      nextState = { ...navStateAd, deviceData: action.deviceData }
       break
     case 'Setting':
       nextState = Navigator.router.getStateForAction(
