@@ -9,10 +9,12 @@ import {
   View
 } from 'react-native'
 import { connect } from 'react-redux'
+import RNFS from "react-native-fs"
 
 import ApiClient from '../api/api-client'
 import ApiInterface from '../api/api-interface'
 import ApiConstant from '../api/api-constant'
+import IOConstant from '../io/io-constant'
 
 class AdScreen extends React.Component {
   static navigationOptions = {
@@ -37,7 +39,6 @@ class AdScreen extends React.Component {
         Promise.all(responses.map(response => response.json()))
       )
       .then((jsons) => {
-        console.log(jsons)
         this.downloadAds(jsons)
       })
       .catch((error) => {
@@ -59,8 +60,19 @@ class AdScreen extends React.Component {
     return Promise.all([promiseAds, promiseAdsFromAdmin])
   }
 
-  downloadAds() {
+  downloadAds(jsons) {
+    console.log(jsons)
+    var advs = jsons[0].data
+    var advsAdmin = jsons[1].data
 
+    storage.save({
+      key: IOConstant.ADV_LIST,
+      data: advs
+    })
+    storage.save({
+      key: IOConstant.ADV_LIST_ADMIN,
+      data: advsAdmin
+    })
   }
 
   launchGame() {

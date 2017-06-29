@@ -3,7 +3,7 @@ export default class ApiClient {
   static access(service) {
 
     let timeout = new Promise((resolve, reject) => {
-      setTimeout(reject, 15000, { message: '请求超时' })
+      setTimeout(reject, 30000, { message: '请求超时' })
     })
 
     let fetch = service.catch(error => {
