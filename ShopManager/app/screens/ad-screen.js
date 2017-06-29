@@ -27,6 +27,7 @@ class AdScreen extends React.Component {
     }
 
     this.getAdList.bind(this)
+    this.downloadAds.bind(this)
   }
 
   componentDidMount() {
@@ -37,6 +38,10 @@ class AdScreen extends React.Component {
       )
       .then((jsons) => {
         console.log(jsons)
+        this.downloadAds(jsons)
+      })
+      .catch((error) => {
+        console.log(error);
       })
       clearTimeout(this.timer)
     }, 500)
@@ -52,6 +57,10 @@ class AdScreen extends React.Component {
     var promiseAdsFromAdmin = ApiClient.access(ApiInterface.playAdvGetListFromAdmin(deviceData.userId, ApiConstant.DEFAULT_NUMBER_PER_PAGE, 1))
 
     return Promise.all([promiseAds, promiseAdsFromAdmin])
+  }
+
+  downloadAds() {
+
   }
 
   launchGame() {
