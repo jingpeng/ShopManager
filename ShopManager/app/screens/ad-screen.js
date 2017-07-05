@@ -18,6 +18,7 @@ import ApiInterface from '../api/api-interface'
 import ApiConstant from '../api/api-constant'
 import IOConstant from '../io/io-constant'
 
+
 const directory = RNFS.ExternalStorageDirectoryPath + IOConstant.ADV_DIRECTORY
 global.advs = []
 
@@ -45,37 +46,29 @@ class AdScreen extends React.Component {
 
   componentDidMount() {
     var copy = this
-    RCTDeviceEventEmitter.addListener('video_on_load', function(data) {
+    RCTDeviceEventEmitter.addListener('on_next', function(data) {
       console.log(data)
-      copy.videoPlayTimer = setTimeout(() => {
+      copy.playTimer = setTimeout(() => {
         copy.dequeue(advs)
       }, data.duration)
     })
 
     var deviceData = this.props.deviceData
-    if (deviceData == undefined) {
-      return
-    }
 
-    this.downloadTimer = setInterval(() => {
-      this.getAdList()
-      .then(responses =>
-        Promise.all(responses.map(response => response.json()))
-      )
-      .then((jsons) => {
-        this.downloadAds(jsons)
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-      clearTimeout(this.downloadTimer)
-    }, 500)
+    this.getAdList()
+    .then(responses =>
+      Promise.all(responses.map(response => response.json()))
+    )
+    .then((jsons) => {
+      this.downloadAds(jsons)
+    })
+    .catch((error) => {
+      console.log(error);
+    })
   }
 
   componentWillUnmount() {
-    this.downloadTimer && clearTimeout(this.downloadTimer)
-    this.imagePlayTimer && clearTimeout(this.imagePlayTimer)
-    this.videoPlayTimer && clearTimeout(this.videoPlayTimer)
+    this.playTimer && clearTimeout(this.playTimer)
   }
 
   getAdList() {
@@ -167,9 +160,7 @@ class AdScreen extends React.Component {
           imageSource: 'file://' + path,
           videoVisible: videoVisible
         })
-        this.imagePlayTimer = setTimeout(() => {
-          copy.dequeue(result)
-        }, poped.advertisement.time * 1000)
+        RCTDeviceEventEmitter.emit('on_next', { duration: poped.advertisement.time * 1000 })
         break
       case 1:
         imageVisible = false
@@ -185,7 +176,7 @@ class AdScreen extends React.Component {
   }
 
   onLoad(data) {
-    RCTDeviceEventEmitter.emit('video_on_load', data);
+    RCTDeviceEventEmitter.emit('on_next', data);
   }
 
   launchGame() {
