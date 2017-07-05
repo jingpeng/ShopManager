@@ -53,18 +53,33 @@ class AdScreen extends React.Component {
       }, data.duration)
     })
 
-    var deviceData = this.props.deviceData
+    if (this.props.deviceData != undefined) {
+      this.getAdList()
+      .then(responses =>
+        Promise.all(responses.map(response => response.json()))
+      )
+      .then((jsons) => {
+        this.downloadAds(jsons)
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+    }
+  }
 
-    this.getAdList()
-    .then(responses =>
-      Promise.all(responses.map(response => response.json()))
-    )
-    .then((jsons) => {
-      this.downloadAds(jsons)
-    })
-    .catch((error) => {
-      console.log(error);
-    })
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.deviceData == undefined && this.props.deviceData != undefined) {
+      this.getAdList()
+      .then(responses =>
+        Promise.all(responses.map(response => response.json()))
+      )
+      .then((jsons) => {
+        this.downloadAds(jsons)
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+    }
   }
 
   componentWillUnmount() {
