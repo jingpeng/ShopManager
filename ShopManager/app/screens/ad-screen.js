@@ -52,6 +52,11 @@ class AdScreen extends React.Component {
       }, data.duration)
     })
 
+    var deviceData = this.props.deviceData
+    if (deviceData == undefined) {
+      return
+    }
+
     this.downloadTimer = setInterval(() => {
       this.getAdList()
       .then(responses =>
