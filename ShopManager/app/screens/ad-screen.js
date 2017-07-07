@@ -32,6 +32,7 @@ class AdScreen extends React.Component {
     this.state = {
       modalVisible: false,
       advs: [],
+      players: [],
       loading: false
     }
 
@@ -44,6 +45,7 @@ class AdScreen extends React.Component {
     RCTDeviceEventEmitter.addListener('all_load', function(advs){
       copy.setState({
         advs: advs,
+        players: new Array(advs.length),
         loading: false
       })
     })
@@ -151,9 +153,20 @@ class AdScreen extends React.Component {
     this.setState({modalVisible: true})
   }
 
-  render() {
-    console.log('render')
+  onPageSelected(e) {
+    var adv = this.state.advs[e.nativeEvent.position]
+    var player = this.state.players[e.nativeEvent.position]
+    for (var i = 0; i < this.state.players.length; i++) {
+      if (this.state.players[i] != undefined) {
+        this.state.players[i].setNativeProps({ paused: true })
+      }
+    }
+    if (player != undefined) {
+      player.setNativeProps({ seek: 0, paused: false })
+    }
+  }
 
+  render() {
     var advList = (object, i) => {
       switch (object.advertisement.fileType) {
         case 0:
@@ -165,6 +178,7 @@ class AdScreen extends React.Component {
               key={i}
               style={styles.adBackground}>
               <Image
+                ref={(ref) => { this.state.players[i] = undefined }}
                 style={styles.adBackground}
                 resizeMode={'contain'}
                 source={{uri: imageSource}}/>
@@ -179,12 +193,12 @@ class AdScreen extends React.Component {
               key={i}
               style={styles.backgroundVideo}>
               <Video
-                ref={(ref) => { this.player = ref }}
+                ref={(ref) => { this.state.players[i] = ref }}
                 source={{uri: videoSource}}   // Can be a URL or a local file.                                      // Store reference
                 rate={1.0}                              // 0 is paused, 1 is normal.
                 volume={1.0}                            // 0 is muted, 1 is normal.
                 muted={false}                           // Mutes the audio entirely.
-                paused={false}                          // Pauses playback entirely.
+                paused={true}                          // Pauses playback entirely.
                 resizeMode="cover"                      // Fill the whole screen at aspect ratio.*
                 repeat={true}                           // Repeat forever.
                 playInBackground={true}                // Audio continues to play when app entering background.
@@ -206,7 +220,9 @@ class AdScreen extends React.Component {
     if (this.state.advs.length > 0) {
       holder =
         <ViewPagerAndroid
+          ref={(ref) => { this.viewPager = ref }}
           style={styles.viewPager}
+          onPageSelected={this.onPageSelected.bind(this)}
           initialPage={0}>
           {this.state.advs.map(advList)}
         </ViewPagerAndroid>
