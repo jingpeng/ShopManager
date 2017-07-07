@@ -47,7 +47,34 @@ class AdScreen extends React.Component {
         advs: advs,
         players: new Array(advs.length),
         loading: false
+      }, () => {
+        RCTDeviceEventEmitter.emit('on_next', 0)
       })
+    })
+
+    RCTDeviceEventEmitter.addListener('on_next', function(page){
+      console.log(page)
+      if (page >= copy.state.advs.length) {
+        page = 0
+        copy.viewPager.setPage(page)
+      }
+      var adv = copy.state.advs[page]
+      if (adv.advertisement.time != null) {
+        copy.timer = setTimeout(() => {
+          copy.viewPager.setPage(page + 1)
+          RCTDeviceEventEmitter.emit('on_next', page + 1)
+
+          var player = copy.state.players[page + 1]
+          for (var i = 0; i < copy.state.players.length; i++) {
+            if (copy.state.players[i] != undefined) {
+              copy.state.players[i].setNativeProps({ paused: true })
+            }
+          }
+          if (player != undefined) {
+            player.setNativeProps({ seek: 0, paused: false })
+          }
+        }, adv.advertisement.time * 1000)
+      }
     })
 
     if (this.props.deviceData != undefined) {
@@ -63,6 +90,10 @@ class AdScreen extends React.Component {
         console.log(error)
       })
     }
+  }
+
+  componentWillUnmount() {
+    this.timer && clearTimeout(this.timer)
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -154,6 +185,8 @@ class AdScreen extends React.Component {
   }
 
   onPageSelected(e) {
+    this.timer && clearTimeout(this.timer)
+
     var adv = this.state.advs[e.nativeEvent.position]
     var player = this.state.players[e.nativeEvent.position]
     for (var i = 0; i < this.state.players.length; i++) {
@@ -163,6 +196,8 @@ class AdScreen extends React.Component {
     }
     if (player != undefined) {
       player.setNativeProps({ seek: 0, paused: false })
+    } else {
+      RCTDeviceEventEmitter.emit('on_next', e.nativeEvent.position)
     }
   }
 
@@ -200,12 +235,12 @@ class AdScreen extends React.Component {
                 muted={false}                           // Mutes the audio entirely.
                 paused={true}                          // Pauses playback entirely.
                 resizeMode="cover"                      // Fill the whole screen at aspect ratio.*
-                repeat={true}                           // Repeat forever.
+                repeat={false}                           // Repeat forever.
                 playInBackground={true}                // Audio continues to play when app entering background.
                 // onLoadStart={this.loadStart}            // Callback when video starts to load
                 // onLoad={this.onLoad}               // Callback when video loads
                 // onProgress={this.setTime}               // Callback every ~250ms with currentTime
-                // onEnd={this.onEnd}                      // Callback when playback finishes
+                onEnd={() => {RCTDeviceEventEmitter.emit('on_next', i + 1)}}                      // Callback when playback finishes
                 // onError={this.videoError}               // Callback when video cannot be loaded
                 // onBuffer={this.onBuffer}                // Callback when remote video is buffering
                 // onTimedMetadata={this.onTimedMetadata}  // Callback when the stream receive some metadata
