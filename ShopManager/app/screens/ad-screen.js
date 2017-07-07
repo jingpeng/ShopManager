@@ -1,12 +1,14 @@
 import React from 'react'
 import BuyModal from './buy-modal'
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   StyleSheet,
   Text,
   TouchableNativeFeedback,
-  View
+  View,
+  ViewPagerAndroid
 } from 'react-native'
 import { connect } from 'react-redux'
 import RNFS from "react-native-fs"
@@ -18,9 +20,7 @@ import ApiInterface from '../api/api-interface'
 import ApiConstant from '../api/api-constant'
 import IOConstant from '../io/io-constant'
 
-
 const directory = RNFS.ExternalStorageDirectoryPath + IOConstant.ADV_DIRECTORY
-global.advs = []
 
 class AdScreen extends React.Component {
   static navigationOptions = {
@@ -31,29 +31,25 @@ class AdScreen extends React.Component {
     super(props)
     this.state = {
       modalVisible: false,
-      imageVisible: false,
-      imageSource: '',
-      videoVisible: false,
-      videoSource: ''
+      advs: [],
+      loading: false
     }
 
     this.getAdList.bind(this)
     this.downloadAds.bind(this)
-    this.autoPlayAds.bind(this)
-    this.dequeue.bind(this)
-    this.onLoad.bind(this)
   }
 
   componentDidMount() {
     var copy = this
-    RCTDeviceEventEmitter.addListener('on_next', function(data) {
-      console.log(data)
-      copy.playTimer = setTimeout(() => {
-        copy.dequeue(advs)
-      }, data.duration)
+    RCTDeviceEventEmitter.addListener('advs_load', function(advs){
+      copy.setState({
+        advs: advs,
+        loading: false
+      })
     })
 
     if (this.props.deviceData != undefined) {
+      this.setState({loading: true})
       this.getAdList()
       .then(responses =>
         Promise.all(responses.map(response => response.json()))
@@ -62,13 +58,14 @@ class AdScreen extends React.Component {
         this.downloadAds(jsons)
       })
       .catch((error) => {
-        console.log(error);
+        console.log(error)
       })
     }
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.deviceData == undefined && this.props.deviceData != undefined) {
+      this.setState({loading: true})
       this.getAdList()
       .then(responses =>
         Promise.all(responses.map(response => response.json()))
@@ -77,13 +74,9 @@ class AdScreen extends React.Component {
         this.downloadAds(jsons)
       })
       .catch((error) => {
-        console.log(error);
+        console.log(error)
       })
     }
-  }
-
-  componentWillUnmount() {
-    this.playTimer && clearTimeout(this.playTimer)
   }
 
   getAdList() {
@@ -99,99 +92,36 @@ class AdScreen extends React.Component {
     var advs = jsons[0].data
     var advsAdmin = jsons[1].data
 
-    storage.save({
-      key: IOConstant.ADV_LIST,
-      data: advs
-    })
-    storage.save({
-      key: IOConstant.ADV_LIST_ADMIN,
-      data: advsAdmin
-    })
+    storage.save({key: IOConstant.ADV_LIST, data: advs})
+    storage.save({key: IOConstant.ADV_LIST_ADMIN, data: advsAdmin})
 
     // 检查目录是否存在
     RNFS.exists(directory).then((result) => {
-      if(!result) {
-        RNFS.mkdir(directory)
-      }
+      if(!result) { RNFS.mkdir(directory) }
     })
 
     var futures = []
     for (var i = 0; i < advs.length; i++) {
       var adv = advs[i].advertisement
       var path = directory + adv.id + '_' + adv.fileName
-      console.log(path)
 
       futures.push(
-        RNFS
-        .downloadFile({
+        RNFS.downloadFile({
           fromUrl: encodeURI(adv.fileSrc),
           toFile: path,
           background: false
-        })
-        .promise
+        }).promise
       )
     }
     // 合并下载结果
     Promise.all(futures)
     .then(responses => {
       console.log(responses)
-      this.autoPlayAds()
+      RCTDeviceEventEmitter.emit('advs_load', jsons[0].data)
     })
     .catch((error) => {
-      console.log(error);
-    })
-  }
-
-  autoPlayAds() {
-    storage.load({
-      key: IOConstant.ADV_LIST
-    }).then(result => {
-      result.reverse()
-      this.dequeue(result)
-    }).catch(error => {
       console.log(error)
     })
-  }
-
-  dequeue(result) {
-    var copy = this
-    var poped = result.pop()
-    console.log("=====" + poped + "=====")
-    if (!poped) {
-      return
-    }
-    var imageVisible
-    var videoVisible
-    var imageSource
-    var videoSource
-    var path = directory + poped.advertisement.id + '_' + poped.advertisement.fileName
-    switch (poped.advertisement.fileType) {
-      case 0:
-        imageVisible = true
-        videoVisible = false
-        advs = result
-        this.setState({
-          imageVisible: imageVisible,
-          imageSource: 'file://' + path,
-          videoVisible: videoVisible
-        })
-        RCTDeviceEventEmitter.emit('on_next', { duration: poped.advertisement.time * 1000 })
-        break
-      case 1:
-        imageVisible = false
-        videoVisible = true
-        advs = result
-        this.setState({
-          imageVisible: imageVisible,
-          videoVisible: videoVisible,
-          videoSource: path
-        })
-        break
-    }
-  }
-
-  onLoad(data) {
-    RCTDeviceEventEmitter.emit('on_next', data);
   }
 
   launchGame() {
@@ -207,40 +137,76 @@ class AdScreen extends React.Component {
   }
 
   render() {
-    let holder = null
-    if (this.state.imageVisible) {
-      holder =
-      <Image
-        style={styles.adBackground}
-        resizeMode={'contain'}
-        source={{uri: this.state.imageSource}}/>
+    console.log('render')
+
+    var advList = (object, i) => {
+      switch (object.advertisement.fileType) {
+        case 0:
+          var imageSource = 'file://' + directory + object.advertisement.id + '_' + object.advertisement.fileName
+          var duration = object.advertisement.time * 1000
+          console.log(imageSource)
+          return (
+            <View
+              key={i}
+              style={styles.adBackground}>
+              <Image
+                style={styles.adBackground}
+                resizeMode={'contain'}
+                source={{uri: imageSource}}/>
+            </View>
+          )
+          break
+        case 1:
+          var videoSource = directory + object.advertisement.id + '_' + object.advertisement.fileName
+          console.log(videoSource)
+          return (
+            <View
+              key={i}
+              style={styles.backgroundVideo}>
+              <Video
+                ref={(ref) => { this.player = ref }}
+                source={{uri: videoSource}}   // Can be a URL or a local file.                                      // Store reference
+                rate={1.0}                              // 0 is paused, 1 is normal.
+                volume={1.0}                            // 0 is muted, 1 is normal.
+                muted={false}                           // Mutes the audio entirely.
+                paused={false}                          // Pauses playback entirely.
+                resizeMode="cover"                      // Fill the whole screen at aspect ratio.*
+                repeat={true}                           // Repeat forever.
+                playInBackground={true}                // Audio continues to play when app entering background.
+                // onLoadStart={this.loadStart}            // Callback when video starts to load
+                // onLoad={this.onLoad}               // Callback when video loads
+                // onProgress={this.setTime}               // Callback every ~250ms with currentTime
+                // onEnd={this.onEnd}                      // Callback when playback finishes
+                // onError={this.videoError}               // Callback when video cannot be loaded
+                // onBuffer={this.onBuffer}                // Callback when remote video is buffering
+                // onTimedMetadata={this.onTimedMetadata}  // Callback when the stream receive some metadata
+                style={styles.backgroundVideo} />
+            </View>
+          )
+          break
+      }
     }
 
-    if (this.state.videoVisible) {
+    let holder = null
+    if (this.state.advs.length > 0) {
       holder =
-      <Video
-        ref={(ref) => { this.player = ref }}
-        source={{uri: this.state.videoSource}}   // Can be a URL or a local file.                                      // Store reference
-        rate={1.0}                              // 0 is paused, 1 is normal.
-        volume={1.0}                            // 0 is muted, 1 is normal.
-        muted={false}                           // Mutes the audio entirely.
-        paused={false}                          // Pauses playback entirely.
-        resizeMode="cover"                      // Fill the whole screen at aspect ratio.*
-        repeat={false}                           // Repeat forever.
-        playInBackground={true}                // Audio continues to play when app entering background.
-        // onLoadStart={this.loadStart}            // Callback when video starts to load
-        onLoad={this.onLoad}               // Callback when video loads
-        // onProgress={this.setTime}               // Callback every ~250ms with currentTime
-        // onEnd={this.onEnd}                      // Callback when playback finishes
-        // onError={this.videoError}               // Callback when video cannot be loaded
-        // onBuffer={this.onBuffer}                // Callback when remote video is buffering
-        // onTimedMetadata={this.onTimedMetadata}  // Callback when the stream receive some metadata
-        style={styles.backgroundVideo} />
+        <ViewPagerAndroid
+          style={styles.viewPager}
+          initialPage={0}>
+          {this.state.advs.map(advList)}
+        </ViewPagerAndroid>
+    } else {
+      holder =
+        <View/>
     }
 
     return (
       <View style={styles.container}>
-        {holder}
+        <ActivityIndicator
+          animating={this.state.loading}
+          style={[styles.centering, {height: 80}]}
+          size="large" />
+        { holder }
         <View style={styles.trolleyContainer}>
           <TouchableNativeFeedback
             onPress={this.showBuyModal.bind(this)}>
@@ -281,12 +247,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5FCFF'
   },
-  adBackground: {
+  centering: {
     height: Dimensions.get('window').height,
     width: Dimensions.get('window').width,
     position: 'absolute'
   },
+  viewPager: {
+    height: Dimensions.get('window').height,
+    width: Dimensions.get('window').width,
+    position: 'absolute'
+  },
+  adBackground: {
+    height: Dimensions.get('window').height,
+    width: Dimensions.get('window').width,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0
+  },
   backgroundVideo: {
+    height: Dimensions.get('window').height,
+    width: Dimensions.get('window').width,
     position: 'absolute',
     top: 0,
     left: 0,
