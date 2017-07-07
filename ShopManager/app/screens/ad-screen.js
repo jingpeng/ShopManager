@@ -41,7 +41,7 @@ class AdScreen extends React.Component {
 
   componentDidMount() {
     var copy = this
-    RCTDeviceEventEmitter.addListener('advs_load', function(advs){
+    RCTDeviceEventEmitter.addListener('all_load', function(advs){
       copy.setState({
         advs: advs,
         loading: false
@@ -97,30 +97,45 @@ class AdScreen extends React.Component {
 
     // 检查目录是否存在
     RNFS.exists(directory).then((result) => {
-      if(!result) { RNFS.mkdir(directory) }
-    })
+      if (!result) { RNFS.mkdir(directory) }
 
-    var futures = []
-    for (var i = 0; i < advs.length; i++) {
-      var adv = advs[i].advertisement
-      var path = directory + adv.id + '_' + adv.fileName
+      var downloadFutures = []
+      var storeFutures = []
+      var collection = advs.concat(advsAdmin)
 
-      futures.push(
-        RNFS.downloadFile({
-          fromUrl: encodeURI(adv.fileSrc),
-          toFile: path,
-          background: false
-        }).promise
-      )
-    }
-    // 合并下载结果
-    Promise.all(futures)
-    .then(responses => {
-      console.log(responses)
-      RCTDeviceEventEmitter.emit('advs_load', jsons[0].data)
-    })
-    .catch((error) => {
-      console.log(error)
+      for (var i = 0; i < collection.length; i++) {
+        var adv = collection[i].advertisement
+        var path = directory + adv.id + '_' + adv.fileName
+
+        storeFutures.push(RNFS.exists(path))
+      }
+
+      Promise.all(storeFutures)
+      .then((results) => {
+        for (var i = 0; i < collection.length; i++) {
+          var adv = collection[i].advertisement
+          var path = directory + adv.id + '_' + adv.fileName
+
+          if (!results[i]) {
+            downloadFutures.push(
+              RNFS.downloadFile({
+                fromUrl: encodeURI(adv.fileSrc),
+                toFile: path,
+                background: false
+              }).promise
+            )
+          }
+        }
+        // 合并下载结果
+        Promise.all(downloadFutures)
+        .then(responses => {
+          console.log(responses)
+          RCTDeviceEventEmitter.emit('all_load', jsons[0].data)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+      })
     })
   }
 
