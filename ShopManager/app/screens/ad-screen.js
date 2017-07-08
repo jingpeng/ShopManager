@@ -47,6 +47,7 @@ class AdScreen extends React.Component {
       modalVisible: false,
       advs: [],
       players: [],
+      currentPage: 0,
       loading: false,
       isOrder: false
     }
@@ -72,6 +73,7 @@ class AdScreen extends React.Component {
       if (page >= copy.state.advs.length) {
         page = 0
         copy.viewPager.setPage(page)
+        copy.setState({currentPage: page})
       }
       var adv = copy.state.advs[page]
       if (adv.isOrder == 1) {
@@ -83,6 +85,7 @@ class AdScreen extends React.Component {
       if (adv.advertisement.time != null) {
         var callback = () => {
           copy.viewPager.setPage(page + 1)
+          copy.setState({currentPage: page + 1})
           RCTDeviceEventEmitter.emit('on_next', page + 1)
 
           var player = copy.state.players[page + 1]
@@ -205,10 +208,24 @@ class AdScreen extends React.Component {
   showBuyModal() {
     this.setState({modalVisible: true})
     this.timer.pause()
+    var player = this.state.players[this.state.currentPage]
+    if (player != undefined) {
+      player.setNativeProps({ paused: true })
+    }
+  }
+
+  hideBuyModal() {
+    this.setState({modalVisible: false})
+    this.timer.resume()
+    var player = this.state.players[this.state.currentPage]
+    if (player != undefined) {
+      player.setNativeProps({ paused: false })
+    }
   }
 
   onPageSelected(e) {
     this.timer.pause()
+    this.setState({currentPage: e.nativeEvent.position})
 
     var adv = this.state.advs[e.nativeEvent.position]
     var player = this.state.players[e.nativeEvent.position]
