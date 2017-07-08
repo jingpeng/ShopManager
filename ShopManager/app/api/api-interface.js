@@ -68,4 +68,12 @@ export default class APIInterface {
     var query = Object.keys(params).map(k => esc(k) + '=' + esc(params[k])).join('&');
     return BaseRequest.get(ApiConstant.BASE_URL + '/playAdv/getPlayAdvListFromAdmin?' + query, {})
   }
+
+  static advOrderAdd(mac, playAdvId, num) {
+    let formData = new FormData();
+    formData.append("mac", mac)
+    formData.append("playAdvId", playAdvId)
+    formData.append("num", num)
+    return BaseRequest.post(ApiConstant.BASE_URL + '/advOrder/add', {}, formData)
+  }
 }

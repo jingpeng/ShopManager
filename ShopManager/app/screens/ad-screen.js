@@ -6,6 +6,7 @@ import {
   Image,
   StyleSheet,
   Text,
+  ToastAndroid,
   TouchableNativeFeedback,
   View,
   ViewPagerAndroid
@@ -14,6 +15,7 @@ import { connect } from 'react-redux'
 import RNFS from "react-native-fs"
 import Video from 'react-native-video'
 import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter'
+import DeviceInfo from 'react-native-device-info'
 
 import ApiClient from '../api/api-client'
 import ApiInterface from '../api/api-interface'
@@ -220,6 +222,20 @@ class AdScreen extends React.Component {
       adTitle: adv.advertisement.name,
       adDesc: adv.advertisement.content,
       adPrice: adv.advertisement.price
+    })
+  }
+
+  orderInModal(num) {
+    var adv = this.state.advs[this.state.currentPage]
+    ApiClient
+    .access(ApiInterface.advOrderAdd(DeviceInfo.getUniqueID(), adv.id, num))
+    .then(response => response.json())
+    .then((json) => {
+      ToastAndroid.show(json.errorCode, ToastAndroid.SHORT)
+      console.log(json)
+    })
+    .catch((error) => {
+      console.log(error)
     })
   }
 

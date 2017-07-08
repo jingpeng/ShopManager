@@ -86,6 +86,7 @@ export default class BuyModal extends React.Component {
   }
 
   onConfrimButtonPress(){
+    this.props.parent.orderInModal(this.state.adBuyCount)
     this.props.parent.hideBuyModal()
   }
 }
