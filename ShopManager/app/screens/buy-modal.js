@@ -87,6 +87,7 @@ export default class BuyModal extends React.Component {
 
   onConfrimButtonPress(){
     this.props.parent.setState({modalVisible: false})
+    this.props.parent.timer.resume()
   }
 }
 

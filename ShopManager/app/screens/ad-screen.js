@@ -22,6 +22,20 @@ import IOConstant from '../io/io-constant'
 
 const directory = RNFS.ExternalStorageDirectoryPath + IOConstant.ADV_DIRECTORY
 
+function Timer(callback, delay) {
+  var timerId, start, remaining = delay
+  this.pause = function() {
+      clearTimeout(timerId)
+      remaining -= new Date() - start
+  }
+  this.resume = function() {
+      start = new Date();
+      window.clearTimeout(timerId)
+      timerId = setTimeout(callback, remaining)
+  }
+  this.resume()
+}
+
 class AdScreen extends React.Component {
   static navigationOptions = {
     header: null
@@ -67,7 +81,7 @@ class AdScreen extends React.Component {
       }
 
       if (adv.advertisement.time != null) {
-        copy.timer = setTimeout(() => {
+        var callback = () => {
           copy.viewPager.setPage(page + 1)
           RCTDeviceEventEmitter.emit('on_next', page + 1)
 
@@ -80,7 +94,8 @@ class AdScreen extends React.Component {
           if (player != undefined) {
             player.setNativeProps({ seek: 0, paused: false })
           }
-        }, adv.advertisement.time * 1000)
+        }
+        copy.timer = new Timer(callback, adv.advertisement.time * 1000)
       }
     })
 
@@ -100,7 +115,7 @@ class AdScreen extends React.Component {
   }
 
   componentWillUnmount() {
-    this.timer && clearTimeout(this.timer)
+    copy.timer.pause()
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -189,10 +204,11 @@ class AdScreen extends React.Component {
 
   showBuyModal() {
     this.setState({modalVisible: true})
+    this.timer.pause()
   }
 
   onPageSelected(e) {
-    this.timer && clearTimeout(this.timer)
+    this.timer.pause()
 
     var adv = this.state.advs[e.nativeEvent.position]
     var player = this.state.players[e.nativeEvent.position]
