@@ -49,7 +49,10 @@ class AdScreen extends React.Component {
       players: [],
       currentPage: 0,
       loading: false,
-      isOrder: false
+      isOrder: false,
+      adTitle: "",
+      adDesc: "",
+      adPrice: 0
     }
 
     this.getAdList.bind(this)
@@ -212,6 +215,12 @@ class AdScreen extends React.Component {
     if (player != undefined) {
       player.setNativeProps({ paused: true })
     }
+    var adv = this.state.advs[this.state.currentPage]
+    this.setState({
+      adTitle: adv.advertisement.name,
+      adDesc: adv.advertisement.content,
+      adPrice: adv.advertisement.price
+    })
   }
 
   hideBuyModal() {
@@ -352,7 +361,7 @@ class AdScreen extends React.Component {
               source={require('../resources/bill.png')}/>
           </View>
         </TouchableNativeFeedback>
-        <BuyModal parent={this} adTitle={'ad-screen给的广告标题'} adDescription={'ad-screen给的广告描述'} adPrice={99911} />
+        <BuyModal parent={this} adTitle={this.state.adTitle} adDescription={this.state.adDesc} adPrice={this.state.adPrice} />
       </View>
     )
   }
