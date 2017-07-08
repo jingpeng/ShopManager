@@ -33,7 +33,8 @@ class AdScreen extends React.Component {
       modalVisible: false,
       advs: [],
       players: [],
-      loading: false
+      loading: false,
+      isOrder: false
     }
 
     this.getAdList.bind(this)
@@ -59,6 +60,12 @@ class AdScreen extends React.Component {
         copy.viewPager.setPage(page)
       }
       var adv = copy.state.advs[page]
+      if (adv.isOrder == 1) {
+        copy.setState({isOrder: true})
+      } else {
+        copy.setState({isOrder: false})
+      }
+
       if (adv.advertisement.time != null) {
         copy.timer = setTimeout(() => {
           copy.viewPager.setPage(page + 1)
@@ -199,6 +206,12 @@ class AdScreen extends React.Component {
     } else {
       RCTDeviceEventEmitter.emit('on_next', e.nativeEvent.position)
     }
+
+    if (adv.isOrder == 1) {
+      this.setState({isOrder: true})
+    } else {
+      this.setState({isOrder: false})
+    }
   }
 
   render() {
@@ -207,7 +220,6 @@ class AdScreen extends React.Component {
         case 0:
           var imageSource = 'file://' + directory + object.advertisement.id + '_' + object.advertisement.fileName
           var duration = object.advertisement.time * 1000
-          console.log(imageSource)
           return (
             <View
               key={i}
@@ -222,7 +234,6 @@ class AdScreen extends React.Component {
           break
         case 1:
           var videoSource = directory + object.advertisement.id + '_' + object.advertisement.fileName
-          console.log(videoSource)
           return (
             <View
               key={i}
@@ -266,6 +277,24 @@ class AdScreen extends React.Component {
         <View/>
     }
 
+    let buyButtonHolder = null
+    if (this.state.isOrder) {
+      buyButtonHolder = <View style={styles.trolleyContainer}>
+        <TouchableNativeFeedback
+          onPress={this.showBuyModal.bind(this)}>
+          <Text style={styles.trolleyText}>下单</Text>
+        </TouchableNativeFeedback>
+        <View style={styles.trolleyImageContainer}>
+          <Image
+            style={styles.trolleyImage}
+            source={require('../resources/trolley.png')}/>
+        </View>
+      </View>
+    } else {
+      buyButtonHolder =
+        <View/>
+    }
+
     return (
       <View style={styles.container}>
         <ActivityIndicator
@@ -273,17 +302,7 @@ class AdScreen extends React.Component {
           style={[styles.centering, {height: 80}]}
           size="large" />
         { holder }
-        <View style={styles.trolleyContainer}>
-          <TouchableNativeFeedback
-            onPress={this.showBuyModal.bind(this)}>
-            <Text style={styles.trolleyText}>下单</Text>
-          </TouchableNativeFeedback>
-          <View style={styles.trolleyImageContainer}>
-            <Image
-              style={styles.trolleyImage}
-              source={require('../resources/trolley.png')}/>
-          </View>
-        </View>
+        { buyButtonHolder}
         <TouchableNativeFeedback
           onPress={this.launchGame.bind(this)}>
           <View style={styles.gameContainer}>
