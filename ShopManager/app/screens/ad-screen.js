@@ -6,7 +6,6 @@ import {
   Image,
   StyleSheet,
   Text,
-  ToastAndroid,
   TouchableNativeFeedback,
   View,
   ViewPagerAndroid
@@ -21,6 +20,7 @@ import ApiClient from '../api/api-client'
 import ApiInterface from '../api/api-interface'
 import ApiConstant from '../api/api-constant'
 import IOConstant from '../io/io-constant'
+import OrderSuccessModal from './order-success-modal'
 
 const directory = RNFS.ExternalStorageDirectoryPath + IOConstant.ADV_DIRECTORY
 
@@ -46,7 +46,8 @@ class AdScreen extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      modalVisible: false,
+      buyModalVisible: false,
+      orderSuccessModalVisible: false,
       advs: [],
       players: [],
       currentPage: 0,
@@ -123,7 +124,7 @@ class AdScreen extends React.Component {
   }
 
   componentWillUnmount() {
-    copy.timer.pause()
+    this.timer.pause()
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -211,7 +212,7 @@ class AdScreen extends React.Component {
   }
 
   showBuyModal() {
-    this.setState({modalVisible: true})
+    this.setState({buyModalVisible: true})
     this.timer.pause()
     var player = this.state.players[this.state.currentPage]
     if (player != undefined) {
@@ -231,7 +232,7 @@ class AdScreen extends React.Component {
     .access(ApiInterface.advOrderAdd(DeviceInfo.getUniqueID(), adv.id, num))
     .then(response => response.json())
     .then((json) => {
-      ToastAndroid.show(json.errorCode, ToastAndroid.SHORT)
+      this.setState({orderSuccessModalVisible: true})
       console.log(json)
     })
     .catch((error) => {
@@ -240,7 +241,7 @@ class AdScreen extends React.Component {
   }
 
   hideBuyModal() {
-    this.setState({modalVisible: false})
+    this.setState({buyModalVisible: false})
     this.timer.resume()
     var player = this.state.players[this.state.currentPage]
     if (player != undefined) {
@@ -378,6 +379,7 @@ class AdScreen extends React.Component {
           </View>
         </TouchableNativeFeedback>
         <BuyModal parent={this} adTitle={this.state.adTitle} adDescription={this.state.adDesc} adPrice={this.state.adPrice} />
+        <OrderSuccessModal parent={this}/>
       </View>
     )
   }

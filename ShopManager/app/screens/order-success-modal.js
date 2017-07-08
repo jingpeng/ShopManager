@@ -14,10 +14,6 @@ export default class OrderSuccessModal extends React.Component {
 
   constructor(props) {
     super(props)
-
-    this.state = {
-      modalVisible: true
-    }
   }
 
   render() {
@@ -25,8 +21,8 @@ export default class OrderSuccessModal extends React.Component {
       <Modal
         animationType={"none"}
         transparent={true}
-        visible={this.state.modalVisible}
-        onRequestClose={() => {this.setState({modalVisible: !this.state.modalVisible})}}>
+        visible={this.props.parent.state.orderSuccessModalVisible}
+        onRequestClose={() => {this.props.parent.setState({orderSuccessModalVisible: !this.props.parent.state.orderSuccessModalVisible})}}>
         <View style={styles.container}>
           <View style={styles.background}/>
           <View style={styles.content}>

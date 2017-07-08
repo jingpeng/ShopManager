@@ -37,7 +37,7 @@ export default class BuyModal extends React.Component {
       <Modal
         animationType={"none"}
         transparent={true}
-        visible={this.props.parent.state.modalVisible}
+        visible={this.props.parent.state.buyModalVisible}
         onRequestClose={() => {alert("Modal has been closed.")}}>
         <View style={styles.container}>
           <View style={styles.innerContainer}>
