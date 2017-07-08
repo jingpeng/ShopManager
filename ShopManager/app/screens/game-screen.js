@@ -8,7 +8,9 @@ import {
   View
 } from 'react-native'
 
-import OrderSuccessModal from './order-success-modal'
+import ApiClient from '../api/api-client'
+import ApiInterface from '../api/api-interface'
+import ApiConstant from '../api/api-constant'
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 
@@ -27,10 +29,20 @@ export default class GameScreen extends React.Component {
     }
   }
 
+  componentDidMount() {
+    ApiClient.access(ApiInterface.gameGetList(ApiConstant.DEFAULT_NUMBER_PER_PAGE, 1))
+    .then(response => response.json())
+    .then(json => {
+      console.log(json)
+    })
+    .catch(error => {
+      console.log(error)
+    })
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <OrderSuccessModal/>
         <Image
           style={styles.leftPanel}
           source={require('../resources/ad-large.png')}>

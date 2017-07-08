@@ -76,4 +76,14 @@ export default class APIInterface {
     formData.append("num", num)
     return BaseRequest.post(ApiConstant.BASE_URL + '/advOrder/add', {}, formData)
   }
+
+  static gameGetList(numberPerPage, currentPage) {
+    var params = {
+      "numberPerPage": numberPerPage,
+      "currentPage": currentPage
+    }
+    var esc = encodeURIComponent;
+    var query = Object.keys(params).map(k => esc(k) + '=' + esc(params[k])).join('&');
+    return BaseRequest.get(ApiConstant.BASE_URL + '/game/getGameList?' + query, {})
+  }
 }

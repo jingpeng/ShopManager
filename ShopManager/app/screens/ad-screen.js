@@ -32,7 +32,7 @@ function Timer(callback, delay) {
   }
   this.resume = function() {
       start = new Date();
-      window.clearTimeout(timerId)
+      clearTimeout(timerId)
       timerId = setTimeout(callback, remaining)
   }
   this.resume()
