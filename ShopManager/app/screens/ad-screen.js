@@ -319,7 +319,7 @@ class AdScreen extends React.Component {
               source={require('../resources/bill.png')}/>
           </View>
         </TouchableNativeFeedback>
-        <BuyModal modalVisible={this.state.modalVisible} adTitle={'ad-screen给的广告标题'} adDescription={'ad-screen给的广告描述'} adPrice={99911} />
+        <BuyModal parent={this} adTitle={'ad-screen给的广告标题'} adDescription={'ad-screen给的广告描述'} adPrice={99911} />
       </View>
     )
   }

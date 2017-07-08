@@ -17,7 +17,6 @@ export default class BuyModal extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      modalVisible: props.modalVisible,
       adTitle: props.adTitle,
       adDescription: props.adDescription,
       adPrice: props.adPrice,
@@ -26,7 +25,6 @@ export default class BuyModal extends React.Component {
   }
   componentWillReceiveProps(props){
     this.setState({
-      modalVisible: props.modalVisible,
       adTitle: props.adTitle,
       adDescription: props.adDescription,
       adPrice: props.adPrice,
@@ -35,11 +33,11 @@ export default class BuyModal extends React.Component {
   }
 
   render() {
-    return (      
-      <Modal 
+    return (
+      <Modal
         animationType={"none"}
         transparent={true}
-        visible={this.state.modalVisible}
+        visible={this.props.parent.state.modalVisible}
         onRequestClose={() => {alert("Modal has been closed.")}}>
         <View style={styles.container}>
           <View style={styles.innerContainer}>
@@ -88,7 +86,7 @@ export default class BuyModal extends React.Component {
   }
 
   onConfrimButtonPress(){
-    this.setState({modalVisible: false});
+    this.props.parent.setState({modalVisible: false})
   }
 }
 
