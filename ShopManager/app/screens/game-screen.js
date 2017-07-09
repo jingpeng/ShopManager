@@ -73,16 +73,19 @@ export default class GameScreen extends React.Component {
             source={require('../resources/start-play-large.png')}/>
           {
             (this.state.index >= 0) ? (
-              <View style={styles.startContainer}>
-                <Text style={styles.startText}>开始</Text>
-              </View>
+              <TouchableWithoutFeedback
+                onPress={() => { this.props.navigation.dispatch({ type: 'WebGame', uri: this.state.currentData.src }) }}>
+                <View style={styles.startContainer}>
+                  <Text style={styles.startText}>开始</Text>
+                </View>
+              </TouchableWithoutFeedback>
             ) : ( null )
           }
         </Image>
         <View>
           <View style={styles.arrowContainer}>
             <TouchableWithoutFeedback
-              onPress={() => {this.props.navigation.dispatch({ type: 'Game2Ad' })}}>
+              onPress={() => { this.props.navigation.dispatch({ type: 'Game2Ad' }) }}>
               <Image
                 style={styles.backArrow}
                 source={require('../resources/back-arrow.png')}/>

@@ -12,6 +12,7 @@ import MainScreen from './screens/main-screen'
 import PlaylistScreen from './screens/playlist-screen'
 import SettingScreen from './screens/setting-screen'
 import WelcomeScreen from './screens/welcome-screen'
+import WebGameScreen from './screens/web-game-screen'
 
 export const Navigator = StackNavigator({
   Ad: { screen: AdScreen },
@@ -20,7 +21,8 @@ export const Navigator = StackNavigator({
   Main: { screen: MainScreen },
   Playlist: { screen: PlaylistScreen },
   Setting: { screen: SettingScreen },
-  Welcome: { screen: WelcomeScreen }
+  Welcome: { screen: WelcomeScreen },
+  WebGame: { screen: WebGameScreen }
 })
 
 const Dispatcher = ({ dispatch, nav }) => (
