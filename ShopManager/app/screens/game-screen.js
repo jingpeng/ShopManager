@@ -25,8 +25,10 @@ export default class GameScreen extends React.Component {
 
     var data = []
     this.state = {
+      currentData: null,
       originData: data,
-      dataSource: ds.cloneWithRows(data)
+      dataSource: ds.cloneWithRows(data),
+      index: -1
     }
   }
 
@@ -36,6 +38,9 @@ export default class GameScreen extends React.Component {
     .then(json => {
       console.log(json)
       var array = json.data
+      if (array.length >= 1) {
+        this.setState({index: 0, currentData: array[0]})
+      }
       var twinArray = []
       for (var i = 0; i < array.length; i+=2) {
         var eachItemArray = new Array(2)
@@ -62,13 +67,17 @@ export default class GameScreen extends React.Component {
       <View style={styles.container}>
         <Image
           style={styles.leftPanel}
-          source={require('../resources/ad-large.png')}>
+          source={(this.state.index < 0) ? require('../resources/ad-large.png') : {uri: this.state.currentData.bigPic}}>
           <Image
             style={styles.playButtonLarge}
             source={require('../resources/start-play-large.png')}/>
-          <View style={styles.startContainer}>
-            <Text style={styles.startText}>开始</Text>
-          </View>
+          {
+            (this.state.index >= 0) ? (
+              <View style={styles.startContainer}>
+                <Text style={styles.startText}>开始</Text>
+              </View>
+            ) : ( null )
+          }
         </Image>
         <View>
           <View style={styles.arrowContainer}>
@@ -84,20 +93,24 @@ export default class GameScreen extends React.Component {
             showsVerticalScrollIndicator={false}
             enableEmptySections={true}
             renderRow={(rowData, sectionId, rowId) => {
+              console.log(rowId)
               var holder1, holder2
               if (rowData[0] != undefined) {
                 holder1 =
-                  <Image
-                    style={[styles.gameCoverImage, {marginLeft: 15}]}
-                    source={{uri: rowData[0].smallPic}}>
-                    <View style={styles.descContainer}>
-                      <View style={styles.gameDescContainer}>
-                        <Text style={styles.gameDescText}>{ rowData[0].name }</Text>
-                        <Text style={styles.gameDescText}>手机游戏</Text>
+                  <TouchableWithoutFeedback
+                    onPress={() => {this.setState({index: rowId * 2, currentData: rowData[0]})}}>
+                    <Image
+                      style={[styles.gameCoverImage, {marginLeft: 15}]}
+                      source={{uri: rowData[0].smallPic}}>
+                      <View style={styles.descContainer}>
+                        <View style={styles.gameDescContainer}>
+                          <Text style={styles.gameDescText}>{ rowData[0].name }</Text>
+                          <Text style={styles.gameDescText}>手机游戏</Text>
+                        </View>
+                        <Text style={styles.gamePlayerNumText}>112万人爱玩</Text>
                       </View>
-                      <Text style={styles.gamePlayerNumText}>112万人爱玩</Text>
-                    </View>
-                  </Image>
+                    </Image>
+                  </TouchableWithoutFeedback>
               } else {
                 holder1 =
                   <Image
@@ -106,17 +119,20 @@ export default class GameScreen extends React.Component {
               }
               if (rowData[1] != undefined) {
                 holder2 =
-                  <Image
-                    style={[styles.gameCoverImage, {marginRight: 15}]}
-                    source={{uri: rowData[1].smallPic}}>
-                    <View style={styles.descContainer}>
-                      <View style={styles.gameDescContainer}>
-                        <Text style={styles.gameDescText}>{ rowData[1].name }</Text>
-                        <Text style={styles.gameDescText}>手机游戏</Text>
+                  <TouchableWithoutFeedback
+                    onPress={() => {this.setState({index: rowId * 2 + 1, currentData: rowData[1]})}}>
+                    <Image
+                      style={[styles.gameCoverImage, {marginRight: 15}]}
+                      source={{uri: rowData[1].smallPic}}>
+                      <View style={styles.descContainer}>
+                        <View style={styles.gameDescContainer}>
+                          <Text style={styles.gameDescText}>{ rowData[1].name }</Text>
+                          <Text style={styles.gameDescText}>手机游戏</Text>
+                        </View>
+                        <Text style={styles.gamePlayerNumText}>112万人爱玩</Text>
                       </View>
-                      <Text style={styles.gamePlayerNumText}>112万人爱玩</Text>
-                    </View>
-                  </Image>
+                    </Image>
+                  </TouchableWithoutFeedback>
               } else {
                 holder2 =
                   <Image
