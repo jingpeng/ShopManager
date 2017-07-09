@@ -5,9 +5,11 @@ import {
   ListView,
   StyleSheet,
   Text,
-  TouchableNativeFeedback,
+  TouchableWithoutFeedback,
   View
 } from 'react-native'
+
+import IOConstant from '../io/io-constant'
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 
@@ -20,23 +22,43 @@ export default class PlaylistScreen extends React.Component {
     super(props)
     this.selectAd.bind(this)
 
-    var data = [{
-      selected: false
-    }, {
-      selected: false
-    }, {
-      selected: false
-    }, {
-      selected: false
-    }, {
-      selected: false
-    }, {
-      selected: false
-    }]
+    var data = []
     this.state = {
       originData: data,
-      dataSource: ds.cloneWithRows(data)
+      dataSource: ds.cloneWithRows(data),
+      index: -1,
+      currentData: null
     }
+  }
+
+  componentDidMount() {
+    var promise1 = storage.load({key: IOConstant.ADV_LIST})
+    var promise2 = storage.load({key: IOConstant.ADV_LIST_ADMIN})
+    promise1.then(results1 => {
+      console.log(results1)
+      promise2.then(results2 => {
+        var all = results1.concat(results2)
+        for (var i = 0; i < all.length; i++) {
+          all[i].selected = false
+        }
+        this.setState({
+          originData: all,
+          dataSource: ds.cloneWithRows(all)
+        })
+        if (all.length > 0) {
+          this.setState({
+            index: 0,
+            currentData: all[0]
+          })
+        }
+      })
+      .catch(error => {
+        console.warn(error.message)
+      })
+    })
+    .catch(error => {
+      console.warn(error.message)
+    })
   }
 
   selectAd(rowId) {
@@ -51,42 +73,72 @@ export default class PlaylistScreen extends React.Component {
 
     this.setState({
       originData: data,
-      dataSource: ds.cloneWithRows(data)
+      dataSource: ds.cloneWithRows(data),
+      index: rowId,
+      currentData: data[rowId]
     })
   }
 
   render() {
+    var coverSource = null
+    if (this.state.index >= 0) {
+      if (this.state.currentData.advertisement.fileType == 0) {
+        coverSource = {uri: this.state.currentData.advertisement.fileSrc}
+      } else if (this.state.currentData.advertisement.fileType == 1) {
+        coverSource = {uri: this.state.currentData.advertisement.fileSrc + "?vframe/jpg/offset/1/w/640/h/360"}
+      } else {
+        coverSource = require('../resources/ad-large.png')
+      }
+    } else {
+      coverSource = require('../resources/ad-large.png')
+    }
     return (
       <View style={styles.container}>
         <Image
           style={styles.leftPanel}
-          source={require('../resources/ad-large.png')}>
+          source={coverSource}>
           <Image
             style={styles.playButtonLarge}
             source={require('../resources/start-play-large.png')}/>
-          <View style={styles.trolleyContainer}>
-            <Text style={styles.trolleyText}>下单</Text>
-            <View style={styles.trolleyImageContainer}>
-              <Image
-                style={styles.trolleyImage}
-                source={require('../resources/trolley.png')}/>
-            </View>
-          </View>
+          {
+            (this.state.index >= 0 && this.state.currentData.isOrder == 1) ? (
+              <View style={styles.trolleyContainer}>
+                <Text style={styles.trolleyText}>下单</Text>
+                <View style={styles.trolleyImageContainer}>
+                  <Image
+                    style={styles.trolleyImage}
+                    source={require('../resources/trolley.png')}/>
+                </View>
+              </View>
+            ) : (null)
+          }
         </Image>
         <View>
           <View style={styles.arrowContainer}>
-            <Image
-              style={styles.backArrow}
-              source={require('../resources/back-arrow.png')}/>
+            <TouchableWithoutFeedback
+              onPress={() => { this.props.navigation.dispatch({ type: 'Playlist2Ad' }) }}>
+              <Image
+                style={styles.backArrow}
+                source={require('../resources/back-arrow.png')}/>
+            </TouchableWithoutFeedback>
           </View>
           <ListView
             dataSource={this.state.dataSource}
             showsVerticalScrollIndicator={false}
+            enableEmptySections={true}
             renderRow={(rowData, sectionId, rowId) => {
+              var imageSource = null
+              if (rowData.advertisement.fileType == 0) {
+                imageSource = {uri: rowData.advertisement.fileSrc}
+              } else if (rowData.advertisement.fileType == 1) {
+                imageSource = {uri: rowData.advertisement.fileSrc + "?vframe/jpg/offset/1/w/640/h/360"}
+              } else {
+                imageSource = require('../resources/ad-small.png')
+              }
               return (
                 <View>
                   <View style={styles.divider}/>
-                  <TouchableNativeFeedback
+                  <TouchableWithoutFeedback
                     onPress={() => {this.selectAd(rowId)}}>
                     <View style={[
                       styles.rightPanel,
@@ -94,7 +146,7 @@ export default class PlaylistScreen extends React.Component {
                       ]}>
                       <Image
                         style={styles.adSmall}
-                        source={require('../resources/ad-small.png')}>
+                        source={imageSource}>
                         <Image
                           style={styles.playButtonSmall}
                           source={require('../resources/start-play-small.png')}/>
@@ -104,17 +156,17 @@ export default class PlaylistScreen extends React.Component {
                           style={[
                             styles.adTitle,
                             {color: rowData.selected ? '#fff' : '#333'}
-                          ]}>广告名称</Text>
+                          ]}>{rowData.advertisement.name}</Text>
                         <Text
                           numberOfLines={2}
                           style={[
                             styles.adDesc,
                             {color: rowData.selected ? '#fff' : '#999'}
-                          ]}>广告描述广告描述广告描述广告描述广告描述广告描述广告描述广告描述广告描述
+                          ]}>{rowData.advertisement.content}
                         </Text>
                       </View>
                     </View>
-                  </TouchableNativeFeedback>
+                  </TouchableWithoutFeedback>
                   <View style={styles.divider}/>
                   <View style={{height: 10}}/>
                 </View>
