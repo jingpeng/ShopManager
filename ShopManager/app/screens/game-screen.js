@@ -5,6 +5,7 @@ import {
   ListView,
   StyleSheet,
   Text,
+  TouchableWithoutFeedback,
   View
 } from 'react-native'
 
@@ -22,7 +23,7 @@ export default class GameScreen extends React.Component {
   constructor(props) {
     super(props)
 
-    var data = [{}, {}, {}, {}, {}, {}]
+    var data = []
     this.state = {
       originData: data,
       dataSource: ds.cloneWithRows(data)
@@ -34,6 +35,22 @@ export default class GameScreen extends React.Component {
     .then(response => response.json())
     .then(json => {
       console.log(json)
+      var array = json.data
+      var twinArray = []
+      for (var i = 0; i < array.length; i+=2) {
+        var eachItemArray = new Array(2)
+        if (i < array.length) {
+          eachItemArray[0] = array[i]
+        }
+        if(i + 1 < array.length) {
+          eachItemArray[1] = array[i + 1]
+        }
+        twinArray.push(eachItemArray)
+      }
+      this.setState({
+        originData: twinArray,
+        dataSource: ds.cloneWithRows(twinArray)
+      })
     })
     .catch(error => {
       console.log(error)
@@ -55,39 +72,63 @@ export default class GameScreen extends React.Component {
         </Image>
         <View>
           <View style={styles.arrowContainer}>
-            <Image
-              style={styles.backArrow}
-              source={require('../resources/back-arrow.png')}/>
+            <TouchableWithoutFeedback
+              onPress={() => {this.props.navigation.dispatch({ type: 'Game2Ad' })}}>
+              <Image
+                style={styles.backArrow}
+                source={require('../resources/back-arrow.png')}/>
+            </TouchableWithoutFeedback>
           </View>
           <ListView
             dataSource={this.state.dataSource}
             showsVerticalScrollIndicator={false}
+            enableEmptySections={true}
             renderRow={(rowData, sectionId, rowId) => {
+              var holder1, holder2
+              if (rowData[0] != undefined) {
+                holder1 =
+                  <Image
+                    style={[styles.gameCoverImage, {marginLeft: 15}]}
+                    source={{uri: rowData[0].smallPic}}>
+                    <View style={styles.descContainer}>
+                      <View style={styles.gameDescContainer}>
+                        <Text style={styles.gameDescText}>{ rowData[0].name }</Text>
+                        <Text style={styles.gameDescText}>手机游戏</Text>
+                      </View>
+                      <Text style={styles.gamePlayerNumText}>112万人爱玩</Text>
+                    </View>
+                  </Image>
+              } else {
+                holder1 =
+                  <Image
+                    style={[styles.gameCoverImage, {marginLeft: 15}]}>
+                  </Image>
+              }
+              if (rowData[1] != undefined) {
+                holder2 =
+                  <Image
+                    style={[styles.gameCoverImage, {marginRight: 15}]}
+                    source={{uri: rowData[1].smallPic}}>
+                    <View style={styles.descContainer}>
+                      <View style={styles.gameDescContainer}>
+                        <Text style={styles.gameDescText}>{ rowData[1].name }</Text>
+                        <Text style={styles.gameDescText}>手机游戏</Text>
+                      </View>
+                      <Text style={styles.gamePlayerNumText}>112万人爱玩</Text>
+                    </View>
+                  </Image>
+              } else {
+                holder2 =
+                  <Image
+                    style={[styles.gameCoverImage, {marginRight: 15}]}>
+                  </Image>
+              }
+
               return (
                 <View>
                   <View style={styles.rowContainer}>
-                    <Image
-                      style={[styles.gameCoverImage, {marginLeft: 15}]}
-                      source={require('../resources/game-cover.png')}>
-                      <View style={styles.descContainer}>
-                        <View style={styles.gameDescContainer}>
-                          <Text style={styles.gameDescText}>捕鱼游戏</Text>
-                          <Text style={styles.gameDescText}>手机游戏</Text>
-                        </View>
-                        <Text style={styles.gamePlayerNumText}>112万人爱玩</Text>
-                      </View>
-                    </Image>
-                    <Image
-                      style={[styles.gameCoverImage, {marginRight: 15}]}
-                      source={require('../resources/game-cover.png')}>
-                      <View style={styles.descContainer}>
-                        <View style={styles.gameDescContainer}>
-                          <Text style={styles.gameDescText}>捕鱼游戏</Text>
-                          <Text style={styles.gameDescText}>手机游戏</Text>
-                        </View>
-                        <Text style={styles.gamePlayerNumText}>112万人爱玩</Text>
-                      </View>
-                    </Image>
+                    {holder1}
+                    {holder2}
                   </View>
                   <View style={{height: 10}}/>
                 </View>

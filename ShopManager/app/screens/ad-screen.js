@@ -75,7 +75,6 @@ class AdScreen extends React.Component {
     })
 
     RCTDeviceEventEmitter.addListener('on_next', function(page){
-      console.log(page)
       if (page >= copy.state.advs.length) {
         page = 0
         copy.viewPager.setPage(page)

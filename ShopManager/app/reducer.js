@@ -52,6 +52,12 @@ function nav(state = navStateWelcome, action) {
         state
       )
       break
+    case 'Game2Ad':
+      nextState = Navigator.router.getStateForAction(
+        NavigationActions.back(),
+        state
+      )
+      break
     default:
       nextState = Navigator.router.getStateForAction(action, state)
       break
