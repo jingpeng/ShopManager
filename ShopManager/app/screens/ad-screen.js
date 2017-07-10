@@ -123,7 +123,9 @@ class AdScreen extends React.Component {
   }
 
   componentWillUnmount() {
-    this.timer.pause()
+    this.timer && this.timer.pause()
+    this.buyModalTimer && this.buyModalTimer.pause()
+    this.orderSuccessModalTimer && this.orderSuccessModalTimer.pause()
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -223,6 +225,10 @@ class AdScreen extends React.Component {
       adDesc: adv.advertisement.content,
       adPrice: adv.advertisement.price
     })
+
+    this.buyModalTimer = new Timer(() => {
+      this.hideBuyModal()
+    }, 18 * 1000)
   }
 
   orderInModal(num) {
@@ -237,6 +243,9 @@ class AdScreen extends React.Component {
       if (player != undefined) {
         player.setNativeProps({ paused: true })
       }
+      this.orderSuccessModalTimer = new Timer(() => {
+        this.hideOrderSuccessModal()
+      }, 18 * 1000)
       console.log(json)
     })
     .catch((error) => {
@@ -251,6 +260,7 @@ class AdScreen extends React.Component {
     if (player != undefined) {
       player.setNativeProps({ paused: false })
     }
+    this.buyModalTimer.pause()
   }
 
   hideOrderSuccessModal() {
@@ -260,6 +270,7 @@ class AdScreen extends React.Component {
     if (player != undefined) {
       player.setNativeProps({ paused: false })
     }
+    this.orderSuccessModalTimer.pause()
   }
 
   onPageSelected(e) {
