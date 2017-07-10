@@ -9,7 +9,6 @@ import { connect } from 'react-redux'
 
 class WebGameScreen extends React.Component {
   static navigationOptions = {
-    header: null
   }
 
   render() {

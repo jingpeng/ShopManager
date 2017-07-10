@@ -79,6 +79,12 @@ export default class PlaylistScreen extends React.Component {
     })
   }
 
+  playFullScreen() {
+    if (this.state.index >= 0) {
+      this.props.navigation.dispatch({ type: 'PlayFull', data: this.state.currentData })
+    }
+  }
+
   render() {
     var coverSource = null
     if (this.state.index >= 0) {
@@ -94,25 +100,28 @@ export default class PlaylistScreen extends React.Component {
     }
     return (
       <View style={styles.container}>
-        <Image
-          style={styles.leftPanel}
-          source={coverSource}>
+        <TouchableWithoutFeedback
+          onPress={this.playFullScreen.bind(this)}>
           <Image
-            style={styles.playButtonLarge}
-            source={require('../resources/start-play-large.png')}/>
-          {
-            (this.state.index >= 0 && this.state.currentData.isOrder == 1) ? (
-              <View style={styles.trolleyContainer}>
-                <Text style={styles.trolleyText}>下单</Text>
-                <View style={styles.trolleyImageContainer}>
-                  <Image
-                    style={styles.trolleyImage}
-                    source={require('../resources/trolley.png')}/>
+            style={styles.leftPanel}
+            source={coverSource}>
+            <Image
+              style={styles.playButtonLarge}
+              source={require('../resources/start-play-large.png')}/>
+            {
+              (this.state.index >= 0 && this.state.currentData.isOrder == 1) ? (
+                <View style={styles.trolleyContainer}>
+                  <Text style={styles.trolleyText}>下单</Text>
+                  <View style={styles.trolleyImageContainer}>
+                    <Image
+                      style={styles.trolleyImage}
+                      source={require('../resources/trolley.png')}/>
+                  </View>
                 </View>
-              </View>
-            ) : (null)
-          }
-        </Image>
+              ) : (null)
+            }
+          </Image>
+        </TouchableWithoutFeedback>
         <View>
           <View style={styles.arrowContainer}>
             <TouchableWithoutFeedback
