@@ -105,9 +105,13 @@ export default class PlaylistScreen extends React.Component {
           <Image
             style={styles.leftPanel}
             source={coverSource}>
-            <Image
-              style={styles.playButtonLarge}
-              source={require('../resources/start-play-large.png')}/>
+            {
+              (this.state.currentData && this.state.currentData.advertisement.fileType == 1) ? (
+                <Image
+                  style={styles.playButtonLarge}
+                  source={require('../resources/start-play-large.png')}/>
+              ) : ( null )
+            }
             {
               (this.state.index >= 0 && this.state.currentData.isOrder == 1) ? (
                 <View style={styles.trolleyContainer}>
@@ -156,9 +160,13 @@ export default class PlaylistScreen extends React.Component {
                       <Image
                         style={styles.adSmall}
                         source={imageSource}>
-                        <Image
-                          style={styles.playButtonSmall}
-                          source={require('../resources/start-play-small.png')}/>
+                        {
+                          (rowData.advertisement.fileType == 1) ? (
+                            <Image
+                              style={styles.playButtonSmall}
+                              source={require('../resources/start-play-small.png')}/>
+                          ) : ( null )
+                        }
                       </Image>
                       <View style={styles.adDescContainer}>
                         <Text
