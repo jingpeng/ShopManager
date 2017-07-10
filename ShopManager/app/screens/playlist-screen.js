@@ -80,9 +80,9 @@ export default class PlaylistScreen extends React.Component {
   }
 
   playFullScreen() {
-    if (this.state.index >= 0) {
-      this.props.navigation.dispatch({ type: 'PlayFull', data: this.state.currentData })
-    }
+    // if (this.state.index >= 0) {
+    //   this.props.navigation.dispatch({ type: 'PlayFull', data: this.state.currentData })
+    // }
   }
 
   render() {
