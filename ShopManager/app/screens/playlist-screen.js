@@ -104,7 +104,8 @@ export default class PlaylistScreen extends React.Component {
           onPress={this.playFullScreen.bind(this)}>
           <Image
             style={styles.leftPanel}
-            source={coverSource}>
+            source={coverSource}
+            resizeMode={'contain'}>
             {
               (this.state.currentData && this.state.currentData.advertisement.fileType == 1) ? (
                 <Image
@@ -159,6 +160,7 @@ export default class PlaylistScreen extends React.Component {
                       ]}>
                       <Image
                         style={styles.adSmall}
+                        resizeMode={'contain'}
                         source={imageSource}>
                         {
                           (rowData.advertisement.fileType == 1) ? (

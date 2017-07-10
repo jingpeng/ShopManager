@@ -80,6 +80,12 @@ function nav(state = navStateWelcome, action) {
       )
       nextState = { ...tmpState, data: action.data }
       break
+    case 'WebGame2Game':
+      nextState = Navigator.router.getStateForAction(
+        NavigationActions.back(),
+        state
+      )
+      break
     default:
       nextState = Navigator.router.getStateForAction(action, state)
       break
