@@ -4,6 +4,7 @@ import {
   Image,
   Modal,
   StyleSheet,
+  TouchableWithoutFeedback,
   View
 } from 'react-native'
 
@@ -25,13 +26,21 @@ export default class OrderSuccessModal extends React.Component {
         onRequestClose={() => {this.props.parent.setState({orderSuccessModalVisible: !this.props.parent.state.orderSuccessModalVisible})}}>
         <View style={styles.container}>
           <View style={styles.background}/>
-          <View style={styles.content}>
-            <Image
-              style={styles.successIcon}
-              source={require('../resources/order-success.png')}/>
-            <Image
-              style={styles.successHint}
-              source={require('../resources/order-success-hint.png')}/>
+          <View style={styles.outerContainer}>
+            <TouchableWithoutFeedback
+              onPress={() => { this.props.parent.hideOrderSuccessModal() }}>
+              <Image
+                style={styles.closeImage}
+                source={require('../resources/close-modal.png')}/>
+            </TouchableWithoutFeedback>
+            <View style={styles.content}>
+              <Image
+                style={styles.successIcon}
+                source={require('../resources/order-success.png')}/>
+              <Image
+                style={styles.successHint}
+                source={require('../resources/order-success-hint.png')}/>
+            </View>
           </View>
         </View>
       </Modal>
@@ -52,11 +61,24 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height
   },
+  closeImage: {
+    width: 30,
+    height: 30,
+    position: 'absolute',
+    right: 0,
+    zIndex: 1
+  },
+  outerContainer: {
+    width: Dimensions.get('window').width - 296
+  },
   content: {
     backgroundColor: '#fff',
     width: Dimensions.get('window').width - 326,
     height: Dimensions.get('window').height - 160,
-    borderRadius: 4
+    borderRadius: 4,
+    marginTop: 15,
+    alignSelf: 'center',
+    zIndex: 0
   },
   successIcon: {
     width: 34,

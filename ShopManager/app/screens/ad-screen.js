@@ -232,6 +232,11 @@ class AdScreen extends React.Component {
     .then(response => response.json())
     .then((json) => {
       this.setState({orderSuccessModalVisible: true})
+      this.timer.pause()
+      var player = this.state.players[this.state.currentPage]
+      if (player != undefined) {
+        player.setNativeProps({ paused: true })
+      }
       console.log(json)
     })
     .catch((error) => {
@@ -241,6 +246,15 @@ class AdScreen extends React.Component {
 
   hideBuyModal() {
     this.setState({buyModalVisible: false})
+    this.timer.resume()
+    var player = this.state.players[this.state.currentPage]
+    if (player != undefined) {
+      player.setNativeProps({ paused: false })
+    }
+  }
+
+  hideOrderSuccessModal() {
+    this.setState({orderSuccessModalVisible: false})
     this.timer.resume()
     var player = this.state.players[this.state.currentPage]
     if (player != undefined) {

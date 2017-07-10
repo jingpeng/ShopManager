@@ -1,10 +1,12 @@
 import React from 'react';
 import {
+  Image,
   Modal,
   StyleSheet,
   Text,
   TextInput,
   TouchableNativeFeedback,
+  TouchableWithoutFeedback,
   View,
   Dimensions
 } from 'react-native';
@@ -40,34 +42,42 @@ export default class BuyModal extends React.Component {
         visible={this.props.parent.state.buyModalVisible}
         onRequestClose={() => {alert("Modal has been closed.")}}>
         <View style={styles.container}>
-          <View style={styles.innerContainer}>
-            <Text style={styles.topTitle} numberOfLines={1} >{this.state.adTitle}</Text>
-            <View style={styles.line}/>
-            <Text style={styles.descTitle} >{this.state.adDescription}</Text>
-            <View style={styles.priceContainer}>
-              <Text style={styles.priceLeftText}>单价: </Text>
-              <Text style={styles.priceText}>{this.state.adPrice}</Text>
-            </View>
-            <View style={styles.countContainer}>
-              <Text style={styles.countLeftText}>购买数量: </Text>
-              <View style={styles.countInputContainer}>
-                <TouchableNativeFeedback onPress={this.onMinuesButtonPress.bind(this)}>
-                  <View style={styles.changeNumButton}><Text style={styles.changeNumText}>-</Text></View>
-                </TouchableNativeFeedback>
-                <Text style={styles.inputCount}> {this.state.adBuyCount}</Text>
-                <TouchableNativeFeedback onPress={this.onAddButtonPress.bind(this)}>
-                  <View style={styles.changeNumButton}><Text style={styles.changeNumText}>+</Text></View>
+          <View style={styles.outerContainer}>
+            <TouchableWithoutFeedback
+              onPress={() => {this.props.parent.hideBuyModal()}}>
+              <Image
+                style={styles.closeImage}
+                source={require('../resources/close-modal.png')}/>
+            </TouchableWithoutFeedback>
+            <View style={styles.innerContainer}>
+              <Text style={styles.topTitle} numberOfLines={1} >{this.state.adTitle}</Text>
+              <View style={styles.line}/>
+              <Text style={styles.descTitle} >{this.state.adDescription}</Text>
+              <View style={styles.priceContainer}>
+                <Text style={styles.priceLeftText}>单价: </Text>
+                <Text style={styles.priceText}>{this.state.adPrice}</Text>
+              </View>
+              <View style={styles.countContainer}>
+                <Text style={styles.countLeftText}>购买数量: </Text>
+                <View style={styles.countInputContainer}>
+                  <TouchableNativeFeedback onPress={this.onMinuesButtonPress.bind(this)}>
+                    <View style={styles.changeNumButton}><Text style={styles.changeNumText}>-</Text></View>
+                  </TouchableNativeFeedback>
+                  <Text style={styles.inputCount}> {this.state.adBuyCount}</Text>
+                  <TouchableNativeFeedback onPress={this.onAddButtonPress.bind(this)}>
+                    <View style={styles.changeNumButton}><Text style={styles.changeNumText}>+</Text></View>
+                  </TouchableNativeFeedback>
+                </View>
+                <Text style={styles.countRightText}>合计: </Text>
+                <Text style={styles.countTotalText}>{this.state.adPrice*this.state.adBuyCount}</Text>
+              </View>
+              <View style={styles.confirmContainer}>
+                <TouchableNativeFeedback onPress={this.onConfrimButtonPress.bind(this)}>
+                  <View style={styles.confirmButton}>
+                    <Text style={styles.confirmText}>确定</Text>
+                  </View>
                 </TouchableNativeFeedback>
               </View>
-              <Text style={styles.countRightText}>合计: </Text>
-              <Text style={styles.countTotalText}>{this.state.adPrice*this.state.adBuyCount}</Text>
-            </View>
-            <View style={styles.confirmContainer}>
-              <TouchableNativeFeedback onPress={this.onConfrimButtonPress.bind(this)}>
-                <View style={styles.confirmButton}>
-                  <Text style={styles.confirmText}>确定</Text>
-                </View>
-              </TouchableNativeFeedback>
             </View>
           </View>
         </View>
@@ -99,12 +109,25 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
+  closeImage: {
+    width: 30,
+    height: 30,
+    position: 'absolute',
+    right: 0,
+    zIndex: 1
+  },
+  outerContainer: {
+    width: Dimensions.get('window').width - 296
+  },
   innerContainer: {
     width: Dimensions.get('window').width - 326,
     borderRadius: 10,
     alignItems: 'stretch',
     backgroundColor: 'white',
+    alignSelf: 'center',
     padding: 10,
+    marginTop: 15,
+    zIndex: 0
   },
   line: {
     height: 1,
