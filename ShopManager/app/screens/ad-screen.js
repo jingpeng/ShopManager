@@ -63,6 +63,20 @@ class AdScreen extends React.Component {
     this.downloadAds.bind(this)
   }
 
+  envGetDetailsByMac() {
+    ApiClient
+    .access(ApiInterface.envGetDetailsByMac(DeviceInfo.getUniqueID()))
+    .then((response) => {
+      return response.json()
+    })
+    .then((json) => {
+      console.log(json)
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+  }
+
   componentDidMount() {
     var copy = this
     RCTDeviceEventEmitter.addListener('all_load', function(advs){
@@ -124,6 +138,7 @@ class AdScreen extends React.Component {
     })
 
     if (this.props.deviceData != undefined) {
+      this.envGetDetailsByMac()
       this.setState({loading: true})
       this.getAdList()
       .then(responses =>
@@ -146,6 +161,7 @@ class AdScreen extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.deviceData == undefined && this.props.deviceData != undefined) {
+      this.envGetDetailsByMac()
       this.setState({loading: true})
       this.getAdList()
       .then(responses =>

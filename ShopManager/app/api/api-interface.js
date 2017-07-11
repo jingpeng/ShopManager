@@ -87,12 +87,12 @@ export default class APIInterface {
     return BaseRequest.get(ApiConstant.BASE_URL + '/game/getGameList?' + query, {})
   }
 
-  static envGetDetails(userId) {
+  static envGetDetailsByMac(mac) {
     var params = {
-      "userId": userId
+      "mac": mac
     }
     var esc = encodeURIComponent;
     var query = Object.keys(params).map(k => esc(k) + '=' + esc(params[k])).join('&');
-    return BaseRequest.get(ApiConstant.BASE_URL + '/env/getEnvDetails?' + query, {})
+    return BaseRequest.get(ApiConstant.BASE_URL + '/env/getEnvDetailsByMac?' + query, {})
   }
 }
