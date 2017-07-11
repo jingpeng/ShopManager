@@ -56,7 +56,11 @@ class AdScreen extends React.Component {
       adTitle: "",
       adDesc: "",
       adPrice: 0,
-      popupAd: null
+      popupAd: null,
+      isSelf: true,
+      selfAds: [],
+      adminAdvs: [],
+      key: 0
     }
 
     this.getAdList.bind(this)
@@ -79,6 +83,15 @@ class AdScreen extends React.Component {
 
   componentDidMount() {
     var copy = this
+    this.switchTimer = setInterval(() => {
+      if (copy.state.isSelf) {
+        RCTDeviceEventEmitter.emit('all_load', copy.state.adminAdvs)
+      } else {
+        RCTDeviceEventEmitter.emit('all_load', copy.state.selfAds)
+      }
+      copy.setState({ isSelf: !copy.state.isSelf, key: copy.state.key + 1 })
+    }, 10000)
+
     RCTDeviceEventEmitter.addListener('all_load', function(advs){
       console.log(advs)
       copy.setState({
@@ -206,6 +219,7 @@ class AdScreen extends React.Component {
     if (popupAd != null) {
       this.setState({ popupAd: popupAd })
     }
+    this.setState({ selfAds: advs, adminAdvs: advsAdmin })
 
     storage.save({key: IOConstant.ADV_LIST, data: advs})
     storage.save({key: IOConstant.ADV_LIST_ADMIN, data: advsAdmin})
@@ -245,7 +259,7 @@ class AdScreen extends React.Component {
         Promise.all(downloadFutures)
         .then(responses => {
           console.log(responses)
-          RCTDeviceEventEmitter.emit('all_load', collection)
+          RCTDeviceEventEmitter.emit('all_load', advs)
         })
         .catch((error) => {
           console.log(error)
@@ -399,6 +413,7 @@ class AdScreen extends React.Component {
     if (this.state.advs.length > 0) {
       holder =
         <ViewPagerAndroid
+          key={this.state.key}
           ref={(ref) => { this.viewPager = ref }}
           style={styles.viewPager}
           onPageSelected={this.onPageSelected.bind(this)}
