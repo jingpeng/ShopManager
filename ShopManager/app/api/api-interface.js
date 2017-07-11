@@ -86,4 +86,13 @@ export default class APIInterface {
     var query = Object.keys(params).map(k => esc(k) + '=' + esc(params[k])).join('&');
     return BaseRequest.get(ApiConstant.BASE_URL + '/game/getGameList?' + query, {})
   }
+
+  static envGetDetails(userId) {
+    var params = {
+      "userId": userId
+    }
+    var esc = encodeURIComponent;
+    var query = Object.keys(params).map(k => esc(k) + '=' + esc(params[k])).join('&');
+    return BaseRequest.get(ApiConstant.BASE_URL + '/env/getEnvDetails?' + query, {})
+  }
 }

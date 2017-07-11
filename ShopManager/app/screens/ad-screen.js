@@ -55,7 +55,8 @@ class AdScreen extends React.Component {
       isOrder: false,
       adTitle: "",
       adDesc: "",
-      adPrice: 0
+      adPrice: 0,
+      popupAd: null
     }
 
     this.getAdList.bind(this)
@@ -65,6 +66,7 @@ class AdScreen extends React.Component {
   componentDidMount() {
     var copy = this
     RCTDeviceEventEmitter.addListener('all_load', function(advs){
+      console.log(advs)
       copy.setState({
         advs: advs,
         players: new Array(advs.length),
@@ -72,6 +74,10 @@ class AdScreen extends React.Component {
       }, () => {
         RCTDeviceEventEmitter.emit('on_next', 0)
       })
+    })
+
+    RCTDeviceEventEmitter.addListener('on_key_pressed', function(advs){
+      copy.props.navigation.dispatch({ type: 'PlayFull', data: copy.state.popupAd })
     })
 
     RCTDeviceEventEmitter.addListener('on_next', function(page){
@@ -104,6 +110,16 @@ class AdScreen extends React.Component {
           }
         }
         copy.timer = new Timer(callback, adv.advertisement.time * 1000)
+      } else {
+        var player = copy.state.players[page]
+        for (var i = 0; i < copy.state.players.length; i++) {
+          if (copy.state.players[i] != undefined) {
+            copy.state.players[i].setNativeProps({ paused: true })
+          }
+        }
+        if (player != undefined) {
+          player.setNativeProps({ seek: 0, paused: false })
+        }
       }
     })
 
@@ -153,9 +169,27 @@ class AdScreen extends React.Component {
   }
 
   downloadAds(jsons) {
-    console.log(jsons)
     var advs = jsons[0].data
     var advsAdmin = jsons[1].data
+
+    var popupAd = null
+    for (var i = 0; i < advs.length; i++) {
+      if (advs[i].type == 0) {
+        popupAd = advs[i]
+        advs.splice(i, 1)
+        break
+      }
+    }
+    for (var i = 0; i < advsAdmin.length; i++) {
+      if (advsAdmin[i].type == 0) {
+        popupAd = advsAdmin[i]
+        advsAdmin.splice(i, 1)
+        break
+      }
+    }
+    if (popupAd != null) {
+      this.setState({ popupAd: popupAd })
+    }
 
     storage.save({key: IOConstant.ADV_LIST, data: advs})
     storage.save({key: IOConstant.ADV_LIST_ADMIN, data: advsAdmin})
@@ -195,7 +229,7 @@ class AdScreen extends React.Component {
         Promise.all(downloadFutures)
         .then(responses => {
           console.log(responses)
-          RCTDeviceEventEmitter.emit('all_load', jsons[0].data)
+          RCTDeviceEventEmitter.emit('all_load', collection)
         })
         .catch((error) => {
           console.log(error)
@@ -274,7 +308,7 @@ class AdScreen extends React.Component {
   }
 
   onPageSelected(e) {
-    this.timer.pause()
+    this.timer && this.timer.pause()
     this.setState({currentPage: e.nativeEvent.position})
 
     var adv = this.state.advs[e.nativeEvent.position]

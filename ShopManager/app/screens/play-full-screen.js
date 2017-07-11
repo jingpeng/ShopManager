@@ -10,6 +10,7 @@ import Video from 'react-native-video'
 
 class PlayFullScreen extends React.Component {
   static navigationOptions = {
+    header: null
   }
 
   render() {
