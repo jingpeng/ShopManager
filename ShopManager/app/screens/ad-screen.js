@@ -23,6 +23,14 @@ import IOConstant from '../io/io-constant'
 import OrderSuccessModal from './order-success-modal'
 
 const directory = RNFS.ExternalStorageDirectoryPath + IOConstant.ADV_DIRECTORY
+var envData = {
+  gameReturnTime: 10,
+  playRate: 1,
+  playTime: 10,
+  refreshTime: "00:00",
+  shutTime: 10,
+  version: "1"
+}
 
 function Timer(callback, delay) {
   var timerId, start, remaining = delay
@@ -75,6 +83,18 @@ class AdScreen extends React.Component {
     })
     .then((json) => {
       console.log(json)
+      envData = json.data
+      var callback = () => {
+        if (this.state.isSelf) {
+          RCTDeviceEventEmitter.emit('all_load', this.state.adminAdvs)
+        } else {
+          RCTDeviceEventEmitter.emit('all_load', this.state.selfAds)
+        }
+
+        this.setState({ isSelf: !this.state.isSelf, key: this.state.key + 1 })
+        setTimeout(callback, this.state.isSelf ? envData.playTime * 1000 : envData.playTime * envData.playRate * 1000)
+      }
+      setTimeout(callback, envData.playTime * envData.playRate * 1000)
     })
     .catch((error) => {
       console.log(error)
@@ -83,14 +103,6 @@ class AdScreen extends React.Component {
 
   componentDidMount() {
     var copy = this
-    this.switchTimer = setInterval(() => {
-      if (copy.state.isSelf) {
-        RCTDeviceEventEmitter.emit('all_load', copy.state.adminAdvs)
-      } else {
-        RCTDeviceEventEmitter.emit('all_load', copy.state.selfAds)
-      }
-      copy.setState({ isSelf: !copy.state.isSelf, key: copy.state.key + 1 })
-    }, 10000)
 
     RCTDeviceEventEmitter.addListener('all_load', function(advs){
       console.log(advs)
