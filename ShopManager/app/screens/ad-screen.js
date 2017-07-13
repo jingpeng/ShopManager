@@ -403,6 +403,7 @@ class AdScreen extends React.Component {
                 style={styles.adBackground}
                 resizeMode={'contain'}
                 source={{uri: imageSource}}/>
+              <Text>{object.playAdvShowName}</Text>
             </View>
           )
           break
@@ -430,6 +431,7 @@ class AdScreen extends React.Component {
                 // onBuffer={this.onBuffer}                // Callback when remote video is buffering
                 // onTimedMetadata={this.onTimedMetadata}  // Callback when the stream receive some metadata
                 style={styles.backgroundVideo} />
+              <Text>{object.playAdvShowName}</Text>
             </View>
           )
           break
