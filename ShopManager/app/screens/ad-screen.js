@@ -122,34 +122,19 @@ class AdScreen extends React.Component {
     RCTDeviceEventEmitter.addListener('on_next', function(page){
       if (page >= copy.state.advs.length) {
         page = 0
-        copy.viewPager.setPage(page)
-        copy.setState({currentPage: page})
+
       }
+      copy.viewPager.setPage(page)
+      copy.setState({currentPage: page})
+
       var adv = copy.state.advs[page]
-      if (adv.isOrder == 1) {
-        copy.setState({isOrder: true})
-      } else {
-        copy.setState({isOrder: false})
-      }
 
-      if (adv.advertisement.time != null) {
+      if (adv.advertisement.fileType == 0) {
         var callback = () => {
-          copy.viewPager.setPage(page + 1)
-          copy.setState({currentPage: page + 1})
           RCTDeviceEventEmitter.emit('on_next', page + 1)
-
-          var player = copy.state.players[page + 1]
-          for (var i = 0; i < copy.state.players.length; i++) {
-            if (copy.state.players[i] != undefined) {
-              copy.state.players[i].setNativeProps({ paused: true })
-            }
-          }
-          if (player != undefined) {
-            player.setNativeProps({ seek: 0, paused: false })
-          }
         }
         copy.timer = new Timer(callback, adv.advertisement.time * 1000)
-      } else {
+      } else if (adv.advertisement.fileType == 1){
         var player = copy.state.players[page]
         for (var i = 0; i < copy.state.players.length; i++) {
           if (copy.state.players[i] != undefined) {
@@ -159,6 +144,13 @@ class AdScreen extends React.Component {
         if (player != undefined) {
           player.setNativeProps({ seek: 0, paused: false })
         }
+      }
+
+      var adv = copy.state.advs[page]
+      if (adv.isOrder == 1) {
+        copy.setState({isOrder: true})
+      } else {
+        copy.setState({isOrder: false})
       }
     })
 
