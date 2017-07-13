@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   View
 } from 'react-native'
+import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter'
 
 import IOConstant from '../io/io-constant'
 
@@ -32,6 +33,8 @@ export default class PlaylistScreen extends React.Component {
   }
 
   componentDidMount() {
+    RCTDeviceEventEmitter.emit('pause_component', 'mount')
+
     var promise1 = storage.load({key: IOConstant.ADV_LIST})
     var promise2 = storage.load({key: IOConstant.ADV_LIST_ADMIN})
     promise1.then(results1 => {
@@ -59,6 +62,10 @@ export default class PlaylistScreen extends React.Component {
     .catch(error => {
       console.warn(error.message)
     })
+  }
+
+  componentWillUnmount() {
+    RCTDeviceEventEmitter.emit('pause_component', 'unmount')
   }
 
   selectAd(rowId) {

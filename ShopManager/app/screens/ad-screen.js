@@ -92,9 +92,9 @@ class AdScreen extends React.Component {
         }
 
         this.setState({ isSelf: !this.state.isSelf, key: this.state.key + 1 })
-        setTimeout(callback, this.state.isSelf ? envData.playTime * 1000 : envData.playTime * envData.playRate * 1000)
+        this.switchTimer = new Timer(callback, this.state.isSelf ? envData.playTime * 1000 : envData.playTime * envData.playRate * 1000)
       }
-      setTimeout(callback, envData.playTime * envData.playRate * 1000)
+      this.switchTimer = new Timer(callback, envData.playTime * envData.playRate * 1000)
     })
     .catch((error) => {
       console.log(error)
@@ -103,6 +103,28 @@ class AdScreen extends React.Component {
 
   componentDidMount() {
     var copy = this
+
+    RCTDeviceEventEmitter.addListener('pause_component', function(data){
+      switch (data) {
+        case "mount":
+          copy.timer && copy.timer.pause()
+          copy.switchTimer && copy.switchTimer.pause()
+          for (var i = 0; i < copy.state.players.length; i++) {
+            if (copy.state.players[i] != undefined) {
+              copy.state.players[i].setNativeProps({ paused: true })
+            }
+          }
+          break
+        case "unmount":
+          copy.timer && copy.timer.resume()
+          copy.switchTimer && copy.switchTimer.resume()
+          var player = copy.state.players[copy.state.currentPage]
+          if (player != undefined) {
+            player.setNativeProps({ paused: false })
+          }
+          break
+      }
+    })
 
     RCTDeviceEventEmitter.addListener('all_load', function(advs){
       console.log(advs)
@@ -172,6 +194,7 @@ class AdScreen extends React.Component {
 
   componentWillUnmount() {
     this.timer && this.timer.pause()
+    this.switchTimer && this.switchTimer.pause()
     this.buyModalTimer && this.buyModalTimer.pause()
     this.orderSuccessModalTimer && this.orderSuccessModalTimer.pause()
   }
