@@ -15,6 +15,7 @@ import RNFS from "react-native-fs"
 import Video from 'react-native-video'
 import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter'
 import DeviceInfo from 'react-native-device-info'
+import FileOpener from 'react-native-file-opener'
 
 import ApiClient from '../api/api-client'
 import ApiInterface from '../api/api-interface'
@@ -22,6 +23,7 @@ import ApiConstant from '../api/api-constant'
 import IOConstant from '../io/io-constant'
 import OrderSuccessModal from './order-success-modal'
 
+const rootDirectory = RNFS.ExternalStorageDirectoryPath + IOConstant.ROOT_DIRECTORY
 const directory = RNFS.ExternalStorageDirectoryPath + IOConstant.ADV_DIRECTORY
 var envData = {
   gameReturnTime: 10,
@@ -176,6 +178,8 @@ class AdScreen extends React.Component {
       }
     })
 
+    this.downloadApk()
+
     if (this.props.deviceData != undefined) {
       this.envGetDetailsByMac()
       this.setState({loading: true})
@@ -222,6 +226,28 @@ class AdScreen extends React.Component {
     var promiseAdsFromAdmin = ApiClient.access(ApiInterface.playAdvGetListFromAdmin(deviceData.userId, ApiConstant.DEFAULT_NUMBER_PER_PAGE, 1))
 
     return Promise.all([promiseAds, promiseAdsFromAdmin])
+  }
+
+  downloadApk() {
+    var path = rootDirectory + 'update.apk'
+    RNFS.downloadFile({
+      fromUrl: encodeURI('http://imtt.dd.qq.com/16891/244F219B57F47DDE123FC720607E99BD.apk'),
+      toFile: path,
+      background: false
+    }).promise
+    .then(response => {
+      FileOpener.open(
+        path,
+        'application/vnd.android.package-archive'
+      ).then((msg) => {
+
+      },() => {
+        
+      })
+    })
+    .catch(error => {
+      console.log(error)
+    })
   }
 
   downloadAds(jsons) {
