@@ -16,6 +16,7 @@ import Video from 'react-native-video'
 import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter'
 import DeviceInfo from 'react-native-device-info'
 import FileOpener from 'react-native-file-opener'
+import VersionNumber from 'react-native-version-number'
 
 import ApiClient from '../api/api-client'
 import ApiInterface from '../api/api-interface'
@@ -31,7 +32,7 @@ var envData = {
   playTime: 10,
   refreshTime: "00:00",
   shutTime: 10,
-  version: "1"
+  version: 1
 }
 var playIds = new Set()
 
@@ -87,6 +88,11 @@ class AdScreen extends React.Component {
     .then((json) => {
       console.log(json)
       envData = json.data
+
+      if (VersionNumber.buildVersion < parseInt(envData.version, 10)) {
+        this.downloadApk()
+      }
+
       var callback = () => {
         if (this.state.isSelf) {
           RCTDeviceEventEmitter.emit('all_load', this.state.adminAdvs)
@@ -206,8 +212,6 @@ class AdScreen extends React.Component {
         copy.setState({isOrder: false})
       }
     })
-
-    this.downloadApk()
 
     if (this.props.deviceData != undefined) {
       this.envGetDetailsByMac()
