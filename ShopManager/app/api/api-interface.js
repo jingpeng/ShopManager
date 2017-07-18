@@ -95,4 +95,26 @@ export default class APIInterface {
     var query = Object.keys(params).map(k => esc(k) + '=' + esc(params[k])).join('&');
     return BaseRequest.get(ApiConstant.BASE_URL + '/env/getEnvDetailsByMac?' + query, {})
   }
+
+  static advOrderAdd(mac, playAdvId, num) {
+    let formData = new FormData();
+    formData.append("mac", mac)
+    formData.append("playAdvId", playAdvId)
+    formData.append("num", num)
+    return BaseRequest.post(ApiConstant.BASE_URL + '/advOrder/add', {}, formData)
+  }
+
+  static recordAddPlay(mac, playAdvIds) {
+    return BaseRequest.post(ApiConstant.BASE_URL + '/record/addPlayRecord?mac=' + mac, {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }, JSON.stringify(playAdvIds))
+  }
+
+  static recordAddOperate(mac, operateRecords) {
+    return BaseRequest.post(ApiConstant.BASE_URL + '/record/addOperateRecord?mac=' + mac, {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }, JSON.stringify(operateRecords))
+  }
 }

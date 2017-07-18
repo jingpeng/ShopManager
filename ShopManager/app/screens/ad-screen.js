@@ -33,6 +33,7 @@ var envData = {
   shutTime: 10,
   version: "1"
 }
+var playIds = new Set()
 
 function Timer(callback, delay) {
   var timerId, start, remaining = delay
@@ -106,6 +107,30 @@ class AdScreen extends React.Component {
   componentDidMount() {
     var copy = this
 
+    this.pingbackTimer = setInterval(() => {
+      var date = new Date;
+      date.setTime(Date.now())
+      var minutes = date.getMinutes()
+      var hour = date.getHours()
+      var timeStr = ''
+      var formattedHour = ("0" + hour).slice(-2)
+      var formattedMinutes = ("0" + minutes).slice(-2)
+      console.log(formattedHour + ":" + formattedMinutes)
+      if (envData.refreshTime == (formattedHour + ":" + formattedMinutes)) {
+        // 投递广告播放记录
+        console.log(playIds)
+        ApiClient.access(ApiInterface.recordAddPlay(DeviceInfo.getUniqueID(), playIds))
+        .then(response => response.json())
+        .then(json => {
+          console.log(json)
+          playIds.clear()
+        })
+        .catch(error => {console.log(error)})
+      } else {
+        console.log(envData.refreshTime)
+      }
+    }, 30000)
+
     RCTDeviceEventEmitter.addListener('pause_component', function(data){
       switch (data) {
         case "mount":
@@ -150,6 +175,10 @@ class AdScreen extends React.Component {
       }
       copy.viewPager.setPage(page)
       copy.setState({currentPage: page})
+
+      if (copy.state.advs.length > 0) {
+        playIds.add(copy.state.advs[page].id)
+      }
 
       var adv = copy.state.advs[page]
 
@@ -242,7 +271,7 @@ class AdScreen extends React.Component {
       ).then((msg) => {
 
       },() => {
-        
+
       })
     })
     .catch(error => {
