@@ -10,6 +10,7 @@ import {
 } from 'react-native'
 import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter'
 import { connect } from 'react-redux'
+import Video from 'react-native-video'
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 
@@ -27,7 +28,9 @@ class PlaylistScreen extends React.Component {
       originData: data,
       dataSource: ds.cloneWithRows(data),
       index: -1,
-      currentData: null
+      currentData: null,
+      isImage: true,
+      videoSource: ''
     }
   }
 
@@ -69,13 +72,24 @@ class PlaylistScreen extends React.Component {
       dataSource: ds.cloneWithRows(data),
       index: rowId,
       currentData: data[rowId]
+    }, () => {
+      this.setState({
+        isImage: true
+      })
     })
   }
 
   playFullScreen() {
-    // if (this.state.index >= 0) {
-    //   this.props.navigation.dispatch({ type: 'PlayFull', data: this.state.currentData })
-    // }
+    if (this.state.index >= 0) {
+      if (this.state.currentData.advertisement.fileType == 0) {
+
+      } else if (this.state.currentData.advertisement.fileType == 1) {
+        this.setState({
+          isImage: false,
+          videoSource: this.state.currentData.advertisement.fileSrc
+        })
+      }
+    }
   }
 
   render() {
@@ -93,33 +107,47 @@ class PlaylistScreen extends React.Component {
     }
     return (
       <View style={styles.container}>
-        <TouchableWithoutFeedback
-          onPress={this.playFullScreen.bind(this)}>
-          <Image
-            style={styles.leftPanel}
-            source={coverSource}
-            resizeMode={'contain'}>
-            {
-              (this.state.currentData && this.state.currentData.advertisement.fileType == 1) ? (
-                <Image
-                  style={styles.playButtonLarge}
-                  source={require('../resources/start-play-large.png')}/>
-              ) : ( null )
-            }
-            {
-              (this.state.index >= 0 && this.state.currentData.isOrder == 1) ? (
-                <View style={styles.trolleyContainer}>
-                  <Text style={styles.trolleyText}>下单</Text>
-                  <View style={styles.trolleyImageContainer}>
+        { (!this.state.isImage) ? (
+            <Video
+              source={{uri: this.state.videoSource}}   // Can be a URL or a local file.                                      // Store reference
+              rate={1.0}                              // 0 is paused, 1 is normal.
+              volume={1.0}                            // 0 is muted, 1 is normal.
+              muted={false}                           // Mutes the audio entirely.
+              paused={false}                          // Pauses playback entirely.
+              resizeMode="cover"                      // Fill the whole screen at aspect ratio.*
+              repeat={false}                           // Repeat forever.
+              playInBackground={true}                // Audio continues to play when app entering background.
+              style={styles.backgroundVideo} />
+          ) : (
+            <TouchableWithoutFeedback
+              onPress={this.playFullScreen.bind(this)}>
+              <Image
+                style={styles.leftPanel}
+                source={coverSource}
+                resizeMode={'contain'}>
+                {
+                  (this.state.currentData && this.state.currentData.advertisement.fileType == 1) ? (
                     <Image
-                      style={styles.trolleyImage}
-                      source={require('../resources/trolley.png')}/>
-                  </View>
-                </View>
-              ) : (null)
-            }
-          </Image>
-        </TouchableWithoutFeedback>
+                      style={styles.playButtonLarge}
+                      source={require('../resources/start-play-large.png')}/>
+                  ) : ( null )
+                }
+                {
+                  (this.state.index >= 0 && this.state.currentData.isOrder == 1) ? (
+                    <View style={styles.trolleyContainer}>
+                      <Text style={styles.trolleyText}>下单</Text>
+                      <View style={styles.trolleyImageContainer}>
+                        <Image
+                          style={styles.trolleyImage}
+                          source={require('../resources/trolley.png')}/>
+                      </View>
+                    </View>
+                  ) : (null)
+                }
+              </Image>
+            </TouchableWithoutFeedback>
+          )
+        }
         <View>
           <View style={styles.arrowContainer}>
             <TouchableWithoutFeedback
@@ -202,6 +230,10 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').height,
     height: Dimensions.get('window').height,
     justifyContent: 'center'
+  },
+  backgroundVideo: {
+    height: Dimensions.get('window').height * 0.5625,
+    width: Dimensions.get('window').height
   },
   playButtonLarge: {
     width: 40,
