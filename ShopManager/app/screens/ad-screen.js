@@ -462,7 +462,7 @@ class AdScreen extends React.Component {
                 style={styles.adBackground}
                 resizeMode={'contain'}
                 source={{uri: imageSource}}/>
-              <Text>{object.playAdvShowName}</Text>
+              <Text style={styles.playAdvShowName}>{object.playAdvShowName}</Text>
             </View>
           )
           break
@@ -490,7 +490,7 @@ class AdScreen extends React.Component {
                 // onBuffer={this.onBuffer}                // Callback when remote video is buffering
                 // onTimedMetadata={this.onTimedMetadata}  // Callback when the stream receive some metadata
                 style={styles.backgroundVideo} />
-              <Text>{object.playAdvShowName}</Text>
+              <Text style={styles.playAdvShowName}>{object.playAdvShowName}</Text>
             </View>
           )
           break
@@ -573,6 +573,11 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').height,
     width: Dimensions.get('window').width,
     position: 'absolute'
+  },
+  playAdvShowName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000000'
   },
   viewPager: {
     height: Dimensions.get('window').height,
