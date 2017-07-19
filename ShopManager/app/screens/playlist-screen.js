@@ -37,6 +37,10 @@ class PlaylistScreen extends React.Component {
   componentDidMount() {
     RCTDeviceEventEmitter.emit('pause_component', 'mount')
 
+    this.timer = setTimeout(() => {
+      this.props.navigation.dispatch({ type: 'Playlist2Ad' })
+    }, envData.shutTime * 1000)
+
     var all = this.props.advs
     for (var i = 0; i < all.length; i++) {
       all[i].selected = false
@@ -55,9 +59,15 @@ class PlaylistScreen extends React.Component {
 
   componentWillUnmount() {
     RCTDeviceEventEmitter.emit('pause_component', 'unmount')
+    this.timer && clearTimeout(this.timer)
   }
 
   selectAd(rowId) {
+    this.timer && clearTimeout(this.timer)
+    this.timer = setTimeout(() => {
+      this.props.navigation.dispatch({ type: 'Playlist2Ad' })
+    }, envData.shutTime * 1000)
+
     var data = this.state.originData;
     for (var i = 0; i < data.length; i++) {
       if (i == rowId) {
@@ -80,6 +90,11 @@ class PlaylistScreen extends React.Component {
   }
 
   playFullScreen() {
+    this.timer && clearTimeout(this.timer)
+    this.timer = setTimeout(() => {
+      this.props.navigation.dispatch({ type: 'Playlist2Ad' })
+    }, envData.shutTime * 1000)
+    
     if (this.state.index >= 0) {
       if (this.state.currentData.advertisement.fileType == 0) {
 
