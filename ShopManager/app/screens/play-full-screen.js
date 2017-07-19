@@ -13,6 +13,16 @@ class PlayFullScreen extends React.Component {
     header: null
   }
 
+  componentDidMount() {
+    this.timer = setTimeout(() => {
+      this.props.navigation.dispatch({ type: 'PlayFull2Ad' })
+    }, envData.popTime * 1000)
+  }
+
+  componentWillUnmount() {
+    this.timer && clearTimeout(this.timer)
+  }
+
   render() {
     var holder = null
     if (this.props.data.advertisement.fileType == 0) {

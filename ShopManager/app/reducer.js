@@ -76,9 +76,15 @@ function nav(state = navStateWelcome, action) {
     case 'PlayFull':
       var tmpState = Navigator.router.getStateForAction(
         actionPlayFull,
-        state
+        navStateAd
       )
       nextState = { ...tmpState, data: action.data }
+      break
+    case 'PlayFull2Ad':
+      nextState = Navigator.router.getStateForAction(
+        NavigationActions.back(),
+        state
+      )
       break
     case 'WebGame2Game':
       nextState = Navigator.router.getStateForAction(

@@ -26,10 +26,12 @@ import OrderSuccessModal from './order-success-modal'
 
 const rootDirectory = RNFS.ExternalStorageDirectoryPath + IOConstant.ROOT_DIRECTORY
 const directory = RNFS.ExternalStorageDirectoryPath + IOConstant.ADV_DIRECTORY
-var envData = {
+global.envData = {
+  appUrl: '',
   gameReturnTime: 10,
   playRate: 1,
   playTime: 10,
+  popTime: 1,
   refreshTime: "00:00",
   shutTime: 10,
   version: 1
