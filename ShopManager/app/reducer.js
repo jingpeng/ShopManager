@@ -49,10 +49,11 @@ function nav(state = navStateWelcome, action) {
       )
       break
     case 'Playlist':
-      nextState = Navigator.router.getStateForAction(
+      tmpState = Navigator.router.getStateForAction(
         actionPlaylist,
         state
       )
+      nextState = { ...tmpState, advs: action.advs }
       break
     case 'Game2Ad':
       nextState = Navigator.router.getStateForAction(

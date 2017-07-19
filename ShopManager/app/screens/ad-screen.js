@@ -361,7 +361,7 @@ class AdScreen extends React.Component {
   }
 
   launchPlaylist() {
-    this.props.navigation.dispatch({ type: 'Playlist' })
+    this.props.navigation.dispatch({ type: 'Playlist', advs: this.state.advs})
   }
 
   showBuyModal() {

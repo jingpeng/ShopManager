@@ -9,12 +9,11 @@ import {
   View
 } from 'react-native'
 import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter'
-
-import IOConstant from '../io/io-constant'
+import { connect } from 'react-redux'
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 
-export default class PlaylistScreen extends React.Component {
+class PlaylistScreen extends React.Component {
   static navigationOptions = {
     header: null,
   }
@@ -35,33 +34,20 @@ export default class PlaylistScreen extends React.Component {
   componentDidMount() {
     RCTDeviceEventEmitter.emit('pause_component', 'mount')
 
-    var promise1 = storage.load({key: IOConstant.ADV_LIST})
-    var promise2 = storage.load({key: IOConstant.ADV_LIST_ADMIN})
-    promise1.then(results1 => {
-      console.log(results1)
-      promise2.then(results2 => {
-        var all = results1.concat(results2)
-        for (var i = 0; i < all.length; i++) {
-          all[i].selected = false
-        }
-        this.setState({
-          originData: all,
-          dataSource: ds.cloneWithRows(all)
-        })
-        if (all.length > 0) {
-          this.setState({
-            index: 0,
-            currentData: all[0]
-          })
-        }
-      })
-      .catch(error => {
-        console.warn(error.message)
-      })
+    var all = this.props.advs
+    for (var i = 0; i < all.length; i++) {
+      all[i].selected = false
+    }
+    this.setState({
+      originData: all,
+      dataSource: ds.cloneWithRows(all)
     })
-    .catch(error => {
-      console.warn(error.message)
-    })
+    if (all.length > 0) {
+      this.setState({
+        index: 0,
+        currentData: all[0]
+      })
+    }
   }
 
   componentWillUnmount() {
@@ -302,3 +288,9 @@ const styles = StyleSheet.create({
     lineHeight: 26
   }
 })
+
+const mapStateToProps = state => ({
+  advs: state.nav.advs
+})
+
+export default connect(mapStateToProps)(PlaylistScreen)
