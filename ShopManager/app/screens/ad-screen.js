@@ -266,7 +266,7 @@ class AdScreen extends React.Component {
   downloadApk() {
     var path = rootDirectory + 'update.apk'
     RNFS.downloadFile({
-      fromUrl: encodeURI('http://imtt.dd.qq.com/16891/244F219B57F47DDE123FC720607E99BD.apk'),
+      fromUrl: encodeURI(envData.appUrl),
       toFile: path,
       background: false
     }).promise
