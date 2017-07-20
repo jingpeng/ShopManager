@@ -33,6 +33,11 @@ export default class GameScreen extends React.Component {
   }
 
   componentDidMount() {
+    RCTDeviceEventEmitter.emit('pause_component', 'mount')
+    this.timer = setTimeout(() => {
+      this.props.navigation.dispatch({ type: 'Game2Ad' })
+    }, envData.shutTime * 1000)
+
     ApiClient.access(ApiInterface.gameGetList(ApiConstant.DEFAULT_NUMBER_PER_PAGE, 1))
     .then(response => response.json())
     .then(json => {
@@ -60,6 +65,11 @@ export default class GameScreen extends React.Component {
     .catch(error => {
       console.log(error)
     })
+  }
+
+  componentWillUnmount() {
+    RCTDeviceEventEmitter.emit('pause_component', 'unmount')
+    this.timer && clearTimeout(this.timer)
   }
 
   render() {
