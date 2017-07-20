@@ -72,7 +72,7 @@ function nav(state = navStateWelcome, action) {
         actionWebGame,
         state
       )
-      nextState = { ...tmpState, uri: action.uri }
+      nextState = { ...tmpState, uri: action.uri, parent: action.parent }
       break
     case 'PlayFull':
       var tmpState = Navigator.router.getStateForAction(

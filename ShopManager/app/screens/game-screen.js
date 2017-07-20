@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   View
 } from 'react-native'
+import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter'
 
 import ApiClient from '../api/api-client'
 import ApiInterface from '../api/api-interface'
@@ -72,6 +73,16 @@ export default class GameScreen extends React.Component {
     this.timer && clearTimeout(this.timer)
   }
 
+  clearTimer() {
+    this.timer && clearTimeout(this.timer)
+  }
+
+  resetTimer() {
+    this.timer = setTimeout(() => {
+      this.props.navigation.dispatch({ type: 'Game2Ad' })
+    }, envData.shutTime * 1000)
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -84,7 +95,13 @@ export default class GameScreen extends React.Component {
           {
             (this.state.index >= 0) ? (
               <TouchableWithoutFeedback
-                onPress={() => { this.props.navigation.dispatch({ type: 'WebGame', uri: this.state.currentData.src }) }}>
+                onPress={() => {
+                  this.props.navigation.dispatch({
+                    type: 'WebGame',
+                    uri: this.state.currentData.src,
+                    parent: this
+                  })
+                }}>
                 <View style={styles.startContainer}>
                   <Text style={styles.startText}>开始</Text>
                 </View>

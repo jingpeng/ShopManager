@@ -19,6 +19,14 @@ class WebGameScreen extends React.Component {
     this.props.navigation.dispatch({ type: 'WebGame2Game' })
   }
 
+  componentDidMount() {
+    this.props.parent.clearTimer()
+  }
+
+  componentWillUnmount() {
+    this.props.parent.resetTimer()
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -73,7 +81,8 @@ const styles = StyleSheet.create({
 })
 
 const mapStateToProps = state => ({
-  uri: state.nav.uri
+  uri: state.nav.uri,
+  parent: state.nav.parent
 })
 
 export default connect(mapStateToProps)(WebGameScreen)
