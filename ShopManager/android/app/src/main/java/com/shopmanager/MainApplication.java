@@ -48,9 +48,7 @@ public class MainApplication extends Application implements ReactApplication {
         super.onCreate();
         SoLoader.init(this, /* native exopackage */ false);
 
-        //Pin.setFunc("PL10", Pin.FUNC_OUTPUT);
-        //Pin.setFunc("PL10", Pin.PULL_UP);
-        //Pin.setDlevel("PL10", Pin.Dlevel_3);
-        //Pin.setData("PL10", Pin.DATA_HIGH);
+        // Pin.setFunc("PL4", Pin.FUNC_OUTPUT);
+        // Pin.setData("PL4", Pin.DATA_HIGH);
     }
 }

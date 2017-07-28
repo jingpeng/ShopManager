@@ -14,6 +14,20 @@ import Video from 'react-native-video'
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 
+function Timer(callback, delay) {
+  var timerId, start, remaining = delay
+  this.pause = function() {
+      clearTimeout(timerId)
+      remaining -= new Date() - start
+  }
+  this.resume = function() {
+      start = new Date();
+      clearTimeout(timerId)
+      timerId = setTimeout(callback, remaining)
+  }
+  this.resume()
+}
+
 class PlaylistScreen extends React.Component {
   static navigationOptions = {
     header: null,
@@ -37,9 +51,18 @@ class PlaylistScreen extends React.Component {
   componentDidMount() {
     RCTDeviceEventEmitter.emit('pause_component', 'mount')
 
+    var copy = this
+    RCTDeviceEventEmitter.addListener('list_on_next', function(data){
+      var newIndex = parseInt(copy.state.index) + 1
+      if (newIndex >= copy.props.advs.length) {
+        newIndex = 0
+      }
+      copy.selectAd(newIndex)
+    })
+
     this.timer = setTimeout(() => {
       this.props.navigation.dispatch({ type: 'Playlist2Ad' })
-    }, envData.shutTime * 1000)
+    }, envData.shutTime * 10000)
 
     var all = this.props.advs
     for (var i = 0; i < all.length; i++) {
@@ -53,6 +76,10 @@ class PlaylistScreen extends React.Component {
       this.setState({
         index: 0,
         currentData: all[0]
+      }, () => {
+        this.delayTimer = setTimeout(() => {
+          this.selectAd(0)
+        }, 2000)
       })
     }
   }
@@ -60,13 +87,15 @@ class PlaylistScreen extends React.Component {
   componentWillUnmount() {
     RCTDeviceEventEmitter.emit('pause_component', 'unmount')
     this.timer && clearTimeout(this.timer)
+    this.nextTimer && clearTimeout(this.nextTimer)
+    this.delayTimer && clearTimeout(this.delayTimer)
   }
 
   selectAd(rowId) {
     this.timer && clearTimeout(this.timer)
     this.timer = setTimeout(() => {
       this.props.navigation.dispatch({ type: 'Playlist2Ad' })
-    }, envData.shutTime * 1000)
+    }, envData.shutTime * 10000)
 
     var data = this.state.originData;
     for (var i = 0; i < data.length; i++) {
@@ -86,25 +115,26 @@ class PlaylistScreen extends React.Component {
       this.setState({
         isImage: true
       })
+
+      if (this.state.index >= 0) {
+        if (this.state.currentData.advertisement.fileType == 0) {
+          this.nextTimer && clearTimeout(this.nextTimer)
+          this.nextTimer = setTimeout(() => {
+            RCTDeviceEventEmitter.emit('list_on_next', '')
+          }, 10000)
+        } else if (this.state.currentData.advertisement.fileType == 1) {
+          this.setState({
+            isImage: false,
+            videoSource: this.state.currentData.advertisement.fileSrc
+          })
+        }
+      }
+
     })
   }
 
   playFullScreen() {
-    this.timer && clearTimeout(this.timer)
-    this.timer = setTimeout(() => {
-      this.props.navigation.dispatch({ type: 'Playlist2Ad' })
-    }, envData.shutTime * 1000)
-    
-    if (this.state.index >= 0) {
-      if (this.state.currentData.advertisement.fileType == 0) {
 
-      } else if (this.state.currentData.advertisement.fileType == 1) {
-        this.setState({
-          isImage: false,
-          videoSource: this.state.currentData.advertisement.fileSrc
-        })
-      }
-    }
   }
 
   render() {
@@ -132,7 +162,8 @@ class PlaylistScreen extends React.Component {
               resizeMode="cover"                      // Fill the whole screen at aspect ratio.*
               repeat={false}                           // Repeat forever.
               playInBackground={true}                // Audio continues to play when app entering background.
-              style={styles.backgroundVideo} />
+              style={styles.backgroundVideo}
+              onEnd={() => {RCTDeviceEventEmitter.emit('list_on_next', '')}} />
           ) : (
             <TouchableWithoutFeedback
               onPress={this.playFullScreen.bind(this)}>
