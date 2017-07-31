@@ -19,33 +19,47 @@ class WebGameScreen extends React.Component {
     this.props.navigation.dispatch({ type: 'WebGame2Game' })
   }
 
+  pressScreen() {
+    this.timer && clearTimeout(this.timer)
+    this.timer = setTimeout(() => {
+      this.props.navigation.dispatch({ type: 'WebGame2Game' })
+    }, envData.shutTime * 1000)
+  }
+
   componentDidMount() {
     this.props.parent.clearTimer()
+    this.timer = setTimeout(() => {
+      this.props.navigation.dispatch({ type: 'WebGame2Game' })
+    }, envData.shutTime * 1000)
   }
 
   componentWillUnmount() {
     this.props.parent.resetTimer()
+    this.timer && clearTimeout(this.timer)
   }
 
   render() {
     return (
-      <View style={styles.container}>
-        <WebView
-          style={styles.webView}
-          source={{uri: this.props.uri}}
-          javaScriptEnabled={true}
-          domStorageEnabled={true}
-          decelerationRate="normal"
-          startInLoadingState={true}
-          scalesPageToFit={true}
-        />
-        <TouchableWithoutFeedback
-          onPress={() => { this.back() }}>
-          <View style={styles.trolleyContainer}>
-            <Text style={styles.trolleyText}>关闭</Text>
-          </View>
-        </TouchableWithoutFeedback>
-      </View>
+      <TouchableWithoutFeedback
+        onPress={() => { this.pressScreen() }}>
+        <View style={styles.container}>
+          <WebView
+            style={styles.webView}
+            source={{uri: this.props.uri}}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
+            decelerationRate="normal"
+            startInLoadingState={true}
+            scalesPageToFit={true}
+          />
+          <TouchableWithoutFeedback
+            onPress={() => { this.back() }}>
+            <View style={styles.trolleyContainer}>
+              <Text style={styles.trolleyText}>关闭</Text>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
     )
   }
 }

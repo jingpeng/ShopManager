@@ -89,9 +89,6 @@ export default class GameScreen extends React.Component {
         <Image
           style={styles.leftPanel}
           source={(this.state.index < 0) ? require('../resources/ad-large.png') : {uri: this.state.currentData.bigPic}}>
-          <Image
-            style={styles.playButtonLarge}
-            source={require('../resources/start-play-large.png')}/>
           {
             (this.state.index >= 0) ? (
               <TouchableWithoutFeedback
@@ -197,11 +194,6 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').height,
     height: Dimensions.get('window').height,
     justifyContent: 'center'
-  },
-  playButtonLarge: {
-    width: 40,
-    height: 40,
-    alignSelf: 'center'
   },
   startContainer: {
     width: 90,
