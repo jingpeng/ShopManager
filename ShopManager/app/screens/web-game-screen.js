@@ -9,6 +9,9 @@ import {
   WebView
 } from 'react-native'
 import { connect } from 'react-redux'
+import moment from 'moment'
+
+import IOConstant from '../io/io-constant'
 
 class WebGameScreen extends React.Component {
   static navigationOptions = {
@@ -17,6 +20,24 @@ class WebGameScreen extends React.Component {
 
   back() {
     this.props.navigation.dispatch({ type: 'WebGame2Game' })
+    // 存储用户点击关闭游戏操作
+    storage.load({key: IOConstant.OPERATE_RECORD})
+    .then(result => {
+      console.log(result)
+      result.push({
+        type: 10,
+        operateDate: moment().format("YYYY-MM-DD HH:mm:ss")
+      })
+      storage.save({key: IOConstant.OPERATE_RECORD, data: result})
+    })
+    .catch(error => {
+      var operations = []
+      operations.push({
+        type: 10,
+        operateDate: moment().format("YYYY-MM-DD HH:mm:ss")
+      })
+      storage.save({key: IOConstant.OPERATE_RECORD, data: operations})
+    })
   }
 
   pressScreen() {
@@ -31,6 +52,25 @@ class WebGameScreen extends React.Component {
     this.timer = setTimeout(() => {
       this.props.navigation.dispatch({ type: 'WebGame2Game' })
     }, envData.shutTime * 1000)
+
+    // 存储用户点击开始游戏操作
+    storage.load({key: IOConstant.OPERATE_RECORD})
+    .then(result => {
+      console.log(result)
+      result.push({
+        type: 9,
+        operateDate: moment().format("YYYY-MM-DD HH:mm:ss")
+      })
+      storage.save({key: IOConstant.OPERATE_RECORD, data: result})
+    })
+    .catch(error => {
+      var operations = []
+      operations.push({
+        type: 9,
+        operateDate: moment().format("YYYY-MM-DD HH:mm:ss")
+      })
+      storage.save({key: IOConstant.OPERATE_RECORD, data: operations})
+    })
   }
 
   componentWillUnmount() {

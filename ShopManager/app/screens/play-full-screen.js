@@ -7,6 +7,9 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 import Video from 'react-native-video'
+import moment from 'moment'
+
+import IOConstant from '../io/io-constant'
 
 class PlayFullScreen extends React.Component {
   static navigationOptions = {
@@ -17,10 +20,54 @@ class PlayFullScreen extends React.Component {
     this.timer = setTimeout(() => {
       this.props.navigation.dispatch({ type: 'PlayFull2Ad' })
     }, envData.popTime * 1000)
+
+    var data = this.props.data
+    // 存储用户点击弹出广告操作
+    storage.load({key: IOConstant.OPERATE_RECORD})
+    .then(result => {
+      console.log(result)
+      result.push({
+        type: 1,
+        playAdvId: data.id,
+        operateDate: moment().format("YYYY-MM-DD HH:mm:ss")
+      })
+      storage.save({key: IOConstant.OPERATE_RECORD, data: result})
+    })
+    .catch(error => {
+      var operations = []
+      operations.push({
+        type: 1,
+        playAdvId: data.id,
+        operateDate: moment().format("YYYY-MM-DD HH:mm:ss")
+      })
+      storage.save({key: IOConstant.OPERATE_RECORD, data: operations})
+    })
   }
 
   componentWillUnmount() {
     this.timer && clearTimeout(this.timer)
+
+    var data = this.props.data
+    // 存储用户点击弹出广告关闭 操作
+    storage.load({key: IOConstant.OPERATE_RECORD})
+    .then(result => {
+      console.log(result)
+      result.push({
+        type: 6,
+        playAdvId: data.id,
+        operateDate: moment().format("YYYY-MM-DD HH:mm:ss")
+      })
+      storage.save({key: IOConstant.OPERATE_RECORD, data: result})
+    })
+    .catch(error => {
+      var operations = []
+      operations.push({
+        type: 6,
+        playAdvId: data.id,
+        operateDate: moment().format("YYYY-MM-DD HH:mm:ss")
+      })
+      storage.save({key: IOConstant.OPERATE_RECORD, data: operations})
+    })
   }
 
   render() {

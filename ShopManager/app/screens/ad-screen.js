@@ -17,6 +17,7 @@ import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter'
 import DeviceInfo from 'react-native-device-info'
 import FileOpener from 'react-native-file-opener'
 import VersionNumber from 'react-native-version-number'
+import moment from 'moment'
 
 import ApiClient from '../api/api-client'
 import ApiInterface from '../api/api-interface'
@@ -381,6 +382,27 @@ class AdScreen extends React.Component {
     this.buyModalTimer = new Timer(() => {
       this.hideBuyModal()
     }, 18 * 1000)
+
+    // 存储用户点击下单操作
+    storage.load({key: IOConstant.OPERATE_RECORD})
+    .then(result => {
+      console.log(result)
+      result.push({
+        type: 5,
+        playAdvId: adv.id,
+        operateDate: moment().format("YYYY-MM-DD HH:mm:ss")
+      })
+      storage.save({key: IOConstant.OPERATE_RECORD, data: result})
+    })
+    .catch(error => {
+      var operations = []
+      operations.push({
+        type: 5,
+        playAdvId: adv.id,
+        operateDate: moment().format("YYYY-MM-DD HH:mm:ss")
+      })
+      storage.save({key: IOConstant.OPERATE_RECORD, data: operations})
+    })
   }
 
   orderInModal(num) {

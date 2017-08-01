@@ -11,6 +11,9 @@ import {
 import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter'
 import { connect } from 'react-redux'
 import Video from 'react-native-video'
+import moment from 'moment'
+
+import IOConstant from '../io/io-constant'
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 
@@ -48,7 +51,49 @@ class PlaylistScreen extends React.Component {
     }
   }
 
+  back() {
+    this.props.navigation.dispatch({ type: 'Playlist2Ad' })
+
+    // 存储用户点击清单关闭操作
+    storage.load({key: IOConstant.OPERATE_RECORD})
+    .then(result => {
+      console.log(result)
+      result.push({
+        type: 4,
+        operateDate: moment().format("YYYY-MM-DD HH:mm:ss")
+      })
+      storage.save({key: IOConstant.OPERATE_RECORD, data: result})
+    })
+    .catch(error => {
+      var operations = []
+      operations.push({
+        type: 4,
+        operateDate: moment().format("YYYY-MM-DD HH:mm:ss")
+      })
+      storage.save({key: IOConstant.OPERATE_RECORD, data: operations})
+    })
+  }
+
   componentDidMount() {
+    // 存储用户点击弹出清单操作
+    storage.load({key: IOConstant.OPERATE_RECORD})
+    .then(result => {
+      console.log(result)
+      result.push({
+        type: 2,
+        operateDate: moment().format("YYYY-MM-DD HH:mm:ss")
+      })
+      storage.save({key: IOConstant.OPERATE_RECORD, data: result})
+    })
+    .catch(error => {
+      var operations = []
+      operations.push({
+        type: 2,
+        operateDate: moment().format("YYYY-MM-DD HH:mm:ss")
+      })
+      storage.save({key: IOConstant.OPERATE_RECORD, data: operations})
+    })
+
     RCTDeviceEventEmitter.emit('pause_component', 'mount')
 
     var copy = this
@@ -105,6 +150,27 @@ class PlaylistScreen extends React.Component {
         data[i].selected = false
       }
     }
+
+    // 存储用户点击广告操作
+    storage.load({key: IOConstant.OPERATE_RECORD})
+    .then(result => {
+      console.log(result)
+      result.push({
+        type: 3,
+        playAdvId: data[rowId].id,
+        operateDate: moment().format("YYYY-MM-DD HH:mm:ss")
+      })
+      storage.save({key: IOConstant.OPERATE_RECORD, data: result})
+    })
+    .catch(error => {
+      var operations = []
+      operations.push({
+        type: 3,
+        playAdvId: data[rowId].id,
+        operateDate: moment().format("YYYY-MM-DD HH:mm:ss")
+      })
+      storage.save({key: IOConstant.OPERATE_RECORD, data: operations})
+    })
 
     this.setState({
       originData: data,
@@ -197,7 +263,7 @@ class PlaylistScreen extends React.Component {
         <View>
           <View style={styles.arrowContainer}>
             <TouchableWithoutFeedback
-              onPress={() => { this.props.navigation.dispatch({ type: 'Playlist2Ad' }) }}>
+              onPress={() => { this.back() }}>
               <Image
                 style={styles.backArrow}
                 source={require('../resources/back-arrow.png')}/>

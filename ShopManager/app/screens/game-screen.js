@@ -9,7 +9,9 @@ import {
   View
 } from 'react-native'
 import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter'
+import moment from 'moment'
 
+import IOConstant from '../io/io-constant'
 import ApiClient from '../api/api-client'
 import ApiInterface from '../api/api-interface'
 import ApiConstant from '../api/api-constant'
@@ -31,6 +33,27 @@ export default class GameScreen extends React.Component {
       dataSource: ds.cloneWithRows(data),
       index: -1
     }
+  }
+
+  pingback(data) {
+    // 存储用户点击游戏清单上的游戏操作
+    storage.load({key: IOConstant.OPERATE_RECORD})
+    .then(result => {
+      console.log(result)
+      result.push({
+        type: 8,
+        operateDate: moment().format("YYYY-MM-DD HH:mm:ss")
+      })
+      storage.save({key: IOConstant.OPERATE_RECORD, data: result})
+    })
+    .catch(error => {
+      var operations = []
+      operations.push({
+        type: 8,
+        operateDate: moment().format("YYYY-MM-DD HH:mm:ss")
+      })
+      storage.save({key: IOConstant.OPERATE_RECORD, data: operations})
+    })
   }
 
   componentDidMount() {
@@ -66,6 +89,25 @@ export default class GameScreen extends React.Component {
     .catch(error => {
       console.log(error)
     })
+
+    // 存储用户点击游戏清单操作
+    storage.load({key: IOConstant.OPERATE_RECORD})
+    .then(result => {
+      console.log(result)
+      result.push({
+        type: 7,
+        operateDate: moment().format("YYYY-MM-DD HH:mm:ss")
+      })
+      storage.save({key: IOConstant.OPERATE_RECORD, data: result})
+    })
+    .catch(error => {
+      var operations = []
+      operations.push({
+        type: 7,
+        operateDate: moment().format("YYYY-MM-DD HH:mm:ss")
+      })
+      storage.save({key: IOConstant.OPERATE_RECORD, data: operations})
+    })
   }
 
   componentWillUnmount() {
@@ -81,6 +123,28 @@ export default class GameScreen extends React.Component {
     this.timer = setTimeout(() => {
       this.props.navigation.dispatch({ type: 'Game2Ad' })
     }, envData.shutTime * 1000)
+  }
+
+  back() {
+    this.props.navigation.dispatch({ type: 'Game2Ad' })
+    // 存储用户点击关闭游戏操作
+    storage.load({key: IOConstant.OPERATE_RECORD})
+    .then(result => {
+      console.log(result)
+      result.push({
+        type: 11,
+        operateDate: moment().format("YYYY-MM-DD HH:mm:ss")
+      })
+      storage.save({key: IOConstant.OPERATE_RECORD, data: result})
+    })
+    .catch(error => {
+      var operations = []
+      operations.push({
+        type: 11,
+        operateDate: moment().format("YYYY-MM-DD HH:mm:ss")
+      })
+      storage.save({key: IOConstant.OPERATE_RECORD, data: operations})
+    })
   }
 
   render() {
@@ -109,7 +173,7 @@ export default class GameScreen extends React.Component {
         <View>
           <View style={styles.arrowContainer}>
             <TouchableWithoutFeedback
-              onPress={() => { this.props.navigation.dispatch({ type: 'Game2Ad' }) }}>
+              onPress={() => { this.back() }}>
               <Image
                 style={styles.backArrow}
                 source={require('../resources/back-arrow.png')}/>
@@ -125,7 +189,10 @@ export default class GameScreen extends React.Component {
               if (rowData[0] != undefined) {
                 holder1 =
                   <TouchableWithoutFeedback
-                    onPress={() => {this.setState({index: rowId * 2, currentData: rowData[0]})}}>
+                    onPress={() => {
+                      this.setState({index: rowId * 2, currentData: rowData[0]})
+                      this.pingback(rowData[0])
+                    }}>
                     <Image
                       style={[styles.gameCoverImage, {marginLeft: 15}]}
                       source={{uri: rowData[0].smallPic}}>
@@ -147,7 +214,10 @@ export default class GameScreen extends React.Component {
               if (rowData[1] != undefined) {
                 holder2 =
                   <TouchableWithoutFeedback
-                    onPress={() => {this.setState({index: rowId * 2 + 1, currentData: rowData[1]})}}>
+                    onPress={() => {
+                      this.setState({index: rowId * 2 + 1, currentData: rowData[1]})
+                      this.pingback(rowData[1])
+                    }}>
                     <Image
                       style={[styles.gameCoverImage, {marginRight: 15}]}
                       source={{uri: rowData[1].smallPic}}>
