@@ -135,6 +135,20 @@ class AdScreen extends React.Component {
           playIds.clear()
         })
         .catch(error => {console.log(error)})
+
+        storage.load({key: IOConstant.OPERATE_RECORD})
+        .then(result => {
+          ApiClient.access(ApiInterface.recordAddOperate(DeviceInfo.getUniqueID(), result))
+          .then(response => response.json())
+          .then(json => {
+            console.log(json)
+            storage.save({key: IOConstant.OPERATE_RECORD, data: []})
+          })
+          .catch(error => {console.log(error)})
+        })
+        .catch(error => {
+
+        })
       } else {
         console.log(envData.refreshTime)
       }
