@@ -102,7 +102,7 @@ class PlaylistScreen extends React.Component {
       if (newIndex >= copy.props.advs.length) {
         newIndex = 0
       }
-      copy.selectAd(newIndex)
+      //copy.selectAd(newIndex)
     })
 
     this.timer = setTimeout(() => {

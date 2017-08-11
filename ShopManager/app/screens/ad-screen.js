@@ -188,6 +188,7 @@ class AdScreen extends React.Component {
     })
 
     RCTDeviceEventEmitter.addListener('on_key_pressed', function(advs){
+      alert(advs.keyCode)
       copy.props.navigation.dispatch({ type: 'PlayFull', data: copy.state.popupAd })
     })
 
