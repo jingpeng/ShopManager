@@ -220,6 +220,13 @@ class AdScreen extends React.Component {
         }
         if (player != undefined) {
           player.setNativeProps({ seek: 0, paused: false })
+          var callback = () => {
+            RCTDeviceEventEmitter.emit('on_next', page + 1)
+          }
+
+          copy.adjustTimer = new Timer(() => {
+            copy.timer = new Timer(callback, adv.advertisement.time * 1000)
+          }, 500)
         }
       }
 
@@ -249,6 +256,7 @@ class AdScreen extends React.Component {
 
   componentWillUnmount() {
     this.timer && this.timer.pause()
+    this.adjustTimer && this.adjustTimer.pause()
     this.switchTimer && this.switchTimer.pause()
     this.buyModalTimer && this.buyModalTimer.pause()
     this.orderSuccessModalTimer && this.orderSuccessModalTimer.pause()
@@ -522,9 +530,12 @@ class AdScreen extends React.Component {
                 repeat={false}                           // Repeat forever.
                 playInBackground={true}                // Audio continues to play when app entering background.
                 // onLoadStart={this.loadStart}            // Callback when video starts to load
-                // onLoad={this.onLoad}               // Callback when video loads
-                // onProgress={this.setTime}               // Callback every ~250ms with currentTime
-                onEnd={() => {RCTDeviceEventEmitter.emit('on_next', i + 1)}}                      // Callback when playback finishes
+                onLoad={(event) => {
+                  console.log(event.duration)
+                  object.advertisement.time = event.duration
+                }}               // Callback when video loads
+                // onProgress={(data) => {  }}               // Callback every ~250ms with currentTime
+                // onEnd={() => {RCTDeviceEventEmitter.emit('on_next', i + 1)}}                      // Callback when playback finishes
                 // onError={this.videoError}               // Callback when video cannot be loaded
                 // onBuffer={this.onBuffer}                // Callback when remote video is buffering
                 // onTimedMetadata={this.onTimedMetadata}  // Callback when the stream receive some metadata
