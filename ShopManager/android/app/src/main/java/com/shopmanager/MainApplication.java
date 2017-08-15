@@ -48,13 +48,20 @@ public class MainApplication extends Application implements ReactApplication {
         super.onCreate();
         SoLoader.init(this, /* native exopackage */ false);
 
+        // home
         // Pin.setFunc("PL4", Pin.FUNC_OUTPUT);
         // Pin.setData("PL4", Pin.DATA_HIGH);
-        //
-        // Pin.setFunc("SPI0-cs", Pin.FUNC_OUTPUT);
-        // Pin.setData("SPI0-cs", Pin.DATA_HIGH);
-        //
+
+        // miso
         // Pin.setFunc("PC1", Pin.FUNC_OUTPUT);
         // Pin.setData("PC1", Pin.DATA_HIGH);
+
+        // clock
+        // Pin.setFunc("PC2", Pin.FUNC_OUTPUT);
+        // Pin.setData("PC2", Pin.DATA_HIGH);
+
+        // msi
+        // Pin.setFunc("PC0", Pin.FUNC_OUTPUT);
+        // Pin.setData("PC0", Pin.DATA_HIGH);
     }
 }
