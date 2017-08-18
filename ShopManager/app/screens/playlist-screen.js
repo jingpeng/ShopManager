@@ -107,7 +107,7 @@ class PlaylistScreen extends React.Component {
 
     this.timer = setTimeout(() => {
       this.props.navigation.dispatch({ type: 'Playlist2Ad' })
-    }, envData.shutTime * 10000)
+    }, 30000)
 
     var all = this.props.advs
     for (var i = 0; i < all.length; i++) {
@@ -123,7 +123,7 @@ class PlaylistScreen extends React.Component {
         currentData: all[0]
       }, () => {
         this.delayTimer = setTimeout(() => {
-          this.selectAd(0)
+          //this.selectAd(0)
         }, 2000)
       })
     }
@@ -140,7 +140,7 @@ class PlaylistScreen extends React.Component {
     this.timer && clearTimeout(this.timer)
     this.timer = setTimeout(() => {
       this.props.navigation.dispatch({ type: 'Playlist2Ad' })
-    }, envData.shutTime * 10000)
+    }, 30000)
 
     var data = this.state.originData;
     for (var i = 0; i < data.length; i++) {
@@ -308,7 +308,7 @@ class PlaylistScreen extends React.Component {
                           style={[
                             styles.adTitle,
                             {color: rowData.selected ? '#fff' : '#333'}
-                          ]}>{rowData.advertisement.name}</Text>
+                          ]}>{rowData.playAdvShowName}</Text>
                         <Text
                           numberOfLines={2}
                           style={[
