@@ -570,11 +570,14 @@ class AdScreen extends React.Component {
           onPress={this.showBuyModal.bind(this)}>
           <Text style={styles.trolleyText}>下单</Text>
         </TouchableNativeFeedback>
-        <View style={styles.trolleyImageContainer}>
-          <Image
-            style={styles.trolleyImage}
-            source={require('../resources/trolley.png')}/>
-        </View>
+        <TouchableNativeFeedback
+          onPress={this.showBuyModal.bind(this)}>
+          <View style={styles.trolleyImageContainer}>
+            <Image
+              style={styles.trolleyImage}
+              source={require('../resources/trolley.png')}/>
+          </View>
+        </TouchableNativeFeedback>
       </View>
     } else {
       buyButtonHolder =
