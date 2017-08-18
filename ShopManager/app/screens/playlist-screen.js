@@ -12,8 +12,14 @@ import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter'
 import { connect } from 'react-redux'
 import Video from 'react-native-video'
 import moment from 'moment'
+import DeviceInfo from 'react-native-device-info'
 
+import ApiClient from '../api/api-client'
+import ApiInterface from '../api/api-interface'
+import ApiConstant from '../api/api-constant'
 import IOConstant from '../io/io-constant'
+import BuyModal from './buy-modal'
+import OrderSuccessModal from './order-success-modal'
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 
@@ -47,7 +53,12 @@ class PlaylistScreen extends React.Component {
       index: -1,
       currentData: null,
       isImage: true,
-      videoSource: ''
+      videoSource: '',
+      adTitle: "",
+      adDesc: "",
+      adPrice: 0,
+      buyModalVisible: false,
+      orderSuccessModalVisible: false
     }
   }
 
@@ -72,6 +83,77 @@ class PlaylistScreen extends React.Component {
       })
       storage.save({key: IOConstant.OPERATE_RECORD, data: operations})
     })
+  }
+
+  showBuyModal() {
+    this.setState({buyModalVisible: true})
+    this.timer && clearTimeout(this.timer)
+
+    var adv = this.state.currentData
+    this.setState({
+      adTitle: adv.advertisement.name,
+      adDesc: adv.advertisement.content,
+      adPrice: adv.advertisement.price
+    })
+
+    this.buyModalTimer = new Timer(() => {
+      this.hideBuyModal()
+    }, 18 * 1000)
+
+    // 存储用户点击下单操作
+    storage.load({key: IOConstant.OPERATE_RECORD})
+    .then(result => {
+      console.log(result)
+      result.push({
+        type: 5,
+        playAdvId: adv.id,
+        operateDate: moment().format("YYYY-MM-DD HH:mm:ss")
+      })
+      storage.save({key: IOConstant.OPERATE_RECORD, data: result})
+    })
+    .catch(error => {
+      var operations = []
+      operations.push({
+        type: 5,
+        playAdvId: adv.id,
+        operateDate: moment().format("YYYY-MM-DD HH:mm:ss")
+      })
+      storage.save({key: IOConstant.OPERATE_RECORD, data: operations})
+    })
+  }
+
+  hideBuyModal() {
+    this.setState({buyModalVisible: false})
+    this.timer = setTimeout(() => {
+      this.props.navigation.dispatch({ type: 'Playlist2Ad' })
+    }, 30000)
+    this.buyModalTimer.pause()
+  }
+
+  orderInModal(num) {
+    var adv = this.state.currentData
+    ApiClient
+    .access(ApiInterface.advOrderAdd(DeviceInfo.getUniqueID(), adv.id, num))
+    .then(response => response.json())
+    .then((json) => {
+      this.setState({orderSuccessModalVisible: true})
+      this.timer && clearTimeout(this.timer)
+      this.orderSuccessModalTimer = new Timer(() => {
+        this.hideOrderSuccessModal()
+      }, 18 * 1000)
+      console.log(json)
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+  }
+
+  hideOrderSuccessModal() {
+    this.setState({orderSuccessModalVisible: false})
+    this.timer = setTimeout(() => {
+      this.props.navigation.dispatch({ type: 'Playlist2Ad' })
+    }, 30000)
+    this.orderSuccessModalTimer.pause()
   }
 
   componentDidMount() {
@@ -126,6 +208,8 @@ class PlaylistScreen extends React.Component {
     RCTDeviceEventEmitter.emit('pause_component', 'unmount')
     this.timer && clearTimeout(this.timer)
     this.delayTimer && clearTimeout(this.delayTimer)
+    this.buyModalTimer && this.buyModalTimer.pause()
+    this.orderSuccessModalTimer && this.orderSuccessModalTimer.pause()
   }
 
   selectAd(rowId) {
@@ -236,14 +320,17 @@ class PlaylistScreen extends React.Component {
                 }
                 {
                   (this.state.index >= 0 && this.state.currentData.isOrder == 1) ? (
-                    <View style={styles.trolleyContainer}>
-                      <Text style={styles.trolleyText}>下单</Text>
-                      <View style={styles.trolleyImageContainer}>
-                        <Image
-                          style={styles.trolleyImage}
-                          source={require('../resources/trolley.png')}/>
+                    <TouchableWithoutFeedback
+                      onPress={this.showBuyModal.bind(this)}>
+                      <View style={styles.trolleyContainer}>
+                        <Text style={styles.trolleyText}>下单</Text>
+                        <View style={styles.trolleyImageContainer}>
+                          <Image
+                            style={styles.trolleyImage}
+                            source={require('../resources/trolley.png')}/>
+                        </View>
                       </View>
-                    </View>
+                    </TouchableWithoutFeedback>
                   ) : (null)
                 }
               </Image>
@@ -315,6 +402,8 @@ class PlaylistScreen extends React.Component {
               )
             }}/>
         </View>
+        <BuyModal parent={this} adTitle={this.state.adTitle} adDescription={this.state.adDesc} adPrice={this.state.adPrice} />
+        <OrderSuccessModal parent={this}/>
       </View>
     )
   }
