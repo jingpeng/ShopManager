@@ -97,13 +97,6 @@ class PlaylistScreen extends React.Component {
     RCTDeviceEventEmitter.emit('pause_component', 'mount')
 
     var copy = this
-    RCTDeviceEventEmitter.addListener('list_on_next', function(data){
-      var newIndex = parseInt(copy.state.index) + 1
-      if (newIndex >= copy.props.advs.length) {
-        newIndex = 0
-      }
-      //copy.selectAd(newIndex)
-    })
 
     this.timer = setTimeout(() => {
       this.props.navigation.dispatch({ type: 'Playlist2Ad' })
@@ -132,7 +125,6 @@ class PlaylistScreen extends React.Component {
   componentWillUnmount() {
     RCTDeviceEventEmitter.emit('pause_component', 'unmount')
     this.timer && clearTimeout(this.timer)
-    this.nextTimer && clearTimeout(this.nextTimer)
     this.delayTimer && clearTimeout(this.delayTimer)
   }
 
@@ -184,10 +176,7 @@ class PlaylistScreen extends React.Component {
 
       if (this.state.index >= 0) {
         if (this.state.currentData.advertisement.fileType == 0) {
-          this.nextTimer && clearTimeout(this.nextTimer)
-          this.nextTimer = setTimeout(() => {
-            RCTDeviceEventEmitter.emit('list_on_next', '')
-          }, 10000)
+
         } else if (this.state.currentData.advertisement.fileType == 1) {
           this.setState({
             isImage: false,
@@ -220,16 +209,17 @@ class PlaylistScreen extends React.Component {
       <View style={styles.container}>
         { (!this.state.isImage) ? (
             <Video
+              ref={(ref) => { this.player = ref }}
               source={{uri: this.state.videoSource}}   // Can be a URL or a local file.                                      // Store reference
               rate={1.0}                              // 0 is paused, 1 is normal.
               volume={1.0}                            // 0 is muted, 1 is normal.
               muted={false}                           // Mutes the audio entirely.
               paused={false}                          // Pauses playback entirely.
               resizeMode="cover"                      // Fill the whole screen at aspect ratio.*
-              repeat={false}                           // Repeat forever.
+              repeat={true}                           // Repeat forever.
               playInBackground={true}                // Audio continues to play when app entering background.
               style={styles.backgroundVideo}
-              onEnd={() => {RCTDeviceEventEmitter.emit('list_on_next', '')}} />
+              onEnd={() => {this.player.setNativeProps({ seek: 0, paused: false })}} />
           ) : (
             <TouchableWithoutFeedback
               onPress={this.playFullScreen.bind(this)}>
