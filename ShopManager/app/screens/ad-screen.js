@@ -37,7 +37,6 @@ global.envData = {
   shutTime: 10,
   version: 1
 }
-var playIds = new Set()
 
 function Timer(callback, delay) {
   var timerId, start, remaining = delay
@@ -51,6 +50,16 @@ function Timer(callback, delay) {
       timerId = setTimeout(callback, remaining)
   }
   this.resume()
+}
+
+function contains(array, obj) {
+    var i = array.length;
+    while (i--) {
+        if (array[i] === obj) {
+            return true;
+        }
+    }
+    return false;
 }
 
 class AdScreen extends React.Component {
@@ -127,14 +136,18 @@ class AdScreen extends React.Component {
       console.log(formattedHour + ":" + formattedMinutes)
       if (envData.refreshTime == (formattedHour + ":" + formattedMinutes)) {
         // 投递广告播放记录
-        console.log(playIds)
-        ApiClient.access(ApiInterface.recordAddPlay(DeviceInfo.getUniqueID(), playIds))
-        .then(response => response.json())
-        .then(json => {
-          console.log(json)
-          playIds.clear()
+        storage.load({key: IOConstant.PLAY_RECORD})
+        .then(result => {
+          ApiClient.access(ApiInterface.recordAddPlay(DeviceInfo.getUniqueID(), result))
+          .then(response => response.json())
+          .then(json => {
+            console.log(json)
+            storage.save({key: IOConstant.PLAY_RECORD, data: []})
+          })
+          .catch(error => {console.log(error)})
         })
-        .catch(error => {console.log(error)})
+        .catch(error => {
+        })
 
         storage.load({key: IOConstant.OPERATE_RECORD})
         .then(result => {
@@ -152,7 +165,7 @@ class AdScreen extends React.Component {
       } else {
         console.log(envData.refreshTime)
       }
-    }, 30000)
+    }, 10000)
 
     RCTDeviceEventEmitter.addListener('pause_component', function(data){
       switch (data) {
@@ -201,7 +214,19 @@ class AdScreen extends React.Component {
       copy.setState({currentPage: page})
 
       if (copy.state.advs.length > 0) {
-        playIds.add(copy.state.advs[page].id)
+        storage.load({key: IOConstant.PLAY_RECORD})
+        .then(result => {
+          console.log(result)
+          if (!contains(result, copy.state.advs[page].id)) {
+            result.push(copy.state.advs[page].id)
+          }
+          storage.save({key: IOConstant.PLAY_RECORD, data: result})
+        })
+        .catch(error => {
+          var advs = []
+          advs.push(copy.state.advs[page].id)
+          storage.save({key: IOConstant.PLAY_RECORD, data: advs})
+        })
       }
 
       var adv = copy.state.advs[page]
