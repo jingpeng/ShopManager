@@ -262,10 +262,10 @@ class PlaylistScreen extends React.Component {
         if (this.state.currentData.advertisement.fileType == 0) {
 
         } else if (this.state.currentData.advertisement.fileType == 1) {
-          this.setState({
-            isImage: false,
-            videoSource: this.state.currentData.advertisement.fileSrc
-          })
+          // this.setState({
+          //   isImage: false,
+          //   videoSource: this.state.currentData.advertisement.fileSrc
+          // })
         }
       }
 
@@ -273,7 +273,7 @@ class PlaylistScreen extends React.Component {
   }
 
   playFullScreen() {
-
+    this.props.navigation.dispatch({ type: 'PlayFull', data: this.state.currentData })
   }
 
   render() {
@@ -299,7 +299,6 @@ class PlaylistScreen extends React.Component {
               volume={1.0}                            // 0 is muted, 1 is normal.
               muted={false}                           // Mutes the audio entirely.
               paused={false}                          // Pauses playback entirely.
-              resizeMode="cover"                      // Fill the whole screen at aspect ratio.*
               repeat={true}                           // Repeat forever.
               playInBackground={true}                // Audio continues to play when app entering background.
               style={styles.backgroundVideo}

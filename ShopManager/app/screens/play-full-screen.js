@@ -87,7 +87,7 @@ class PlayFullScreen extends React.Component {
           muted={false}                           // Mutes the audio entirely.
           paused={false}                          // Pauses playback entirely.
           resizeMode="cover"                      // Fill the whole screen at aspect ratio.*
-          repeat={false}                           // Repeat forever.
+          repeat={true}                           // Repeat forever.
           playInBackground={true}                // Audio continues to play when app entering background.
           style={styles.backgroundVideo} />
     } else {
