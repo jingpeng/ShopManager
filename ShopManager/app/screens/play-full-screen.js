@@ -3,6 +3,8 @@ import {
   Dimensions,
   Image,
   StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
   View
 } from 'react-native'
 import { connect } from 'react-redux'
@@ -68,6 +70,12 @@ class PlayFullScreen extends React.Component {
       })
       storage.save({key: IOConstant.OPERATE_RECORD, data: operations})
     })
+
+    global.popupAd = false
+  }
+
+  back() {
+    this.props.navigation.dispatch({ type: 'PlayFull2Ad' })
   }
 
   render() {
@@ -96,6 +104,12 @@ class PlayFullScreen extends React.Component {
     return (
       <View style={styles.container}>
         {holder}
+        <TouchableWithoutFeedback
+          onPress={() => { this.back() }}>
+          <View style={styles.trolleyContainer}>
+            <Text style={styles.trolleyText}>关闭</Text>
+          </View>
+        </TouchableWithoutFeedback>
       </View>
     )
   }
@@ -125,6 +139,23 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     right: 0
+  },
+  trolleyContainer: {
+    width: 60,
+    height: 30,
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    flexDirection: 'row'
+  },
+  trolleyText: {
+    color: '#fff',
+    fontSize: 14,
+    width: 60,
+    height: 30,
+    textAlign: 'center',
+    textAlignVertical: "center",
+    backgroundColor: '#e95412'
   }
 })
 

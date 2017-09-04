@@ -201,8 +201,12 @@ class AdScreen extends React.Component {
     })
 
     RCTDeviceEventEmitter.addListener('on_key_pressed', function(advs){
-      alert(advs.keyCode)
-      copy.props.navigation.dispatch({ type: 'PlayFull', data: copy.state.popupAd })
+      if (advs.keyCode == 26) {
+        if (!global.popupAd) {
+          global.popupAd = true
+          copy.props.navigation.dispatch({ type: 'PlayFull', data: copy.state.popupAd })
+        }
+      }
     })
 
     RCTDeviceEventEmitter.addListener('on_next', function(page){
@@ -590,7 +594,8 @@ class AdScreen extends React.Component {
 
     let buyButtonHolder = null
     if (this.state.isOrder) {
-      buyButtonHolder = <View style={styles.trolleyContainer}>
+      buyButtonHolder =
+      <View style={styles.trolleyContainer}>
         <TouchableNativeFeedback
           onPress={this.showBuyModal.bind(this)}>
           <Text style={styles.trolleyText}>下单</Text>
@@ -681,8 +686,8 @@ const styles = StyleSheet.create({
     right: 0
   },
   trolleyContainer: {
-    width: 90,
-    height: 30,
+    width: 180,
+    height: 60,
     position: 'absolute',
     right: 0,
     bottom: 0,
@@ -690,51 +695,51 @@ const styles = StyleSheet.create({
   },
   trolleyText: {
     color: '#fff',
-    fontSize: 14,
-    width: 60,
-    height: 30,
+    fontSize: 28,
+    width: 120,
+    height: 60,
     textAlign: 'center',
     textAlignVertical: "center",
     backgroundColor: '#e95412'
   },
   trolleyImageContainer: {
-    width: 30,
-    height: 30,
+    width: 60,
+    height: 60,
     backgroundColor: '#ff7132',
     justifyContent: 'center',
     alignItems: 'center'
   },
   trolleyImage: {
-    width: 18,
-    height: 18
+    width: 36,
+    height: 36
   },
   gameContainer: {
-    width: 30,
-    height: 30,
+    width: 60,
+    height: 60,
     position: 'absolute',
-    right: 45,
-    top: 30,
+    right: 90,
+    top: 20,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#009944'
   },
   gameImage: {
-    width: 25,
-    height: 17,
+    width: 50,
+    height: 34,
   },
   billContainer: {
-    width: 30,
-    height: 30,
+    width: 60,
+    height: 60,
     position: 'absolute',
-    right: 10,
-    top: 30,
+    right: 20,
+    top: 20,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#ff7132'
   },
   billImage: {
-    width: 17,
-    height: 20,
+    width: 34,
+    height: 40,
   }
 })
 

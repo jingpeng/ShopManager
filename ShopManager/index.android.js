@@ -18,6 +18,7 @@ var storage = new Storage({
 	}
 })
 global.storage = storage
+global.popupAd = false
 
 export default class ShopManager extends Component {
   store = createStore(Reducer)
