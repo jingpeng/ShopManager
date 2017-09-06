@@ -201,7 +201,7 @@ class AdScreen extends React.Component {
     })
 
     RCTDeviceEventEmitter.addListener('on_key_pressed', function(advs){
-      if (advs.keyCode == 26) {
+      if (advs.keyCode == 122) {
         if (!global.popupAd) {
           global.popupAd = true
           copy.props.navigation.dispatch({ type: 'PlayFull', data: copy.state.popupAd })
@@ -658,7 +658,7 @@ const styles = StyleSheet.create({
     position: 'absolute'
   },
   playAdvShowName: {
-    fontSize: 18,
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#000000'
   },

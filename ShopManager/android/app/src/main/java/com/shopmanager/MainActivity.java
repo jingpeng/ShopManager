@@ -52,8 +52,10 @@ public class MainActivity extends ReactActivity {
                     .emit("on_key_pressed", params);
         }
         if (keyCode == 131) {
-            mWakeLock.acquire();
-            mKeyguardLock.disableKeyguard();
+            if (mWakeLock != null && mKeyguardLock != null) {
+                mWakeLock.acquire();
+                mKeyguardLock.disableKeyguard();
+            }
         }
         return super.onKeyUp(keyCode, event);
     }

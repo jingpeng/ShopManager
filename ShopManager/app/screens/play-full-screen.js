@@ -141,8 +141,8 @@ const styles = StyleSheet.create({
     right: 0
   },
   trolleyContainer: {
-    width: 60,
-    height: 30,
+    width: 120,
+    height: 60,
     position: 'absolute',
     right: 0,
     bottom: 0,
@@ -150,9 +150,9 @@ const styles = StyleSheet.create({
   },
   trolleyText: {
     color: '#fff',
-    fontSize: 14,
-    width: 60,
-    height: 30,
+    fontSize: 28,
+    width: 120,
+    height: 60,
     textAlign: 'center',
     textAlignVertical: "center",
     backgroundColor: '#e95412'

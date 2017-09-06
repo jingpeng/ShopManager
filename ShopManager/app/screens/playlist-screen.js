@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5FCFF'
   },
   leftPanel: {
-    width: Dimensions.get('window').height,
+    width: Dimensions.get('window').width * 2 / 3,
     height: Dimensions.get('window').height,
     justifyContent: 'center'
   },
@@ -431,8 +431,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   trolleyContainer: {
-    width: 90,
-    height: 30,
+    width: 180,
+    height: 60,
     position: 'absolute',
     right: 0,
     bottom: 0,
@@ -440,23 +440,23 @@ const styles = StyleSheet.create({
   },
   trolleyText: {
     color: '#fff',
-    fontSize: 14,
-    width: 60,
-    height: 30,
+    fontSize: 28,
+    width: 120,
+    height: 60,
     textAlign: 'center',
     textAlignVertical: "center",
     backgroundColor: '#e95412'
   },
   trolleyImageContainer: {
-    width: 30,
-    height: 30,
+    width: 60,
+    height: 60,
     backgroundColor: '#ff7132',
     justifyContent: 'center',
     alignItems: 'center'
   },
   trolleyImage: {
-    width: 18,
-    height: 18
+    width: 36,
+    height: 36
   },
   arrowContainer: {
     height: 48,
