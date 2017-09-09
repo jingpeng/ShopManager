@@ -239,6 +239,7 @@ class AdScreen extends React.Component {
         var callback = () => {
           RCTDeviceEventEmitter.emit('on_next', page + 1)
         }
+        copy.timer && copy.timer.pause()
         copy.timer = new Timer(callback, adv.advertisement.time * 1000)
       } else if (adv.advertisement.fileType == 1){
         var player = copy.state.players[page]
@@ -253,6 +254,8 @@ class AdScreen extends React.Component {
             RCTDeviceEventEmitter.emit('on_next', page + 1)
           }
 
+          copy.timer && copy.timer.pause()
+          copy.adjustTimer && copy.adjustTimer.pause()
           copy.adjustTimer = new Timer(() => {
             copy.timer = new Timer(callback, adv.advertisement.time * 1000)
           }, 500)
@@ -513,7 +516,7 @@ class AdScreen extends React.Component {
     if (player != undefined) {
       player.setNativeProps({ seek: 0, paused: false })
     } else {
-      RCTDeviceEventEmitter.emit('on_next', e.nativeEvent.position)
+
     }
 
     if (adv.isOrder == 1) {
@@ -521,6 +524,8 @@ class AdScreen extends React.Component {
     } else {
       this.setState({isOrder: false})
     }
+
+    RCTDeviceEventEmitter.emit('on_next', e.nativeEvent.position)
   }
 
   render() {
