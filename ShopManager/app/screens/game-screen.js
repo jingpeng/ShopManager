@@ -261,13 +261,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5FCFF'
   },
   leftPanel: {
-    width: Dimensions.get('window').height,
+    width: Dimensions.get('window').width * 2 / 3,
     height: Dimensions.get('window').height,
     justifyContent: 'center'
   },
   startContainer: {
-    width: 90,
-    height: 30,
+    width: 180,
+    height: 60,
     position: 'absolute',
     right: 0,
     bottom: 0,
@@ -275,33 +275,33 @@ const styles = StyleSheet.create({
   },
   startText: {
     color: '#fff',
-    fontSize: 14,
-    width: 90,
-    height: 30,
+    fontSize: 28,
+    width: 180,
+    height: 60,
     textAlign: 'center',
     textAlignVertical: "center",
     backgroundColor: '#e95412'
   },
   arrowContainer: {
-    height: 48,
+    height: 96,
     flexDirection: 'row',
     justifyContent: 'flex-end'
   },
   backArrow: {
-    width: 11,
-    height: 20,
-    marginTop: 15,
-    marginBottom: 13,
-    marginRight: 10
+    width: 22,
+    height: 40,
+    marginTop: 30,
+    marginBottom: 26,
+    marginRight: 20
   },
   rowContainer: {
-    width: Dimensions.get('window').width - Dimensions.get('window').height,
+    width: Dimensions.get('window').width * 1 / 3,
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
   gameCoverImage: {
-    width: (Dimensions.get('window').width - Dimensions.get('window').height - 40) / 2,
-    height: (Dimensions.get('window').width - Dimensions.get('window').height - 40) / 2,
+    width: (Dimensions.get('window').width / 3 - 40) / 2,
+    height: (Dimensions.get('window').width / 3 - 40) / 2,
     justifyContent: 'flex-end'
   },
   descContainer: {

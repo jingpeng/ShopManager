@@ -110,14 +110,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   closeImage: {
-    width: 30,
-    height: 30,
+    width: 45,
+    height: 45,
     position: 'absolute',
     right: 0,
     zIndex: 1
   },
   outerContainer: {
-    width: Dimensions.get('window').width - 296
+    width: Dimensions.get('window').width - 288.5
   },
   innerContainer: {
     width: Dimensions.get('window').width - 326,
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     alignSelf: 'center',
     padding: 10,
-    marginTop: 15,
+    marginTop: 22.5,
     zIndex: 0
   },
   line: {
@@ -138,13 +138,13 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     color: '#333',
     padding: 15,
-    fontSize: 12,
+    fontSize: 16,
     // backgroundColor: 'red',
   },
   descTitle: {
     color: '#666',
     padding: 15,
-    fontSize: 10,
+    fontSize: 14,
     lineHeight: 20,
   },
   priceContainer: {
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   },
   priceText: {
     color: 'rgba(88, 88, 88, 255)',
-    fontSize: 12,
+    fontSize: 16,
     padding: 0,
   },
   countContainer: {
@@ -170,16 +170,16 @@ const styles = StyleSheet.create({
   },
   countLeftText: {
     color: '#666',
-    fontSize: 12,
+    fontSize: 16,
   },
   priceText: {
     color: 'rgba(233, 84, 18, 255)',
-    fontSize: 12,
+    fontSize: 16,
     padding: 0,
   },
   countRightText: {
     color: '#333',
-    fontSize: 12,
+    fontSize: 16,
     paddingLeft: 10,
   },
   countInputContainer:{
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   inputCount: {
-    fontSize: 12,
+    fontSize: 16,
     textAlign: 'center',
     paddingTop: 10,
     paddingBottom: 10,
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
   },
   countTotalText: {
     color: 'rgba(233, 84, 18, 255)',
-    fontSize: 12,
+    fontSize: 16,
   },
   changeNumButton: {
     width: 30,
@@ -219,8 +219,8 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   confirmButton: {
-    height: 30,
-    width: 80,
+    height: 60,
+    width: 160,
     backgroundColor: 'rgba(233, 84, 18, 255)',
     borderRadius: 2,
     justifyContent: 'center',
@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
   },
   confirmText: {
     color: 'white',
-    fontSize: 14
+    fontSize: 28
   }
 
 });

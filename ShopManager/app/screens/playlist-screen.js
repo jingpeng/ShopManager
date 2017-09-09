@@ -459,19 +459,20 @@ const styles = StyleSheet.create({
     height: 36
   },
   arrowContainer: {
-    height: 48,
+    width: Dimensions.get('window').width * 1 / 3,
+    height: 96,
     flexDirection: 'row',
     justifyContent: 'flex-end'
   },
   backArrow: {
-    width: 11,
-    height: 20,
-    marginTop: 15,
-    marginBottom: 13,
-    marginRight: 10
+    width: 22,
+    height: 40,
+    marginTop: 30,
+    marginBottom: 26,
+    marginRight: 20
   },
   rightPanel: {
-    width: Dimensions.get('window').width - Dimensions.get('window').height,
+    width: Dimensions.get('window').width * 1 / 3,
     justifyContent: 'space-between',
     flexDirection: 'row'
   },
