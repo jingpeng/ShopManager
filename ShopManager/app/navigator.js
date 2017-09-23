@@ -7,6 +7,7 @@ import {
 
 import AdScreen from './screens/ad-screen'
 import GameScreen from './screens/game-screen'
+import AllowanceScreen from './screens/allowance-screen'
 import LoginScreen from './screens/login-screen'
 import MainScreen from './screens/main-screen'
 import PlaylistScreen from './screens/playlist-screen'
@@ -18,6 +19,7 @@ import PlayFullScreen from './screens/play-full-screen'
 export const Navigator = StackNavigator({
   Ad: { screen: AdScreen },
   Game: { screen: GameScreen },
+  Allowance: { screen: AllowanceScreen },
   Login: { screen: LoginScreen },
   Main: { screen: MainScreen },
   Playlist: { screen: PlaylistScreen },

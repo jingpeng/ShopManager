@@ -412,6 +412,26 @@ class AdScreen extends React.Component {
     })
   }
 
+  launchAllowance() {
+    var deviceData = this.props.deviceData
+    ApiClient
+    .access(ApiInterface. newAdvGetList(deviceData.userId, ApiConstant.DEFAULT_NUMBER_PER_PAGE, 1))
+    .then((response) => {
+      return response.json()
+    })
+    .then((json) => {
+      console.log(json)
+      if (json.callStatus == ApiConstant.SUCCEED) {
+        this.props.navigation.dispatch({ type: 'Allowance', data: json.data })
+      } else {
+        ToastAndroid.show(json.data, ToastAndroid.SHORT)
+      }
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+  }
+
   launchGame() {
     this.props.navigation.dispatch({ type: 'Game' })
   }
@@ -628,6 +648,14 @@ class AdScreen extends React.Component {
         { holder }
         { buyButtonHolder}
         <TouchableNativeFeedback
+          onPress={this.launchAllowance.bind(this)}>
+          <View style={styles.allowanceContainer}>
+            <Image
+              style={styles.allowanceImage}
+              source={require('../resources/allowance.png')}/>
+          </View>
+        </TouchableNativeFeedback>
+        <TouchableNativeFeedback
           onPress={this.launchGame.bind(this)}>
           <View style={styles.gameContainer}>
             <Image
@@ -717,6 +745,20 @@ const styles = StyleSheet.create({
   trolleyImage: {
     width: 36,
     height: 36
+  },
+  allowanceContainer: {
+    width: 60,
+    height: 60,
+    position: 'absolute',
+    right: 160,
+    top: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#009944'
+  },
+  allowanceImage: {
+    width: 50,
+    height: 50,
   },
   gameContainer: {
     width: 60,

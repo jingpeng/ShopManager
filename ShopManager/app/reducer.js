@@ -19,6 +19,7 @@ const navStateSetting2Login = Navigator.router.getStateForAction(
   navStateAd2Setting
 )
 const actionGame = Navigator.router.getActionForPathAndParams('Game')
+const actionAllowance = Navigator.router.getActionForPathAndParams('Allowance')
 const actionPlaylist = Navigator.router.getActionForPathAndParams('Playlist')
 const actionWebGame = Navigator.router.getActionForPathAndParams('WebGame')
 const actionPlayFull = Navigator.router.getActionForPathAndParams('PlayFull')
@@ -47,6 +48,13 @@ function nav(state = navStateWelcome, action) {
         actionGame,
         state
       )
+      break
+    case 'Allowance':
+      tmpState = Navigator.router.getStateForAction(
+        actionAllowance,
+        state
+      )
+      nextState = { ...tmpState, data: action.data }
       break
     case 'Playlist':
       tmpState = Navigator.router.getStateForAction(

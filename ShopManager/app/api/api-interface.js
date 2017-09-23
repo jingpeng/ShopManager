@@ -117,4 +117,22 @@ export default class APIInterface {
       'Content-Type': 'application/json'
     }, JSON.stringify(operateRecords))
   }
+
+  static recordAddOperate(mac, operateRecords) {
+    return BaseRequest.post(ApiConstant.BASE_URL + '/record/addOperateRecord?mac=' + mac, {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }, JSON.stringify(operateRecords))
+  }
+
+  static newAdvGetList(userId, numberPerPage, currentPage) {
+    var params = {
+      "userId": userId,
+      "numberPerPage": numberPerPage,
+      "currentPage": currentPage
+    }
+    var esc = encodeURIComponent;
+    var query = Object.keys(params).map(k => esc(k) + '=' + esc(params[k])).join('&');
+    return BaseRequest.get(ApiConstant.BASE_URL + '/newAdv/getNewAdvList?' + query, {})
+  }
 }
