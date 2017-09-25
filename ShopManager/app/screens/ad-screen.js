@@ -419,10 +419,29 @@ class AdScreen extends React.Component {
     .then((response) => {
       return response.json()
     })
-    .then((json) => {
-      console.log(json)
-      if (json.callStatus == ApiConstant.SUCCEED) {
-        this.props.navigation.dispatch({ type: 'Allowance', data: json.data })
+    .then((json1) => {
+      console.log(json1)
+      if (json1.callStatus == ApiConstant.SUCCEED) {
+        ApiClient
+        .access(ApiInterface. drawGet(deviceData.userId))
+        .then((response) => {
+          return response.json()
+        })
+        .then((json2) => {
+          console.log(json2)
+          if (json2.data != null) {
+            var drawData = json2.data
+            drawData.isDraw = true
+            var array = new Array(drawData)
+            this.props.navigation.dispatch({ type: 'Allowance', data: array.concat(json1.data) })
+          } else {
+            this.props.navigation.dispatch({ type: 'Allowance', data: json1.data })
+          }
+
+        })
+        .catch((error) => {
+          console.log(error)
+        })
       } else {
         ToastAndroid.show(json.data, ToastAndroid.SHORT)
       }

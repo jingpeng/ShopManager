@@ -32,8 +32,8 @@ class AllowanceScreen extends React.Component {
 
     var data = []
     this.state = {
-      originData: data,
-      dataSource: ds.cloneWithRows(data),
+      originData: props.data,
+      dataSource: ds.cloneWithRows(props.data),
       index: -1,
       currentData: null
     }
@@ -50,13 +50,32 @@ class AllowanceScreen extends React.Component {
   }
 
   selectAd(rowId) {
+    var data = this.state.originData;
+    for (var i = 0; i < data.length; i++) {
+      if (i == rowId) {
+        data[i].selected = true
+      } else {
+        data[i].selected = false
+      }
+    }
+    this.setState({
+      originData: data,
+      dataSource: ds.cloneWithRows(data),
+      index: rowId,
+      currentData: data[rowId]
+    }, () => {
 
+    })
   }
 
   render() {
     var coverSource = null
     if (this.state.index >= 0) {
-      coverSource = {uri: this.state.currentData.bigImgSrc}
+      if (this.state.currentData.isDraw) {
+        coverSource = require('../resources/draw-large.png')
+      } else {
+        coverSource = {uri: this.state.currentData.bigImgSrc}
+      }
     }
     return (
       <View style={styles.container}>
@@ -81,7 +100,19 @@ class AllowanceScreen extends React.Component {
             showsVerticalScrollIndicator={false}
             enableEmptySections={true}
             renderRow={(rowData, sectionId, rowId) => {
-              var imageSource = {uri: rowData.advertisement.fileSrc}
+              var imageSource = null
+              var name = null
+              var content = null
+              if (rowData.isDraw) {
+                imageSource = require('../resources/draw-small.png')
+                name = '欢乐大抽奖'
+                content = '扫描左侧二维码即可参与抽奖活动'
+              } else {
+                imageSource = { uri: rowData.smallImgSrc }
+                name = rowData.name
+                content = rowData.description
+              }
+
               return (
                 <View>
                   <View style={styles.divider}/>
@@ -95,26 +126,19 @@ class AllowanceScreen extends React.Component {
                         style={styles.adSmall}
                         resizeMode={'contain'}
                         source={imageSource}>
-                        {
-                          (rowData.advertisement.fileType == 1) ? (
-                            <Image
-                              style={styles.playButtonSmall}
-                              source={require('../resources/start-play-small.png')}/>
-                          ) : ( null )
-                        }
                       </Image>
                       <View style={styles.adDescContainer}>
                         <Text
                           style={[
                             styles.adTitle,
                             {color: rowData.selected ? '#fff' : '#333'}
-                          ]}>{rowData.playAdvShowName}</Text>
+                          ]}>{ name }</Text>
                         <Text
                           numberOfLines={2}
                           style={[
                             styles.adDesc,
                             {color: rowData.selected ? '#fff' : '#999'}
-                          ]}>{rowData.advertisement.content}
+                          ]}>{ content }
                         </Text>
                       </View>
                     </View>
