@@ -13,6 +13,7 @@ import { connect } from 'react-redux'
 import Video from 'react-native-video'
 import moment from 'moment'
 import DeviceInfo from 'react-native-device-info'
+import QRCode from 'react-native-qrcode'
 
 import ApiClient from '../api/api-client'
 import ApiInterface from '../api/api-interface'
@@ -77,6 +78,14 @@ class AllowanceScreen extends React.Component {
         coverSource = {uri: this.state.currentData.bigImgSrc}
       }
     }
+    var qrCodeStr = ''
+    if (this.state.index >= 0) {
+      if (this.state.currentData.isDraw) {
+        qrCodeStr = 'wap.tabhead.com/draw/' + (this.state.currentData.userId) + '?mac=' + DeviceInfo.getUniqueID()
+      } else {
+        qrCodeStr = 'wap.tabhead.com/discount/' + (this.state.currentData.id) + '?mac=' + DeviceInfo.getUniqueID()
+      }
+    }
     return (
       <View style={styles.container}>
         <TouchableWithoutFeedback>
@@ -84,6 +93,13 @@ class AllowanceScreen extends React.Component {
             style={styles.leftPanel}
             source={coverSource}
             resizeMode={'contain'}>
+            <View style={styles.qrCode}>
+              <QRCode
+                value={ qrCodeStr }
+                size={Dimensions.get('window').height / 4}
+                bgColor='black'
+                fgColor='white'/>
+            </View>
           </Image>
         </TouchableWithoutFeedback>
         <View>
@@ -166,6 +182,11 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width * 2 / 3,
     height: Dimensions.get('window').height,
     justifyContent: 'center'
+  },
+  qrCode: {
+    position: 'absolute',
+    right: (Dimensions.get('window').width * 2 / 3 - Dimensions.get('window').height) / 2,
+    bottom: 0
   },
   backgroundVideo: {
     height: Dimensions.get('window').height * 0.5625,
