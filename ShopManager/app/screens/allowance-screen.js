@@ -22,6 +22,20 @@ import IOConstant from '../io/io-constant'
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 
+function Timer(callback, delay) {
+  var timerId, start, remaining = delay
+  this.pause = function() {
+      clearTimeout(timerId)
+      remaining -= new Date() - start
+  }
+  this.resume = function() {
+      start = new Date();
+      clearTimeout(timerId)
+      timerId = setTimeout(callback, remaining)
+  }
+  this.resume()
+}
+
 class AllowanceScreen extends React.Component {
   static navigationOptions = {
     header: null
@@ -41,6 +55,10 @@ class AllowanceScreen extends React.Component {
   }
 
   componentDidMount() {
+    this.timer = setTimeout(() => {
+      this.props.navigation.dispatch({ type: 'Allowance2Ad' })
+    }, 30000)
+
     console.log(this.props.data)
     if (this.props.data.length >= 0)
     this.setState({
@@ -50,7 +68,16 @@ class AllowanceScreen extends React.Component {
     })
   }
 
+  componentWillUnmount() {
+    this.timer && clearTimeout(this.timer)
+  }
+
   selectAd(rowId) {
+    this.timer && clearTimeout(this.timer)
+    this.timer = setTimeout(() => {
+      this.props.navigation.dispatch({ type: 'Allowance2Ad' })
+    }, 30000)
+
     var data = this.state.originData;
     for (var i = 0; i < data.length; i++) {
       if (i == rowId) {
@@ -67,6 +94,10 @@ class AllowanceScreen extends React.Component {
     }, () => {
 
     })
+  }
+
+  back() {
+    this.props.navigation.dispatch({ type: 'Allowance2Ad' })
   }
 
   render() {

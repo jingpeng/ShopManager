@@ -56,6 +56,12 @@ function nav(state = navStateWelcome, action) {
       )
       nextState = { ...tmpState, data: action.data }
       break
+    case 'Allowance2Ad':
+      nextState = Navigator.router.getStateForAction(
+        NavigationActions.back(),
+        state
+      )
+      break
     case 'Playlist':
       tmpState = Navigator.router.getStateForAction(
         actionPlaylist,
