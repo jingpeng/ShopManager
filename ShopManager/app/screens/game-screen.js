@@ -201,7 +201,7 @@ export default class GameScreen extends React.Component {
                           <Text style={styles.gameDescText}>{ rowData[0].name }</Text>
                           <Text style={styles.gameDescText}>手机游戏</Text>
                         </View>
-                        <Text style={styles.gamePlayerNumText}>112万人爱玩</Text>
+                        {/*<Text style={styles.gamePlayerNumText}>112万人爱玩</Text>*/}
                       </View>
                     </Image>
                   </TouchableWithoutFeedback>
@@ -226,7 +226,7 @@ export default class GameScreen extends React.Component {
                           <Text style={styles.gameDescText}>{ rowData[1].name }</Text>
                           <Text style={styles.gameDescText}>手机游戏</Text>
                         </View>
-                        <Text style={styles.gamePlayerNumText}>112万人爱玩</Text>
+                        {/*<Text style={styles.gamePlayerNumText}>112万人爱玩</Text>*/}
                       </View>
                     </Image>
                   </TouchableWithoutFeedback>
@@ -316,7 +316,8 @@ const styles = StyleSheet.create({
   },
   gameDescText: {
     color: '#333',
-    fontSize: 12
+    fontSize: 14,
+      width:50
   },
   gamePlayerNumText: {
     color: '#999',

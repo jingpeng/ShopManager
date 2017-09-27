@@ -12,13 +12,13 @@ import com.facebook.soloader.SoLoader;
 import com.fileopener.FileOpenerPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.rnfs.RNFSPackage;
-import com.vortex.pin.Pin;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
 
+    public final String TAG = "????";
     private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
         @Override
         public boolean getUseDeveloperSupport() {
@@ -48,13 +48,14 @@ public class MainApplication extends Application implements ReactApplication {
         super.onCreate();
         SoLoader.init(this, /* native exopackage */ false);
 
+
         //home
         // Pin.setFunc("PL4", Pin.FUNC_INPUT);
         // Pin.setData("PL4", Pin.DATA_HIGH);
 
-        //miso
-        // Pin.setFunc("PC1", Pin.FUNC_OUTPUT);
-        // Pin.setData("PC1", Pin.DATA_HIGH);
+//        miso
+//         Pin.setFunc("PC1", Pin.FUNC_OUTPUT);
+//         Pin.setData("PC1", Pin.DATA_HIGH);
 
         //clock
         // Pin.setFunc("PC2", Pin.FUNC_INPUT);
@@ -64,4 +65,8 @@ public class MainApplication extends Application implements ReactApplication {
         // Pin.setFunc("PC0", Pin.FUNC_OUTPUT);
         // Pin.setData("PC0", Pin.DATA_HIGH);
     }
+
+
+
+
 }

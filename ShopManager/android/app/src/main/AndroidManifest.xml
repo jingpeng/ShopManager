@@ -50,6 +50,7 @@
           </data>
         </intent-filter>
       </receiver>
+
     </application>
 
 </manifest>

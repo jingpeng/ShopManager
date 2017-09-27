@@ -9,5 +9,6 @@ public class BootBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Intent appIntent = context.getPackageManager().getLaunchIntentForPackage("com.shopmanager");
         context.startActivity(appIntent);
+
     }
 }
