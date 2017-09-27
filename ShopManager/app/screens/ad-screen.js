@@ -773,7 +773,7 @@ const styles = StyleSheet.create({
     top: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#009944'
+    backgroundColor: '#25A2F8'
   },
   allowanceImage: {
     width: 50,
