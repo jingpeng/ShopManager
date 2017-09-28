@@ -53,6 +53,7 @@ public class MainApplication extends Application implements ReactApplication {
         // Pin.setFunc("PL4", Pin.FUNC_INPUT);
         // Pin.setData("PL4", Pin.DATA_HIGH);
 
+
 //        miso
 //         Pin.setFunc("PC1", Pin.FUNC_OUTPUT);
 //         Pin.setData("PC1", Pin.DATA_HIGH);

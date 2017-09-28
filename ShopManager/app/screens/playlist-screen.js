@@ -316,9 +316,13 @@ class PlaylistScreen extends React.Component {
                             resizeMode={'contain'}>
                             {
                                 (this.state.currentData && this.state.currentData.advertisement.fileType == 1) ? (
-                                    <Image
-                                        style={styles.playButtonLarge}
-                                        source={require('../resources/start-play-large.png')}/>
+                                    <TouchableWithoutFeedback
+                                    onPress={this.playFullScreen.bind(this)}>
+                                        <Image
+                                            style={styles.playButtonLarge}
+                                            source={require('../resources/start-play-large.png')}
+                                        />
+                                    </TouchableWithoutFeedback>
                                 ) : ( null )
                             }
                             {
@@ -518,7 +522,7 @@ const styles = StyleSheet.create({
     adsDesc: {
         fontSize: 15,
         // width: Dimensions.get('window').width - Dimensions.get('window').height - 95 - 10,
-        width:180,
+        width: 180,
         height: 50,
         lineHeight: 26
     }

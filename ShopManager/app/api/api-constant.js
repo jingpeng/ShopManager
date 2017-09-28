@@ -1,5 +1,6 @@
 export default class ApiConstant {
-  static BASE_URL = "http://123.56.220.72:8080/Advertisement/api"
+  static BASE_URL = "http://116.62.228.3:8080/Advertisement/api"
+  //   static BASE_URL = "http://www.tabread.com:8080/Advertisement/api"
 
   static SUCCEED = "SUCCEED"
   static FAILED = "FAILED"

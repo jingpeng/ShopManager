@@ -42,8 +42,6 @@ public class MainActivity extends ReactActivity {
 
         KeyguardManager km = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
         mKeyguardLock = km.newKeyguardLock("unLock");
-
-
     }
 
     /**
@@ -88,7 +86,7 @@ public class MainActivity extends ReactActivity {
             //获取当前电量信息
             int currentBattery = bundle.getInt("level");
             Log.d(TAG, "onReceive: " + currentBattery);
-//            //获取总电量
+//            获取总电量
 //            int totalBattery = bundle.getInt("scale");
 //            Log.d(TAG, "totalBattery: "+totalBattery);
 //            int currLevel = (currentBattery/totalBattery)*100/100;
