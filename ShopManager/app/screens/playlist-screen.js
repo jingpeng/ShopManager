@@ -99,7 +99,6 @@ class PlaylistScreen extends React.Component {
         this.buyModalTimer = new Timer(() => {
             this.hideBuyModal()
         }, 18 * 1000)
-
         // 存储用户点击下单操作
         storage.load({key: IOConstant.OPERATE_RECORD})
             .then(result => {

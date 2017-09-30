@@ -57,7 +57,7 @@ public class MainActivity extends ReactActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         WritableMap params = Arguments.createMap();
         params.putInt("keyCode", keyCode);
-//        Log.e(TAG, String.valueOf(keyCode));
+        Log.e(TAG, String.valueOf(keyCode));
         if (getReactInstanceManager() != null &&
                 getReactInstanceManager().getCurrentReactContext() != null &&
                 getReactInstanceManager().getCurrentReactContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class) != null) {
@@ -95,7 +95,7 @@ public class MainActivity extends ReactActivity {
                 Pin.setFunc("PC1", Pin.FUNC_OUTPUT);
                 Pin.setData("PC1", Pin.DATA_HIGH);
 //                Log.d(TAG, "onReceive: 电量小于15，亮灯");
-            } else if (currentBattery > 15) {
+            } else if (currentBattery >15) {
                 Pin.setFunc("PC1", Pin.FUNC_DISABLED);
                 Pin.setData("PC1", Pin.DATA_LOW);
 //                Log.d(TAG, "onReceive:电量大于15灭灯 ");
