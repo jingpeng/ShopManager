@@ -29,13 +29,15 @@ public class MainActivity extends ReactActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //初始化广播接收者
-        initReceiver();
+        //initReceiver();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);
 
+        //開啓紅外服務
+        //startService(new Intent(this, RayStatusService.class));
 
         PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
         mWakeLock = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK, "SimpleTimer");
@@ -64,12 +66,12 @@ public class MainActivity extends ReactActivity {
             getReactInstanceManager().getCurrentReactContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                     .emit("on_key_pressed", params);
         }
-        if (keyCode == 131) {
-            if (mWakeLock != null && mKeyguardLock != null) {
-                mWakeLock.acquire();
-                mKeyguardLock.disableKeyguard();
-            }
-        }
+//        if (keyCode == 131) {
+//            if (mWakeLock != null && mKeyguardLock != null) {
+//                mWakeLock.acquire();
+//                mKeyguardLock.disableKeyguard();
+//            }
+//        }
         return super.onKeyUp(keyCode, event);
     }
 
@@ -95,13 +97,14 @@ public class MainActivity extends ReactActivity {
                 Pin.setFunc("PC1", Pin.FUNC_OUTPUT);
                 Pin.setData("PC1", Pin.DATA_HIGH);
 //                Log.d(TAG, "onReceive: 电量小于15，亮灯");
-            } else if (currentBattery >15) {
+            } else if (currentBattery > 15) {
                 Pin.setFunc("PC1", Pin.FUNC_DISABLED);
                 Pin.setData("PC1", Pin.DATA_LOW);
 //                Log.d(TAG, "onReceive:电量大于15灭灯 ");
             }
         }
     };
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

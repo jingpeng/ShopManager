@@ -95,10 +95,12 @@ class AllowanceScreen extends React.Component {
         }
         var qrCodeStr = ''
         if (this.state.index >= 0) {
-            if (this.state.currentData.isDraw) {
+            if (this.state.currentData.isDraw && this.state.index == 0) {
                 qrCodeStr = 'http://wap.tabread.com/draw/' + (this.state.currentData.userId) + '?mac=' + DeviceInfo.getUniqueID()
             } else {
+                console.log('currentData' + this.state.currentData)
                 qrCodeStr = 'http://wap.tabread.com/discount/' + (this.state.currentData.id) + '?mac=' + DeviceInfo.getUniqueID()
+                console.log('新添加Url = ' + qrCodeStr)
             }
         }
         return (
@@ -145,7 +147,6 @@ class AllowanceScreen extends React.Component {
                                 name = rowData.name
                                 content = rowData.description
                             }
-
                             return (
                                 <View>
                                     <View style={styles.divider}/>

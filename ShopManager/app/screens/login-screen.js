@@ -1,12 +1,12 @@
 import React from 'react'
 import {
-    Alert,
     Dimensions,
     StyleSheet,
     Text,
     TextInput,
     ToastAndroid,
     TouchableNativeFeedback,
+    TouchableWithoutFeedback,
     View
 } from 'react-native'
 import {connect} from 'react-redux'
@@ -14,11 +14,7 @@ import DeviceInfo from 'react-native-device-info'
 
 import ApiClient from '../api/api-client'
 import ApiInterface from '../api/api-interface'
-import ApiConstant from '../api/api-constant'
-    ;
-import {exitApp} from "react-native/Libraries/Utilities/BackAndroid";
-import * as BackAndroid from "react-native/Libraries/Utilities/BackAndroid";
-import * as flex from "react-native/Libraries/Performance/CPUProfiler";
+import ApiConstant from '../api/api-constant';
 
 class LoginScreen extends React.Component {
 
@@ -130,6 +126,13 @@ class LoginScreen extends React.Component {
     render() {
         return (
             <View style={styles.container}>
+                <TouchableWithoutFeedback
+                    onPressIn={this.startCount.bind(this)}
+                        onPressOut={this.stopCount.bind(this)}>
+                        <View style={styles.backStyle}>
+                    {/*<Text style={styles.backText}>点击退出</Text>*/}
+                        </View>
+                        </TouchableWithoutFeedback>
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.inputTitle}
@@ -179,21 +182,21 @@ class LoginScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    // backStyle:{
-    //     width:30,
-    //     height:30,
-    //     alignSelf:flex.start
-    //
-    // },
-    // backTextStyle:{
-    //   fontSize:16
-    // },
     container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center'
     },
-    backButton: {},
+                backStyle: {
+                width: 60,
+                height: 60,
+                position: 'absolute',
+                left:0,
+                top: 0,
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: '#233'
+            },
     inputContainer: {
         flexDirection: 'row',
         justifyContent: 'center',

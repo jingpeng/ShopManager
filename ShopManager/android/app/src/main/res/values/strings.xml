@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ShopManager</string>
+    <string name="sample_device_admin_description">授予权限</string>
 </resources>
