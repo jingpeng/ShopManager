@@ -41,7 +41,7 @@ class AllowanceScreen extends React.Component {
     componentDidMount() {
         this.timer = setTimeout(() => {
             this.props.navigation.dispatch({type: 'Allowance2Ad'})
-        }, 30000)
+        }, envData.shutTime * 1000)
 
         console.log(this.props.data)
         if (this.props.data.length >= 0)

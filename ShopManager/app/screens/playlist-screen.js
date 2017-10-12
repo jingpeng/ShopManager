@@ -181,7 +181,7 @@ class PlaylistScreen extends React.Component {
 
         this.timer = setTimeout(() => {
             this.props.navigation.dispatch({type: 'Playlist2Ad'})
-        }, 30000)
+        }, envData.shutTime * 1000)
 
         var all = this.props.advs
         for (var i = 0; i < all.length; i++) {

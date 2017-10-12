@@ -74,9 +74,8 @@ class PlayFullScreen extends React.Component {
     }
 
     back() {
-        this.props.navigation.dispatch({type: 'PlayFull2Ad'})
-        //this.props.navigation.dispatch({ type: 'Playlist', advs: this.mapStateToProps.data})
-        // console.log(this.props.navigation)
+        // this.props.navigation.dispatch({type: 'PlayFull2Ad'})
+        this.props.navigation.dispatch({type: 'Playlist2Ad'})
     }
 
     render() {

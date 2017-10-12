@@ -104,7 +104,7 @@ class AdScreen extends React.Component {
                 return response.json()
             })
             .then((json) => {
-                console.log('更新信息Json'+json.data)
+                console.log('更新信息Json' + json.data)
                 envData = json.data
                 if (VersionNumber.buildVersion < parseInt(envData.version, 10)) {
                     this.downloadApk()
@@ -426,24 +426,26 @@ class AdScreen extends React.Component {
         })
     }
 
-    startCount(){
-        this.startTime=new Date().getTime()
-        console.log('当前时间 = '+ this.startTime)
-        this._timer = setTimeout(()=> {BackAndroid.exitApp();
-        this.startTime = 0;
-        console.log("定时器")
-        },10000)
+    startCount() {
+        this.startTime = new Date().getTime()
+        console.log('当前时间 = ' + this.startTime)
+        this._timer = setTimeout(() => {
+            BackAndroid.exitApp();
+            this.startTime = 0;
+            console.log("定时器")
+        }, 10000)
     }
-    stopCount(){
+
+    stopCount() {
         this.endTime = new Date().getTime()
-        console.log('结束时间 = '+ this.endTime)
-        console.log( parseInt(this.endTime,10)-parseInt(this.startTime,10))
-        if(parseInt(this.endTime,10)-parseInt(this.startTime,10)<10000){
+        console.log('结束时间 = ' + this.endTime)
+        console.log(parseInt(this.endTime, 10) - parseInt(this.startTime, 10))
+        if (parseInt(this.endTime, 10) - parseInt(this.startTime, 10) < 10000) {
             console.log("清除")
-            this._timer&& clearTimeout(this._timer)
-            console.log('2223' +this._timer)
-            this.startTime=0;
-            this.endTime=0;
+            this._timer && clearTimeout(this._timer)
+            console.log('2223' + this._timer)
+            this.startTime = 0;
+            this.endTime = 0;
         }
     }
 
@@ -744,29 +746,9 @@ class AdScreen extends React.Component {
                 <OrderSuccessModal parent={this}/>
             </View>
         )
-
-        // let exitStartTime=0
-        // let exitLastTime=0
-        //
-        // function getTime() {
-        //     return new Date().getDate()
-        // }
-        //
-        // function exitApp() {
-        //     exitStartTime = getTime()
-        //     timer.setTimeout(BackAndroid.exitApp(), 10000);
-        // }
-        //
-        // function judgeTimeOut() {
-        //     exitLastTime = getTime()
-        //     if (exitLastTime - exitStartTime < 10000) {
-        //         exitLastTime = 0;
-        //         exitStartTime = 0;
-        //         timer.cancel()
-        //     }
-        // }
     }
 }
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -853,7 +835,7 @@ const styles = StyleSheet.create({
         width: 60,
         height: 60,
         position: 'absolute',
-        left:0,
+        left: 0,
         top: 0,
         justifyContent: 'center',
         alignItems: 'center',

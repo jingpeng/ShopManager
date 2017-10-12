@@ -8,7 +8,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.PowerManager;
 import android.util.Log;
 
@@ -22,12 +24,25 @@ import java.util.TimerTask;
 public class RayStatusService extends Service {
     private boolean screenStatus;
     private static final String TAG = "RayStatusService";
+    public static final int GET_DEVICE_MANAGER_PERMISSION = 100;
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case GET_DEVICE_MANAGER_PERMISSION:
+                    getPermissionDeviceManager((ComponentName) msg.obj);
+                    break;
+                default:
+            }
+        }
+    };
 
     BroadcastReceiver screenStatusReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals("android.intent.action.SCREEN_ON")) {
                 screenStatus = true;
+                mStartTime = new Date().getTime();
                 Log.d("Pingmu", "onReceive: 屏幕亮");
             } else if (intent.getAction().equals("android.intent.action.SCREEN_OFF")) {
                 screenStatus = false;
@@ -35,7 +50,7 @@ public class RayStatusService extends Service {
             }
         }
     };
-    private long mFirstTime = new Date().getTime();
+    private long mStartTime = new Date().getTime();
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -62,7 +77,7 @@ public class RayStatusService extends Service {
                 //当前状态为0，不进行操作
                 if (rayStatus == 0) {
                     long endTime = new Date().getTime();
-                    if (endTime - mFirstTime > 10000) {
+                    if (endTime - mStartTime > 5 * 60 * 1000) {
                         closeScreen();
                     } else {
 
@@ -76,7 +91,7 @@ public class RayStatusService extends Service {
                         //开启定时器，设置五分钟
                         openScreen();
                     }
-                    mFirstTime = new Date().getTime();
+                    mStartTime = new Date().getTime();
                 }
             }
         };
@@ -85,10 +100,6 @@ public class RayStatusService extends Service {
     }
 
     private void openScreen() {
-//        //启用屏幕常亮功能
-//        pm = (PowerManager) getSystemService(POWER_SERVICE);
-//        wakeLock = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
-//        wakeLock.acquire();
         PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
         PowerManager.WakeLock mWakeLock = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK, "SimpleTimer");
 
@@ -97,7 +108,6 @@ public class RayStatusService extends Service {
         mWakeLock.acquire();
         mKeyguardLock.disableKeyguard();
     }
-
     private void closeScreen() {
         Log.d(TAG, "關閉屏幕");
         ComponentName componentName = new ComponentName(this, AdminReceiver.class);
@@ -105,12 +115,21 @@ public class RayStatusService extends Service {
         if (manager.isAdminActive(componentName)) {
             manager.lockNow();
         } else {
-            Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-            intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
-            intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-                    "请打开设备管理器");
-            startActivity(intent);
+
+            Message msg = new Message();
+            msg.obj = componentName;
+            msg.what = GET_DEVICE_MANAGER_PERMISSION;
+            mHandler.sendMessage(msg);
+
         }
     }
 
+    //检测获取设备管理器权限
+    private void getPermissionDeviceManager(ComponentName componentName) {
+        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
+        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,
+                "请打开设备管理器");
+        startActivity(intent);
+    }
 }
