@@ -104,7 +104,7 @@ class AdScreen extends React.Component {
                 return response.json()
             })
             .then((json) => {
-                console.log('更新信息Json' + json.data)
+                // console.log( json)
                 envData = json.data
                 if (VersionNumber.buildVersion < parseInt(envData.version, 10)) {
                     this.downloadApk()

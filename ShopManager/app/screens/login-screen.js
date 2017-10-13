@@ -4,7 +4,7 @@ import {
     StyleSheet,
     Text,
     TextInput,
-    ToastAndroid,
+    ToastAndroid, TouchableHighlight,
     TouchableNativeFeedback,
     TouchableWithoutFeedback,
     View
@@ -15,6 +15,7 @@ import DeviceInfo from 'react-native-device-info'
 import ApiClient from '../api/api-client'
 import ApiInterface from '../api/api-interface'
 import ApiConstant from '../api/api-constant';
+import * as BackAndroid from "react-native/Libraries/Utilities/BackAndroid";
 
 class LoginScreen extends React.Component {
 
@@ -27,8 +28,14 @@ class LoginScreen extends React.Component {
         super(props)
         this.state = {
             userName: "",
-            password: ""
+
+            password: "",
         }
+
+
+        this._timer = null;
+        this.startTime = 0;
+        this.endTime = 0;
 
         this.userLogin.bind(this)
         this.deviceAdd.bind(this)
@@ -50,7 +57,7 @@ class LoginScreen extends React.Component {
                 return response.json()
             })
             .then((json) => {
-                console.log(json)
+                console.log("json = "+json)
                 if (json.callStatus == ApiConstant.SUCCEED) {
                     if (!this.props.defaultPlace) {
                         this.deviceAdd(json)
@@ -73,7 +80,7 @@ class LoginScreen extends React.Component {
                 return response.json()
             })
             .then((json) => {
-                console.log(json)
+                console.log("1" + json)
                 if (json.callStatus == ApiConstant.SUCCEED) {
                     this.props.navigation.dispatch({type: 'Login', userData: loginResponse, deviceData: json.data})
                 } else {
@@ -92,7 +99,7 @@ class LoginScreen extends React.Component {
                 return response.json()
             })
             .then((json) => {
-                console.log(json)
+                console.log("2"+ json)
                 if (json.callStatus == ApiConstant.SUCCEED) {
                     this.props.navigation.dispatch({type: 'Login', userData: loginResponse, deviceData: json.data})
                 } else {
@@ -124,62 +131,83 @@ class LoginScreen extends React.Component {
             })
     }
 
+    startCount() {
+        this.startTime = new Date().getTime()
+        console.log('当前时间 = ' + this.startTime)
+        this._timer = setTimeout(() => {
+            BackAndroid.exitApp();
+            this.startTime = 0;
+            console.log("定时器")
+        }, 10000)
+    }
+
+    stopCount() {
+        this.endTime = new Date().getTime()
+        console.log('结束时间 = ' + this.endTime)
+        console.log(parseInt(this.endTime, 10) - parseInt(this.startTime, 10))
+        if (parseInt(this.endTime, 10) - parseInt(this.startTime, 10) < 10000) {
+            console.log("清除")
+            this._timer && clearTimeout(this._timer)
+            console.log('2223' + this._timer)
+            this.startTime = 0;
+            this.endTime = 0;
+        }
+    }
+
     render() {
         return (
             <View style={styles.container}>
-                {/*<TouchableWithoutFeedback*/}
-                    {/*onPressIn={this.startCount.bind(this)}*/}
-                    {/*onPressOut={this.stopCount.bind(this)}>*/}
-                    {/*<View style={styles.backStyle}>*/}
-                        {/*/!*<Text style={styles.backText}>点击退出</Text>*!/*/}
-                    {/*</View>*/}
-                {/*</TouchableWithoutFeedback>*/}
-                {/*<View style={styles.rootStyle}>*/}
-                    <View style={styles.inputContainer}>
-                        <TextInput
-                            style={styles.inputTitle}
-                            editable={false}
-                            placeholder={'商铺账号：'}
-                            underlineColorAndroid={'transparent'}
-                        />
-                        <TextInput
-                            onChangeText={this.userNameOnChange.bind(this)}
-                            style={styles.inputContent}
-                            underlineColorAndroid={'transparent'}
-                        />
+                {/*<View style={styles.backStyle}/>*/}
+                <TouchableWithoutFeedback
+                    onPressIn={this.startCount.bind(this)}
+                    onPressOut={this.stopCount.bind(this)}>
+                    <View style={styles.backStyle}>
                     </View>
-                    <View style={styles.divider}/>
+                </TouchableWithoutFeedback>
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.inputTitle}
+                        editable={false}
+                        placeholder={'商铺账号：'}
+                        underlineColorAndroid={'transparent'}
+                    />
+                    <TextInput
+                        onChangeText={this.userNameOnChange.bind(this)}
+                        style={styles.inputContent}
+                        underlineColorAndroid={'transparent'}
+                    />
+                </View>
+                <View style={styles.divider}/>
 
-                    <View style={styles.space1}/>
+                <View style={styles.space1}/>
 
-                    <View style={styles.inputContainer}>
-                        <TextInput
-                            style={styles.inputTitle}
-                            editable={false}
-                            placeholder={'商铺密码：'}
-                            underlineColorAndroid={'transparent'}
-                        />
-                        <TextInput
-                            onChangeText={this.passwordOnChange.bind(this)}
-                            style={styles.inputContent}
-                            underlineColorAndroid={'transparent'}
-                        />
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.inputTitle}
+                        editable={false}
+                        placeholder={'商铺密码：'}
+                        underlineColorAndroid={'transparent'}
+                    />
+                    <TextInput
+                        onChangeText={this.passwordOnChange.bind(this)}
+                        style={styles.inputContent}
+                        underlineColorAndroid={'transparent'}
+                    />
+                </View>
+                <View style={styles.divider}/>
+
+                <View style={styles.space2}/>
+                <TouchableNativeFeedback
+                    onPress={() => {
+                        this.userLogin()
+                    }}
+                    background={TouchableNativeFeedback.SelectableBackground()}>
+                    <View style={styles.loginButton}>
+                        <Text style={styles.loginText}>确定</Text>
                     </View>
-                    <View style={styles.divider}/>
-
-                    <View style={styles.space2}/>
-
-                    <TouchableNativeFeedback
-                        onPress={() => {
-                            this.userLogin()
-                        }}
-                        background={TouchableNativeFeedback.SelectableBackground()}>
-                        <View style={styles.loginButton}>
-                            <Text style={styles.loginText}>确定</Text>
-                        </View>
-                    </TouchableNativeFeedback>
-                {/*</View>*/}
+                </TouchableNativeFeedback>
             </View>
+
         )
     }
 }
@@ -188,23 +216,24 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        position: 'relative',
+        alignItems: 'center',
     },
-    // rootStyle: {
-    //     flex:1,
-    //     height: Dimensions.get('window').height,
-    //     width: Dimensions.get('window').width,
-    //     position: 'absolute'
-    // },
     backStyle: {
         width: 60,
         height: 60,
         position: 'absolute',
-        left:0,
+        left: 0,
         top: 0,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'red'
+        backgroundColor: 'rgba(0,0,0,0)'
+    },
+    backText: {
+        position: 'absolute',
+        height: 60,
+        width: 60,
+        top: 0,
+        left: 0,
+        fontSize: 22
     },
     inputContainer: {
         flexDirection: 'row',
@@ -253,5 +282,6 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => ({
     defaultPlace: state.nav.defaultPlace,
 })
+
 
 export default connect(mapStateToProps)(LoginScreen)

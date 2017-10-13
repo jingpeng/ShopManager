@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  View
+    View
 } from 'react-native'
 import DeviceInfo from 'react-native-device-info'
 
@@ -9,51 +9,55 @@ import ApiInterface from '../api/api-interface'
 import ApiConstant from '../api/api-constant'
 
 export default class WelcomeScreen extends React.Component {
-  static navigationOptions = {
-    header: null
-  }
+    static navigationOptions = {
+        header: null
+    }
 
-  constructor(props) {
-    super(props)
+    constructor(props) {
+        super(props)
 
-    this.deviceGetDetailsByMac.bind(this)
-  }
+        this.deviceGetDetailsByMac.bind(this)
+    }
 
-  componentDidMount() {
-    this.deviceGetDetailsByMac()
-  }
+    componentDidMount() {
+        this.deviceGetDetailsByMac()
+    }
 
-  deviceGetDetailsByMac() {
-    ApiClient
-    .access(ApiInterface.deviceGetDetailsByMac(DeviceInfo.getUniqueID()))
-    .then((response) => {
-      return response.json()
-    })
-    .then((json) => {
-      console.log(json)
-      if (json.callStatus == ApiConstant.SUCCEED) {
-        if (json.data == null) {
-          this.props.navigation.dispatch({ type: 'Welcome' })
-        } else {
-          if (json.data.place == ApiConstant.DEFAULT_DEVICE_PLACE) {
-            this.props.navigation.dispatch({ type: 'Welcome', defaultPlace: true })
-          } else {
-            this.props.navigation.dispatch({ type: 'Ad', deviceData: json.data })
-          }
-        }
-      } else {
-        ToastAndroid.show(json.data, ToastAndroid.SHORT)
-      }
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-  }
+    deviceGetDetailsByMac() {
+        ApiClient
+            .access(ApiInterface.deviceGetDetailsByMac(DeviceInfo.getUniqueID()))
+            .then((response) => {
+                return response.json()
+            })
+            .then((json) => {
+                console.log( json)
+                if (json.callStatus == ApiConstant.SUCCEED) {
+                    if (json.data == null) {
+                        this.props.navigation.dispatch({type: 'Welcome'})
+                    } else {
+                        if (json.data.userId) {
+                            storage.save({key: "USERID", data: json.data.userId})
+                            console.log(json.data.userId)
+                        }
+                        if (json.data.place == ApiConstant.DEFAULT_DEVICE_PLACE) {
+                            this.props.navigation.dispatch({type: 'Welcome', defaultPlace: true})
+                        } else {
+                            this.props.navigation.dispatch({type: 'Ad', deviceData: json.data})
+                        }
+                    }
+                } else {
+                    ToastAndroid.show(json.data, ToastAndroid.SHORT)
+                }
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+    }
 
-  render() {
-    return (
-      <View>
-      </View>
-    )
-  }
+    render() {
+        return (
+            <View>
+            </View>
+        )
+    }
 }

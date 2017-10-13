@@ -50,6 +50,13 @@ class AllowanceScreen extends React.Component {
                 index: 0,
                 currentData: this.props.data[0]
             })
+        // //如果currentData存在的话，将数据进行存
+        // if(this.state.currentData.userId){
+        //     storage.save({
+        //         key:'USERID',
+        //         data:this.state.currentData.userId
+        //     })
+        // }
     }
 
     componentWillUnmount() {
@@ -95,7 +102,14 @@ class AllowanceScreen extends React.Component {
         }
         var qrCodeStr = ''
         if (this.state.index >= 0) {
-            if (this.state.currentData.isDraw && this.state.index == 0) {
+            storage.load({
+                key: 'USERID'
+            }).then(ret => {
+                console.log("retUserID" + ret);
+                this.state.currentData.userId = ret;
+            })
+            if (this.state.currentData.isDraw && this.state.index == 0 && this.state.currentData.userId) {
+                console.log("当前currentData = " + this.state.currentData.userId);
                 qrCodeStr = 'http://wap.tabread.com/draw/' + (this.state.currentData.userId) + '?mac=' + DeviceInfo.getUniqueID()
             } else {
                 console.log('currentData' + this.state.currentData)
