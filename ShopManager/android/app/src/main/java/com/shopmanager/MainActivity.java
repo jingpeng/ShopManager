@@ -31,14 +31,14 @@ public class MainActivity extends ReactActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //初始化广播接收者
-        initReceiver();
+        //initReceiver();
         //開啓紅外服務
-        startService(new Intent(this, RayStatusService.class));
+        //startService(new Intent(this, RayStatusService.class));
+
 
         ComponentName componentName = new ComponentName(this, AdminReceiver.class);
         DevicePolicyManager manager = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
         if (manager.isAdminActive(componentName)) {
-//            manager.lockNow();
         } else {
             Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
             intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
@@ -79,12 +79,13 @@ public class MainActivity extends ReactActivity {
             getReactInstanceManager().getCurrentReactContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                     .emit("on_key_pressed", params);
         }
-//        if (keyCode == 131) {
-//            if (mWakeLock != null && mKeyguardLock != null) {
-//                mWakeLock.acquire();
-//                mKeyguardLock.disableKeyguard();
-//            }
-//        }
+        //当按压home 键的时候，点亮屏幕
+        if (keyCode == 122) {
+            if (mWakeLock != null && mKeyguardLock != null) {
+                mWakeLock.acquire();
+                mKeyguardLock.disableKeyguard();
+            }
+        }
         return super.onKeyUp(keyCode, event);
     }
 

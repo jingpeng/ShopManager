@@ -272,7 +272,7 @@ class PlaylistScreen extends React.Component {
     }
 
     playFullScreen() {
-        this.props.navigation.dispatch({type: 'PlayFull', data: this.state.currentData})
+        this.props.navigation.dispatch({type: 'PlayFull', data: [this.state.currentData,this.props.advs]})
     }
 
     render() {

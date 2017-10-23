@@ -73,6 +73,7 @@ public class RayStatusService extends Service {
             @Override
             public void run() {
                 int rayStatus = Pin.getData("PC2");
+                int homeStatus = Pin.getData("PL4");
                 Log.d(TAG, "rayStatus: " + rayStatus);
                 //当前状态为0，不进行操作
                 if (rayStatus == 0) {
@@ -82,9 +83,8 @@ public class RayStatusService extends Service {
                     } else {
 
                     }
-                }
-                //当前状态为1，判断屏幕状态
-                else if (rayStatus == 1) {
+                } else if (rayStatus == 1) {
+                    //当前状态为1，判断屏幕状态
                     if (screenStatus) {
                     } else {
                         //屏幕关闭的情况下，打开屏幕
@@ -92,6 +92,15 @@ public class RayStatusService extends Service {
                         openScreen();
                     }
                     mStartTime = new Date().getTime();
+                }
+                if (homeStatus == 0) {
+                } else if (homeStatus == 1) {
+                    //当按压home键了，检测屏幕状态，黑屏的话点亮屏幕
+                    if (!screenStatus) {
+                        openScreen();
+                    } else if (screenStatus) {
+
+                    }
                 }
             }
         };
@@ -108,6 +117,7 @@ public class RayStatusService extends Service {
         mWakeLock.acquire();
         mKeyguardLock.disableKeyguard();
     }
+
     private void closeScreen() {
         Log.d(TAG, "關閉屏幕");
         ComponentName componentName = new ComponentName(this, AdminReceiver.class);

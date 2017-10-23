@@ -86,7 +86,12 @@ class AdScreen extends React.Component {
             isSelf: true,
             selfAds: [],
             adminAdvs: [],
-            key: 0
+            key: 0,
+
+            allowanceIsFirst: true,
+            gameIsFirst: true,
+            listIsFirst: true,
+
         }
 
         this._timer = null;
@@ -95,6 +100,8 @@ class AdScreen extends React.Component {
 
         this.getAdList.bind(this)
         this.downloadAds.bind(this)
+
+
     }
 
     envGetDetailsByMac() {
@@ -455,6 +462,7 @@ class AdScreen extends React.Component {
             .access(ApiInterface.newAdvGetList(deviceData.userId, ApiConstant.DEFAULT_NUMBER_PER_PAGE, 1))
             .then((response) => {
                 return response.json()
+
             })
             .then((json1) => {
                 console.log(json1)
@@ -474,7 +482,11 @@ class AdScreen extends React.Component {
                             } else {
                                 this.props.navigation.dispatch({type: 'Allowance', data: json1.data})
                             }
-
+                            // setTimeout(
+                            //     this.setState({
+                            //         allowanceIsFirst: true
+                            //     })
+                            //     , 2000);
                         })
                         .catch((error) => {
                             console.log(error)
@@ -490,10 +502,12 @@ class AdScreen extends React.Component {
 
     launchGame() {
         this.props.navigation.dispatch({type: 'Game'})
+
     }
 
     launchPlaylist() {
         this.props.navigation.dispatch({type: 'Playlist', advs: this.state.selfAds})
+
     }
 
     showBuyModal() {
@@ -550,7 +564,7 @@ class AdScreen extends React.Component {
                 }
                 this.orderSuccessModalTimer = new Timer(() => {
                     this.hideOrderSuccessModal()
-                }, 18 * 1000)
+                }, 2 * 1000)//下单成功之后的弹框三秒之后隐藏
                 console.log(json)
             })
             .catch((error) => {
@@ -602,6 +616,48 @@ class AdScreen extends React.Component {
         }
 
         RCTDeviceEventEmitter.emit('on_next', e.nativeEvent.position)
+    }
+
+    judgeIsFirst(name, isFirst) {
+        switch (name) {
+            case 'allowance':
+                if (isFirst) {
+                    this.setState({
+                        allowanceIsFirst: false
+                    })
+                    //打開頁面
+                    this.launchAllowance()
+                } else if (!isFirst) {
+                    //多次點擊無響應
+                    ToastAndroid.show("請勿多次點擊", ToastAndroid.SHORT)
+                }
+                break;
+            case 'playlist':
+                if (isFirst) {
+                    //打開頁面
+                    this.setState({
+                        listIsFirst: false
+                    })
+                    this.launchPlaylist()
+                } else if (!isFirst) {
+                    //多次點擊無響應
+                    ToastAndroid.show("請勿多次點擊", ToastAndroid.SHORT)
+                }
+                break;
+            case 'game':
+                if (isFirst) {
+                    //打開頁面
+                    this.setState({
+                        gameIsFirst: false
+                    })
+                    this.launchGame()
+                } else if (!isFirst) {
+                    //多次點擊無響應
+                    ToastAndroid.show("請勿多次點擊", ToastAndroid.SHORT)
+                }
+                break;
+        }
+
     }
 
     render() {
@@ -702,6 +758,8 @@ class AdScreen extends React.Component {
             buyButtonHolder =
                 <View/>
         }
+
+
         return (
             <View style={styles.container}>
                 <ActivityIndicator
@@ -717,8 +775,10 @@ class AdScreen extends React.Component {
                         {/*<Text style={styles.backText}>点击退出</Text>*/}
                     </View>
                 </TouchableWithoutFeedback>
+
                 <TouchableNativeFeedback
                     onPress={this.launchAllowance.bind(this)}>
+                    {/*// onPress={() => this.judgeIsFirst('allowance', this.state.allowanceIsFirst)}>*/}
                     <View style={styles.allowanceContainer}>
                         <Image
                             style={styles.allowanceImage}
@@ -727,6 +787,7 @@ class AdScreen extends React.Component {
                 </TouchableNativeFeedback>
                 <TouchableNativeFeedback
                     onPress={this.launchGame.bind(this)}>
+                    {/*onPress={() => this.judgeIsFirst('game', this.state.gameIsFirst)}>*/}
                     <View style={styles.gameContainer}>
                         <Image
                             style={styles.gameImage}
@@ -735,6 +796,7 @@ class AdScreen extends React.Component {
                 </TouchableNativeFeedback>
                 <TouchableNativeFeedback
                     onPress={this.launchPlaylist.bind(this)}>
+                    {/*onPress={() => this.judgeIsFirst('playlist', this.state.listIsFirst)}>*/}
                     <View style={styles.billContainer}>
                         <Image
                             style={styles.billImage}

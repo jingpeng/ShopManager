@@ -4,6 +4,7 @@ import {
     Image,
     StyleSheet,
     Text,
+    ToastAndroid,
     TouchableWithoutFeedback,
     View
 } from 'react-native'
@@ -23,7 +24,7 @@ class PlayFullScreen extends React.Component {
             this.props.navigation.dispatch({type: 'PlayFull2Ad'})
         }, envData.popTime * 1000)
 
-        var data = this.props.data
+        var data = this.props.data[0]
         // 存储用户点击弹出广告操作
         storage.load({key: IOConstant.OPERATE_RECORD})
             .then(result => {
@@ -48,7 +49,7 @@ class PlayFullScreen extends React.Component {
 
     componentWillUnmount() {
         this.timer && clearTimeout(this.timer)
-        var data = this.props.data
+        var data = this.props.data[0]
         // 存储用户点击弹出广告关闭 操作
         storage.load({key: IOConstant.OPERATE_RECORD})
             .then(result => {
@@ -75,21 +76,22 @@ class PlayFullScreen extends React.Component {
 
     back() {
         // this.props.navigation.dispatch({type: 'PlayFull2Ad'})
-        this.props.navigation.dispatch({type: 'Playlist2Ad'})
+        // this.props.advs
+        this.props.navigation.dispatch({type: 'Playlist', advs: this.props.data[1]})
     }
 
     render() {
         var holder = null
-        if (this.props.data.advertisement.fileType == 0) {
+        if (this.props.data[0].advertisement.fileType == 0) {
             holder =
                 <Image
                     style={styles.adBackground}
                     resizeMode={'contain'}
-                    source={{uri: this.props.data.advertisement.fileSrc}}/>
-        } else if (this.props.data.advertisement.fileType == 1) {
+                    source={{uri: this.props.data[0].advertisement.fileSrc}}/>
+        } else if (this.props.data[0].advertisement.fileType == 1) {
             holder =
                 <Video
-                    source={{uri: this.props.data.advertisement.fileSrc}}   // Can be a URL or a local file.                                      // Store reference
+                    source={{uri: this.props.data[0].advertisement.fileSrc}}   // Can be a URL or a local file.                                      // Store reference
                     rate={1.0}                              // 0 is paused, 1 is normal.
                     volume={1.0}                            // 0 is muted, 1 is normal.
                     muted={false}                           // Mutes the audio entirely.

@@ -58,7 +58,7 @@ public class MainApplication extends Application implements ReactApplication {
 //         Pin.setFunc("PC1", Pin.FUNC_OUTPUT);
 //         Pin.setData("PC1", Pin.DATA_HIGH);
 
-        //clock
+        //clock 紅外綫狀態
         // Pin.setFunc("PC2", Pin.FUNC_INPUT);
         // Pin.setData("PC2", Pin.DATA_HIGH);
 
