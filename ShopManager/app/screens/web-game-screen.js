@@ -1,14 +1,6 @@
 import React from 'react'
-import {
-  Dimensions,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableWithoutFeedback,
-  View,
-  WebView
-} from 'react-native'
-import { connect } from 'react-redux'
+import {Dimensions, StyleSheet, Text, TouchableWithoutFeedback, View, WebView} from 'react-native'
+import {connect} from 'react-redux'
 import moment from 'moment'
 
 import IOConstant from '../io/io-constant'

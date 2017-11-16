@@ -4,7 +4,7 @@ import {
     StyleSheet,
     Text,
     TextInput,
-    ToastAndroid, TouchableHighlight,
+    ToastAndroid,
     TouchableNativeFeedback,
     TouchableWithoutFeedback,
     View

@@ -6,7 +6,8 @@ import {
     Image,
     StyleSheet,
     Text,
-    TouchableNativeFeedback, TouchableWithoutFeedback,
+    TouchableNativeFeedback,
+    TouchableWithoutFeedback,
     View,
     ViewPagerAndroid
 } from 'react-native'
@@ -87,11 +88,7 @@ class AdScreen extends React.Component {
             selfAds: [],
             adminAdvs: [],
             key: 0,
-
-            allowanceIsFirst: true,
-            gameIsFirst: true,
-            listIsFirst: true,
-
+            deviceData: this.props.deviceData,
         }
 
         this._timer = null;
@@ -123,7 +120,6 @@ class AdScreen extends React.Component {
                     } else {
                         RCTDeviceEventEmitter.emit('all_load', this.state.selfAds)
                     }
-
                     this.setState({isSelf: !this.state.isSelf, key: this.state.key + 1})
                     this.switchTimer = new Timer(callback, this.state.isSelf ? envData.playTime * 1000 : envData.playTime * envData.playRate * 1000)
                 }
@@ -217,12 +213,15 @@ class AdScreen extends React.Component {
         })
 
 
-//home键点击事件
+        //home键点击事件
         RCTDeviceEventEmitter.addListener('on_key_pressed', function (advs) {
+            console.log(advs.keyCode)
             if (advs.keyCode == 122) {
                 if (!global.popupAd && copy.state.popupAd !== null) {
                     global.popupAd = true
-                    console.log(copy.state, 'ghj')
+                    console.log('ghj')
+                    console.log(copy.state.popupAd)
+                    console.log('ghj')
                     copy.props.navigation.dispatch({type: 'PlayFull', data: copy.state.popupAd})
                 }
             }
@@ -289,6 +288,10 @@ class AdScreen extends React.Component {
             }
         })
 
+        this.initData();
+    }
+
+    initData() {
         if (this.props.deviceData != undefined) {
             this.envGetDetailsByMac()
             this.setState({loading: true})
@@ -361,6 +364,8 @@ class AdScreen extends React.Component {
     }
 
     downloadAds(jsons) {
+        console.log("json")
+        console.log(jsons)
         var advs = jsons[0].data
         var advsAdmin = jsons[1].data
 
@@ -383,10 +388,8 @@ class AdScreen extends React.Component {
             this.setState({popupAd: popupAd})
         }
         this.setState({selfAds: advs, adminAdvs: advsAdmin})
-
         storage.save({key: IOConstant.ADV_LIST, data: advs})
         storage.save({key: IOConstant.ADV_LIST_ADMIN, data: advsAdmin})
-
         // 检查目录是否存在
         RNFS.exists(directory).then((result) => {
             if (!result) {
@@ -456,13 +459,12 @@ class AdScreen extends React.Component {
         }
     }
 
-    launchAllowance() {
-        var deviceData = this.props.deviceData
+    //获取福利数据
+    getAllowanceData(deviceData) {
         ApiClient
             .access(ApiInterface.newAdvGetList(deviceData.userId, ApiConstant.DEFAULT_NUMBER_PER_PAGE, 1))
             .then((response) => {
                 return response.json()
-
             })
             .then((json1) => {
                 console.log(json1)
@@ -478,15 +480,13 @@ class AdScreen extends React.Component {
                                 var drawData = json2.data
                                 drawData.isDraw = true
                                 var array = new Array(drawData)
-                                this.props.navigation.dispatch({type: 'Allowance', data: array.concat(json1.data)})
+                                this.props.navigation.dispatch({
+                                    type: 'Allowance',
+                                    data: array.concat(json1.data)
+                                })
                             } else {
                                 this.props.navigation.dispatch({type: 'Allowance', data: json1.data})
                             }
-                            // setTimeout(
-                            //     this.setState({
-                            //         allowanceIsFirst: true
-                            //     })
-                            //     , 2000);
                         })
                         .catch((error) => {
                             console.log(error)
@@ -498,6 +498,23 @@ class AdScreen extends React.Component {
             .catch((error) => {
                 console.log(error)
             })
+    }
+
+    launchAllowance() {
+        var copy = this
+        var deviceData = this.state.deviceData
+        console.log("deviceData")
+        console.log(deviceData)
+        try {
+            this.getAllowanceData(deviceData)
+        } catch (e) {
+            storage.load({key: IOConstant.DEVICE_DATE})
+                .then(result => {
+                    console.log(result)
+                    copy.getAllowanceData(result)
+                })
+            console.log("开启福利失败")
+        }
     }
 
     launchGame() {
@@ -564,7 +581,7 @@ class AdScreen extends React.Component {
                 }
                 this.orderSuccessModalTimer = new Timer(() => {
                     this.hideOrderSuccessModal()
-                }, 2 * 1000)//下单成功之后的弹框三秒之后隐藏
+                }, 2 * 1000)//下单成功之后的弹框2秒之后隐藏
                 console.log(json)
             })
             .catch((error) => {
@@ -616,48 +633,6 @@ class AdScreen extends React.Component {
         }
 
         RCTDeviceEventEmitter.emit('on_next', e.nativeEvent.position)
-    }
-
-    judgeIsFirst(name, isFirst) {
-        switch (name) {
-            case 'allowance':
-                if (isFirst) {
-                    this.setState({
-                        allowanceIsFirst: false
-                    })
-                    //打開頁面
-                    this.launchAllowance()
-                } else if (!isFirst) {
-                    //多次點擊無響應
-                    ToastAndroid.show("請勿多次點擊", ToastAndroid.SHORT)
-                }
-                break;
-            case 'playlist':
-                if (isFirst) {
-                    //打開頁面
-                    this.setState({
-                        listIsFirst: false
-                    })
-                    this.launchPlaylist()
-                } else if (!isFirst) {
-                    //多次點擊無響應
-                    ToastAndroid.show("請勿多次點擊", ToastAndroid.SHORT)
-                }
-                break;
-            case 'game':
-                if (isFirst) {
-                    //打開頁面
-                    this.setState({
-                        gameIsFirst: false
-                    })
-                    this.launchGame()
-                } else if (!isFirst) {
-                    //多次點擊無響應
-                    ToastAndroid.show("請勿多次點擊", ToastAndroid.SHORT)
-                }
-                break;
-        }
-
     }
 
     render() {
@@ -772,13 +747,11 @@ class AdScreen extends React.Component {
                     onPressIn={this.startCount.bind(this)}
                     onPressOut={this.stopCount.bind(this)}>
                     <View style={styles.backStyle}>
-                        {/*<Text style={styles.backText}>点击退出</Text>*/}
                     </View>
                 </TouchableWithoutFeedback>
 
                 <TouchableNativeFeedback
                     onPress={this.launchAllowance.bind(this)}>
-                    {/*// onPress={() => this.judgeIsFirst('allowance', this.state.allowanceIsFirst)}>*/}
                     <View style={styles.allowanceContainer}>
                         <Image
                             style={styles.allowanceImage}

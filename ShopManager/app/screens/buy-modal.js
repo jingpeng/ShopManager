@@ -1,14 +1,13 @@
 import React from 'react';
 import {
-  Image,
-  Modal,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableNativeFeedback,
-  TouchableWithoutFeedback,
-  View,
-  Dimensions
+    Dimensions,
+    Image,
+    Modal,
+    StyleSheet,
+    Text,
+    TouchableNativeFeedback,
+    TouchableWithoutFeedback,
+    View
 } from 'react-native';
 
 export default class BuyModal extends React.Component {

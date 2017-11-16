@@ -3,6 +3,7 @@ import {Dimensions, Image, ListView, StyleSheet, Text, TouchableWithoutFeedback,
 import {connect} from 'react-redux'
 import DeviceInfo from 'react-native-device-info'
 import QRCode from 'react-native-qrcode'
+import IOConstant from "../io/io-constant";
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 
@@ -50,13 +51,6 @@ class AllowanceScreen extends React.Component {
                 index: 0,
                 currentData: this.props.data[0]
             })
-        // //如果currentData存在的话，将数据进行存
-        // if(this.state.currentData.userId){
-        //     storage.save({
-        //         key:'USERID',
-        //         data:this.state.currentData.userId
-        //     })
-        // }
     }
 
     componentWillUnmount() {
@@ -97,25 +91,29 @@ class AllowanceScreen extends React.Component {
             if (this.state.currentData.isDraw) {
                 coverSource = require('../resources/draw-large.png')
             } else {
-                coverSource = {uri: this.state.currentData.bigImgSrc}
+                coverSource = {
+                    uri: this.state ? this.state.currentData.bigImgSrc : require('../resources/draw-large.png')
+                }
             }
         }
         var qrCodeStr = ''
+        var copy = this
         if (this.state.index >= 0) {
             storage.load({
-                key: 'USERID'
+                key: IOConstant.DEVICE_DATE
             }).then(ret => {
-                console.log("retUserID" + ret);
-                this.state.currentData.userId = ret;
+                console.log("retUserID" + ret.userId);
+                this.state.currentData.userId = ret.userId
+                if (this.state.currentData.isDraw && this.state.index == 0 && this.state.currentData.userId) {
+                    // console.log("当前currentData = " + this.state.currentData.userId);
+                    qrCodeStr = 'http://wap.tabread.com/draw/' + (this.state.currentData.userId) + '?mac=' + DeviceInfo.getUniqueID()
+                } else {
+                    // console.log('currentData' + this.state.currentData)
+                    qrCodeStr = 'http://wap.tabread.com/discount/' + (this.state.currentData.id) + '?mac=' + DeviceInfo.getUniqueID()
+                    // console.log('新添加Url = ' + qrCodeStr)
+                }
             })
-            if (this.state.currentData.isDraw && this.state.index == 0 && this.state.currentData.userId) {
-                console.log("当前currentData = " + this.state.currentData.userId);
-                qrCodeStr = 'http://wap.tabread.com/draw/' + (this.state.currentData.userId) + '?mac=' + DeviceInfo.getUniqueID()
-            } else {
-                console.log('currentData' + this.state.currentData)
-                qrCodeStr = 'http://wap.tabread.com/discount/' + (this.state.currentData.id) + '?mac=' + DeviceInfo.getUniqueID()
-                console.log('新添加Url = ' + qrCodeStr)
-            }
+
         }
         return (
             <View style={styles.container}>

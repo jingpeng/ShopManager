@@ -31,9 +31,9 @@ public class MainActivity extends ReactActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //初始化广播接收者
-        //initReceiver();
+        initReceiver();
         //開啓紅外服務
-        //startService(new Intent(this, RayStatusService.class));
+        startService(new Intent(this, RayStatusService.class));
 
 
         ComponentName componentName = new ComponentName(this, AdminReceiver.class);

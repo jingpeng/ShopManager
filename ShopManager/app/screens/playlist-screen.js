@@ -1,22 +1,12 @@
 import React from 'react'
-import {
-    Dimensions,
-    Image,
-    ListView,
-    StyleSheet,
-    Text,
-    TouchableWithoutFeedback,
-    View
-} from 'react-native'
+import {Dimensions, Image, ListView, StyleSheet, Text, TouchableWithoutFeedback, View} from 'react-native'
 import RCTDeviceEventEmitter from 'RCTDeviceEventEmitter'
 import {connect} from 'react-redux'
-import Video from 'react-native-video'
 import moment from 'moment'
 import DeviceInfo from 'react-native-device-info'
 
 import ApiClient from '../api/api-client'
 import ApiInterface from '../api/api-interface'
-import ApiConstant from '../api/api-constant'
 import IOConstant from '../io/io-constant'
 import BuyModal from './buy-modal'
 import OrderSuccessModal from './order-success-modal'
@@ -272,16 +262,29 @@ class PlaylistScreen extends React.Component {
     }
 
     playFullScreen() {
-        this.props.navigation.dispatch({type: 'PlayFull', data: [this.state.currentData,this.props.advs]})
+        this.props.navigation.dispatch({type: 'PlayFull', data: this.state.currentData})
     }
 
     render() {
         var coverSource = null
         if (this.state.index >= 0) {
+            let rowData = this.state.currentData
             if (this.state.currentData.advertisement.fileType == 0) {
-                coverSource = {uri: this.state.currentData.advertisement.fileSrc}
+                // coverSource = {uri: this.state.currentData.advertisement.fileSrc}
+                if (rowData.advertisement.imgSrc == null) {
+                    coverSource = {uri: rowData.advertisement.fileSrc}
+                }
+                //判断图片为GIF动图的时候
+                else {
+                    coverSource = {uri: rowData.advertisement.imgSrc}
+                }
             } else if (this.state.currentData.advertisement.fileType == 1) {
-                coverSource = {uri: this.state.currentData.advertisement.fileSrc + "?vframe/jpg/offset/1/w/640/h/360"}
+                // coverSource = {uri: this.state.currentData.advertisement.fileSrc + "?vframe/jpg/offset/1/w/640/h/360"}
+                if (rowData.advertisement.imgSrc !== null) {
+                    coverSource = {uri: rowData.advertisement.imgSrc}
+                } else {
+                    coverSource = require('../resources/ad-small.png')
+                }
             } else {
                 coverSource = require('../resources/ad-large.png')
             }
@@ -291,6 +294,7 @@ class PlaylistScreen extends React.Component {
         return (
             <View style={styles.container}>
                 {(!this.state.isImage) ? (
+                    /*
                     <Video
                         ref={(ref) => {
                             this.player = ref
@@ -301,11 +305,16 @@ class PlaylistScreen extends React.Component {
                         muted={false}                           // Mutes the audio entirely.
                         paused={false}                          // Pauses playback entirely.
                         repeat={true}                           // Repeat forever.
-                        playInBackground={true}                // Audio continues to play when app entering background.
+                        playInBackground={false}                // Audio continues to play when app entering background.
                         style={styles.backgroundVideo}
                         onEnd={() => {
                             this.player.setNativeProps({seek: 0, paused: false})
                         }}/>
+                    */
+                    <Image
+                        style={styles.backgroundVideo}
+                        source={coverSource}
+                    />
                 ) : (
                     <TouchableWithoutFeedback
                         onPress={this.playFullScreen.bind(this)}>
@@ -316,7 +325,7 @@ class PlaylistScreen extends React.Component {
                             {
                                 (this.state.currentData && this.state.currentData.advertisement.fileType == 1) ? (
                                     <TouchableWithoutFeedback
-                                    onPress={this.playFullScreen.bind(this)}>
+                                        onPress={this.playFullScreen.bind(this)}>
                                         <Image
                                             style={styles.playButtonLarge}
                                             source={require('../resources/start-play-large.png')}
@@ -359,12 +368,34 @@ class PlaylistScreen extends React.Component {
                         showsVerticalScrollIndicator={false}
                         enableEmptySections={true}
                         renderRow={(rowData, sectionId, rowId) => {
+                            // var imageSource = null
+                            // if (rowData.advertisement.fileType == 0) {
+                            //     imageSource = {uri: rowData.advertisement.fileSrc}
+                            // } else if (rowData.advertisement.fileType == 1) {
+                            //     imageSource = {uri: rowData.advertisement.fileSrc + "?vframe/jpg/offset/1/w/640/h/360"}
+                            // } else {
+                            //     imageSource = require('../resources/ad-small.png')
+                            // }
                             var imageSource = null
                             if (rowData.advertisement.fileType == 0) {
-                                imageSource = {uri: rowData.advertisement.fileSrc}
-                            } else if (rowData.advertisement.fileType == 1) {
-                                imageSource = {uri: rowData.advertisement.fileSrc + "?vframe/jpg/offset/1/w/640/h/360"}
-                            } else {
+                                console.log(rowData, '图片');
+                                if (rowData.advertisement.imgSrc == null) {
+                                    imageSource = {uri: rowData.advertisement.fileSrc}
+                                } else {
+                                    imageSource = {uri: rowData.advertisement.imgSrc}
+                                }
+                            }
+                            else if (rowData.advertisement.fileType == 1) {
+
+                                if (rowData.advertisement.imgSrc !== null) {
+                                    //console.log(rowData.advertisement.imgSrc,'视频');
+                                    // imageSource = {uri: rowData.advertisement.fileSrc + "?vframe/jpg/offset/1/w/640/h/360"}
+                                    imageSource = {uri: rowData.advertisement.imgSrc}
+                                } else {
+                                    imageSource = require('../resources/ad-small.png')
+                                }
+                            }
+                            else {
                                 imageSource = require('../resources/ad-small.png')
                             }
                             return (

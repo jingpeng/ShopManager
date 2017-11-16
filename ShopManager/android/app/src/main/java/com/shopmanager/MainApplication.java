@@ -1,12 +1,15 @@
 package com.shopmanager;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.apsl.versionnumber.RNVersionNumberPackage;
 import com.brentvatne.react.ReactVideoPackage;
+import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
+import com.facebook.react.shell.MainPackageConfig;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.fileopener.FileOpenerPackage;
@@ -27,13 +30,24 @@ public class MainApplication extends Application implements ReactApplication {
 
         @Override
         protected List<ReactPackage> getPackages() {
+            Context context = getApplicationContext();
+            // This is the Fresco config, do anything custom you want here
+            ImagePipelineConfig frescoConfig = ImagePipelineConfig
+                    .newBuilder(context)
+                    .setBitmapMemoryCacheParamsSupplier(new CustomBitmapMemoryCacheParamsSupplier(context))
+                    .build();
+
+            MainPackageConfig appConfig = new MainPackageConfig
+                    .Builder()
+                    .setFrescoConfig(frescoConfig)
+                    .build();
             return Arrays.<ReactPackage>asList(
-                    new MainReactPackage(),
                     new RNVersionNumberPackage(),
                     new FileOpenerPackage(),
                     new ReactVideoPackage(),
                     new RNDeviceInfo(),
-                    new RNFSPackage()
+                    new RNFSPackage(),
+                    new MainReactPackage(appConfig)
             );
         }
     };
@@ -66,8 +80,6 @@ public class MainApplication extends Application implements ReactApplication {
         // Pin.setFunc("PC0", Pin.FUNC_OUTPUT);
         // Pin.setData("PC0", Pin.DATA_HIGH);
     }
-
-
 
 
 }
