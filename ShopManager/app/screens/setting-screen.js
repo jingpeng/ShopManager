@@ -5,7 +5,6 @@ import {connect} from 'react-redux'
 import ApiClient from '../api/api-client'
 import ApiInterface from '../api/api-interface'
 import ApiConstant from '../api/api-constant'
-import IOConstant from '../io/io-constant'
 
 
 class SettingScreen extends React.Component {

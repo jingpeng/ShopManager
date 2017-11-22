@@ -5,14 +5,20 @@ import android.app.admin.DevicePolicyManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.os.PowerManager;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.WindowManager;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.bridge.Arguments;
@@ -30,22 +36,17 @@ public class MainActivity extends ReactActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //初始化广播接收者
-        initReceiver();
-        //開啓紅外服務
-        startService(new Intent(this, RayStatusService.class));
 
-
-        ComponentName componentName = new ComponentName(this, AdminReceiver.class);
-        DevicePolicyManager manager = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
-        if (manager.isAdminActive(componentName)) {
-        } else {
-            Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-            intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
-            intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-                    "请打开设备管理器");
-            startActivity(intent);
+        if (judgeAuthority()) {
+            //初始化广播接收者
+            initReceiver();
+            //開啓紅外服務
+            startService(new Intent(this, RayStatusService.class));
         }
+
+        WindowManager manager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        Log.d("屏幕宽高", "宽度: " + manager.getDefaultDisplay().getWidth());
+        Log.d("屏幕宽高", "高度: " + manager.getDefaultDisplay().getHeight());
     }
 
     @Override
@@ -88,6 +89,73 @@ public class MainActivity extends ReactActivity {
         }
         return super.onKeyUp(keyCode, event);
     }
+
+    /**
+     * 检验权限
+     */
+    private boolean judgeAuthority() {
+        boolean internetOk = false;
+        boolean adminAuthority = false;
+        /**
+         * 判断是否联网
+         */
+        if (!isConnect()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("网络连接失败");
+            builder.setMessage("网络连接失败，请联网重新打开软件");
+            builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+            builder.setPositiveButton("打开wifi", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                    startActivity(intent);
+                    finish();
+                }
+            });
+            builder.show();
+        } else {
+            internetOk = true;
+        }
+        //判断管理员权限
+        ComponentName componentName = new ComponentName(this, AdminReceiver.class);
+        DevicePolicyManager manager = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
+        if (manager.isAdminActive(componentName)) {
+            adminAuthority = true;
+        } else {
+            Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+            intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
+            intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,
+                    "请打开设备管理器");
+            startActivity(intent);
+        }
+
+        if (internetOk && adminAuthority) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    //判断网络是否已连接
+    public boolean isConnect() {
+        boolean isConnect = false;
+        ConnectivityManager manager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo info = manager.getActiveNetworkInfo();
+        if (info != null) {
+            if (info.isConnected()) {
+                isConnect = true;
+            } else {
+                isConnect = false;
+            }
+        }
+        return isConnect;
+    }
+
 
     public void initReceiver() {
         IntentFilter filter = new IntentFilter();
