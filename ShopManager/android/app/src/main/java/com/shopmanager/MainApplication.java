@@ -47,7 +47,8 @@ public class MainApplication extends Application implements ReactApplication {
                     new ReactVideoPackage(),
                     new RNDeviceInfo(),
                     new RNFSPackage(),
-                    new MainReactPackage(appConfig)
+//
+                    new RNMainReactPackage()
             );
         }
     };
