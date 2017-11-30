@@ -22,8 +22,6 @@ class LoginScreen extends React.Component {
     static navigationOptions = {
         header: null
     }
-
-
     constructor(props) {
         super(props)
         this.state = {
@@ -31,8 +29,6 @@ class LoginScreen extends React.Component {
 
             password: "",
         }
-
-
         this._timer = null;
         this.startTime = 0;
         this.endTime = 0;
@@ -41,15 +37,12 @@ class LoginScreen extends React.Component {
         this.deviceAdd.bind(this)
         this.deviceGetDetailsByMac.bind(this)
     }
-
     userNameOnChange(text) {
         this.setState({userName: text})
     }
-
     passwordOnChange(text) {
         this.setState({password: text})
     }
-
     userLogin() {
         ApiClient
             .access(ApiInterface.userLogin(this.state.userName, this.state.password))
@@ -130,7 +123,6 @@ class LoginScreen extends React.Component {
                 console.log(error);
             })
     }
-
     startCount() {
         this.startTime = new Date().getTime()
         console.log('当前时间 = ' + this.startTime)
@@ -207,7 +199,6 @@ class LoginScreen extends React.Component {
                     </View>
                 </TouchableNativeFeedback>
             </View>
-
         )
     }
 }
@@ -282,6 +273,5 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => ({
     defaultPlace: state.nav.defaultPlace,
 })
-
 
 export default connect(mapStateToProps)(LoginScreen)

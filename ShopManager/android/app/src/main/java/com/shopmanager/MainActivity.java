@@ -38,7 +38,7 @@ public class MainActivity extends ReactActivity {
         super.onCreate(savedInstanceState);
 
         if (judgeAuthority()) {
-            //初始化广播接收者
+            //初始化广播接收者，监听电池状态变化
             initReceiver();
             //開啓紅外服務
             startService(new Intent(this, RayStatusService.class));

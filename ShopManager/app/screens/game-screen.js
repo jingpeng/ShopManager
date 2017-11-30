@@ -157,13 +157,13 @@ export default class GameScreen extends React.Component {
             } else {
                 qrCodeStr = 'http://wap.tabread.com/game/' + (this.state.currentData.id) + '?mac=' + DeviceInfo.getUniqueID()
             }
-            console.log('qrCode' + qrCodeStr)
+            // console.log('qrCode' + qrCodeStr)
         }
         return (
             <View style={styles.container}>
                 <Image
                     style={styles.leftPanel}
-                    source={(this.state.index < 0) ? require('../resources/ad-large.png') : {uri: this.state.currentData.bigPic}}>
+                    source={(this.state.index < 0) ? {} : {uri: this.state.currentData.bigPic}}>
                     {/*{*/}
                     {/*(this.state.index >= 0) ? (*/}
                     {/*<TouchableWithoutFeedback*/}
