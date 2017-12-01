@@ -97,24 +97,34 @@ class AllowanceScreen extends React.Component {
             }
         }
         var qrCodeStr = ''
-        var copy = this
-        if (this.state.index >= 0) {
+        var allowanceCopy = this
+
+        try {
+            if (this.state.index >= 0) {
+                if (this.state.currentData.isDraw && this.state.index == 0 && this.state.currentData.userId) {
+                    // console.log("当前currentData = " + this.state.currentData.userId);
+                    qrCodeStr = 'http://wap.tabread.com/draw/' + (this.state.currentData.userId) + '?mac=' + DeviceInfo.getUniqueID()
+                    console.log("第一个")
+                    console.log(qrCodeStr)
+                } else {
+                    // console.log('currentData' + this.state.currentData)
+                    qrCodeStr = 'http://wap.tabread.com/discount/' + (this.state.currentData.id) + '?mac=' + DeviceInfo.getUniqueID()
+                    console.log("其他")
+                    console.log(qrCodeStr)
+                    // console.log('新添加Url = ' + qrCodeStr)
+                }
+            }
+        } catch (e) {
             storage.load({
                 key: IOConstant.DEVICE_DATE
             }).then(ret => {
                 console.log("retUserID" + ret.userId);
                 this.state.currentData.userId = ret.userId
-                if (this.state.currentData.isDraw && this.state.index == 0 && this.state.currentData.userId) {
-                    // console.log("当前currentData = " + this.state.currentData.userId);
-                    qrCodeStr = 'http://wap.tabread.com/draw/' + (this.state.currentData.userId) + '?mac=' + DeviceInfo.getUniqueID()
-                } else {
-                    // console.log('currentData' + this.state.currentData)
-                    qrCodeStr = 'http://wap.tabread.com/discount/' + (this.state.currentData.id) + '?mac=' + DeviceInfo.getUniqueID()
-                    // console.log('新添加Url = ' + qrCodeStr)
-                }
-            })
+                qrCodeStr = 'http://wap.tabread.com/draw/' + (this.state.currentData.userId) + '?mac=' + DeviceInfo.getUniqueID()
 
+            })
         }
+
         return (
             <View style={styles.container}>
                 <TouchableWithoutFeedback>

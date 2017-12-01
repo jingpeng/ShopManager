@@ -211,8 +211,6 @@ class AdScreen extends React.Component {
                 RCTDeviceEventEmitter.emit('on_next', 0)
             })
         })
-
-
         //home键点击事件
         RCTDeviceEventEmitter.addListener('on_key_pressed', function (advs) {
             console.log(advs.keyCode)
@@ -230,11 +228,10 @@ class AdScreen extends React.Component {
         RCTDeviceEventEmitter.addListener('on_next', function (page) {
             if (page >= copy.state.advs.length) {
                 page = 0
-
             }
-            copy.viewPager.setPage(page)
+            //TODO  cant read property setPage of null
+            copy.viewPager.setPage(page);
             copy.setState({currentPage: page})
-
             if (copy.state.advs.length > 0) {
                 storage.load({key: IOConstant.PLAY_RECORD})
                     .then(result => {
@@ -252,7 +249,6 @@ class AdScreen extends React.Component {
             }
 
             var adv = copy.state.advs[page]
-
             if (adv.advertisement.fileType == 0) {
                 var callback = () => {
                     RCTDeviceEventEmitter.emit('on_next', page + 1)
@@ -271,7 +267,6 @@ class AdScreen extends React.Component {
                     var callback = () => {
                         RCTDeviceEventEmitter.emit('on_next', page + 1)
                     }
-
                     copy.timer && copy.timer.pause()
                     copy.adjustTimer && copy.adjustTimer.pause()
                     copy.adjustTimer = new Timer(() => {
@@ -286,8 +281,8 @@ class AdScreen extends React.Component {
             } else {
                 copy.setState({isOrder: false})
             }
-        })
 
+        })
         this.initData();
     }
 
@@ -519,12 +514,10 @@ class AdScreen extends React.Component {
 
     launchGame() {
         this.props.navigation.dispatch({type: 'Game'})
-
     }
 
     launchPlaylist() {
         this.props.navigation.dispatch({type: 'Playlist', advs: this.state.selfAds})
-
     }
 
     showBuyModal() {
