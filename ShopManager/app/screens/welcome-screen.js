@@ -121,7 +121,7 @@ const styles = StyleSheet.create(
             position: 'absolute',
             left: 0,
             top: 0,
-            backgroundColor: 'argb(0,0,0,0)'
+            backgroundColor: 'rgba(0,0,0,0)'
         },
         backText: {
             position: 'absolute',
