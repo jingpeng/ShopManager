@@ -48,7 +48,6 @@ public class MainApplication extends Application implements ReactApplication {
                     new RNDeviceInfo(),
                     new RNFSPackage(),
                     new MainReactPackage(appConfig)
-//new RNMainReactPackage()
             );
         }
     };
