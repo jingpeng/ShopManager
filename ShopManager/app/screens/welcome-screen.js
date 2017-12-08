@@ -1,5 +1,5 @@
 import React from 'react'
-import {Dimensions, Image, StyleSheet, Text, TouchableWithoutFeedback, View} from 'react-native'
+import {Dimensions, Alert, Image, StyleSheet, Text, TouchableWithoutFeedback, View} from 'react-native'
 import DeviceInfo from 'react-native-device-info'
 
 import ApiClient from '../api/api-client'
@@ -58,8 +58,15 @@ export default class WelcomeScreen extends React.Component {
                 }
             })
             .catch((error) => {
-                console.log(error)
-            })
+                // Alert.alert(
+                //         '警告：',
+                //         '获取数据失败，请检查网络链接',
+                //         [
+                //             {text: '确定', onPress: () => BackAndroid.exitApp()}
+                //         ],
+                //         {cancelable: false})
+                    console.log(error)
+                })
     }
 
     startCount() {

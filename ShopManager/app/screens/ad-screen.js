@@ -119,11 +119,11 @@ class AdScreen extends React.Component {
                     if (this.state.isSelf) {
                         console.log("adminAdvs")
                         console.log(this.state.adminAdvs)
-                        //判断admin广告数组是否为空，如果为空直接进入
-                        if (!this.state.adminAdvs) {
+                        //判断admin广告数组是否有内容，如果没内容直接继续播放后台广告
+                        if (this.state.adminAdvs.length > 0) {
                             RCTDeviceEventEmitter.emit('all_load', this.state.adminAdvs)
                         } else {
-                            this.setState({isSelf: !this.state.isSelf, key: this.state.key + 1})
+                            this.setState({isSelf: !this.state.isSelf, key: (this.state.key + 1)})
                         }
                     } else {
                         console.log("userAdvs")
@@ -235,6 +235,8 @@ class AdScreen extends React.Component {
             if (page >= copy.state.advs.length) {
                 page = 0
             }
+            console.log("广告")
+            console.log(copy.state.advs)
             //cant read property setPage of null:由于数据为null会导致闪退
             copy.viewPager.setPage(page);
             copy.setState({currentPage: page})
@@ -383,12 +385,11 @@ class AdScreen extends React.Component {
         if (popupAd != null) {
             this.setState({popupAd: popupAd})
         }
+        console.log("广告数组")
         console.log(advs)
         console.log(advsAdmin)
         this.setState({selfAds: advs, adminAdvs: advsAdmin})
-        setTimeout(() => {
-            this.setState({initOk: true})
-        }, 2000)
+        console.log(this.state.adminAdvs)
         storage.save({key: IOConstant.ADV_LIST, data: advs})
         storage.save({key: IOConstant.ADV_LIST_ADMIN, data: advsAdmin})
         // 检查目录是否存在
@@ -396,7 +397,6 @@ class AdScreen extends React.Component {
             if (!result) {
                 RNFS.mkdir(directory)
             }
-
             var downloadFutures = []
             var storeFutures = []
             var collection = advs.concat(advsAdmin)
@@ -426,10 +426,7 @@ class AdScreen extends React.Component {
                     // 合并下载结果
                     Promise.all(downloadFutures)
                         .then(responses => {
-                                console.log(responses)
-                                if (advs.length > 0) {
-                                    RCTDeviceEventEmitter.emit('all_load', advs)
-                                }
+                                RCTDeviceEventEmitter.emit('all_load', advs)
                             }
                         )
                         .catch((error) => {
@@ -637,169 +634,150 @@ class AdScreen extends React.Component {
     }
 
     render() {
-        if (this.state.initOk) {
-            if (this.state.advs.length == 0) {
-                return (
-                    <View style={styles.container}>
-                        <Image
-                            style={styles.adBackground}
-                            resizeMode={'contain'}
-                            source={require('../resources/noAdBackground.jpg')}
-                        />
-                        <TouchableWithoutFeedback
-                            onPressIn={this.startCount.bind(this)}
-                            onPressOut={this.stopCount.bind(this)}>
-                            <View style={styles.backStyle}>
-                            </View>
-                        </TouchableWithoutFeedback>
-                    </View>
-                )
-            } else {
-                console.log(this.state.advs.length)
-                var advList = (object, i) => {
-                    switch (object.advertisement.fileType) {
-                        case 0:
-                            var imageSource = 'file://' + directory + object.advertisement.id + '_' + object.advertisement.fileName
-                            var duration = object.advertisement.time * 1000
-                            return (
-                                <View
-                                    key={i}
-                                    style={styles.adBackground}>
-                                    <Image
-                                        ref={(ref) => {
-                                            this.state.players[i] = undefined
-                                        }}
-                                        style={styles.adBackground}
-                                        resizeMode={'contain'}
-                                        source={{uri: imageSource}}/>
-                                </View>
-                            )
-                            break
-                        case 1:
-                            var videoSource = directory + object.advertisement.id + '_' + object.advertisement.fileName
-                            return (
-                                <View
-                                    key={i}
-                                    style={styles.backgroundVideo}>
-                                    <Video
-                                        ref={(ref) => {
-                                            this.state.players[i] = ref
-                                        }}
-                                        source={{uri: videoSource}}   // Can be a URL or a local file.                                      // Store reference
-                                        rate={1.0}                              // 0 is paused, 1 is normal.
-                                        volume={1.0}                            // 0 is muted, 1 is normal.
-                                        muted={false}                           // Mutes the audio entirely.
-                                        paused={true}                          // Pauses playback entirely.
-                                        resizeMode="cover"                      // Fill the whole screen at aspect ratio.*
-                                        repeat={false}                           // Repeat forever.
-                                        playInBackground={true}                // Audio continues to play when app entering background.
-                                        // onLoadStart={this.loadStart}            // Callback when video starts to load
-                                        onLoad={(event) => {
-                                            console.log(event.duration)
-                                            object.advertisement.time = event.duration
-                                        }}               // Callback when video loads
-                                        // onProgress={(data) => {  }}               // Callback every ~250ms with currentTime
-                                        // onEnd={() => {RCTDeviceEventEmitter.emit('on_next', i + 1)}}                      // Callback when playback finishes
-                                        // onError={this.videoError}               // Callback when video cannot be loaded
-                                        // onBuffer={this.onBuffer}                // Callback when remote video is buffering
-                                        // onTimedMetadata={this.onTimedMetadata}  // Callback when the stream receive some metadata
-                                        style={styles.backgroundVideo}/>
-                                </View>
-                            )
-                            break
-                    }
-                }
-                let holder = null
-                if (this.state.advs.length > 0) {
-                    holder =
-                        <ViewPagerAndroid
-                            key={this.state.key}
-                            ref={(ref) => {
-                                this.viewPager = ref
-                            }}
-                            style={styles.viewPager}
-                            onPageSelected={this.onPageSelected.bind(this)}
-                            initialPage={0}>
-                            {this.state.advs.map(advList)}
-                        </ViewPagerAndroid>
-                } else {
-                    holder =
-                        <View/>
-                }
-                let buyButtonHolder = null
-                if (this.state.isOrder) {
-                    buyButtonHolder =
-                        <View style={styles.trolleyContainer}>
-                            <TouchableNativeFeedback
-                                onPress={this.showBuyModal.bind(this)}>
-                                <Text style={styles.trolleyText}>下单</Text>
-                            </TouchableNativeFeedback>
-                            <TouchableNativeFeedback
-                                onPress={this.showBuyModal.bind(this)}>
-                                <View style={styles.trolleyImageContainer}>
-                                    <Image
-                                        style={styles.trolleyImage}
-                                        source={require('../resources/trolley.png')}/>
-                                </View>
-                            </TouchableNativeFeedback>
+        console.log(this.state.advs.length)
+        var advList = (object, i) => {
+            switch (object.advertisement.fileType) {
+                case 0:
+                    var imageSource = 'file://' + directory + object.advertisement.id + '_' + object.advertisement.fileName
+                    var duration = object.advertisement.time * 1000
+                    return (
+                        <View
+                            key={i}
+                            style={styles.adBackground}>
+                            <Image
+                                ref={(ref) => {
+                                    this.state.players[i] = undefined
+                                }}
+                                style={styles.adBackground}
+                                resizeMode={'contain'}
+                                source={{uri: imageSource}}/>
                         </View>
-                } else {
-                    buyButtonHolder =
-                        <View/>
-                }
-                return (
-                    <View style={styles.container}>
-                        {holder}
-                        {buyButtonHolder}
-                        <TouchableWithoutFeedback
-                            onPressIn={this.startCount.bind(this)}
-                            onPressOut={this.stopCount.bind(this)}>
-                            <View style={styles.backStyle}>
-                            </View>
-                        </TouchableWithoutFeedback>
-
-                        <TouchableNativeFeedback
-                            onPress={this.launchAllowance.bind(this)}>
-                            <View style={styles.allowanceContainer}>
-                                <Image
-                                    style={styles.allowanceImage}
-                                    source={require('../resources/allowance.png')}/>
-                            </View>
-                        </TouchableNativeFeedback>
-                        <TouchableNativeFeedback
-                            onPress={this.launchGame.bind(this)}>
-                            {/*onPress={() => this.judgeIsFirst('game', this.state.gameIsFirst)}>*/}
-                            <View style={styles.gameContainer}>
-                                <Image
-                                    style={styles.gameImage}
-                                    source={require('../resources/game.png')}/>
-                            </View>
-                        </TouchableNativeFeedback>
-                        <TouchableNativeFeedback
-                            onPress={this.launchPlaylist.bind(this)}>
-                            {/*onPress={() => this.judgeIsFirst('playlist', this.state.listIsFirst)}>*/}
-                            <View style={styles.billContainer}>
-                                <Image
-                                    style={styles.billImage}
-                                    source={require('../resources/bill.png')}/>
-                            </View>
-                        </TouchableNativeFeedback>
-                        <BuyModal parent={this} adTitle={this.state.adTitle} adDescription={this.state.adDesc}
-                                  adPrice={this.state.adPrice}/>
-                        <OrderSuccessModal parent={this}/>
-                    </View>
-                )
+                    )
+                    break
+                case 1:
+                    var videoSource = directory + object.advertisement.id + '_' + object.advertisement.fileName
+                    return (
+                        <View
+                            key={i}
+                            style={styles.backgroundVideo}>
+                            <Video
+                                ref={(ref) => {
+                                    this.state.players[i] = ref
+                                }}
+                                source={{uri: videoSource}}   // Can be a URL or a local file.                                      // Store reference
+                                rate={1.0}                              // 0 is paused, 1 is normal.
+                                volume={1.0}                            // 0 is muted, 1 is normal.
+                                muted={false}                           // Mutes the audio entirely.
+                                paused={true}                          // Pauses playback entirely.
+                                resizeMode="cover"                      // Fill the whole screen at aspect ratio.*
+                                repeat={false}                           // Repeat forever.
+                                playInBackground={true}                // Audio continues to play when app entering background.
+                                // onLoadStart={this.loadStart}            // Callback when video starts to load
+                                onLoad={(event) => {
+                                    console.log(event.duration)
+                                    object.advertisement.time = event.duration
+                                }}               // Callback when video loads
+                                // onProgress={(data) => {  }}               // Callback every ~250ms with currentTime
+                                // onEnd={() => {RCTDeviceEventEmitter.emit('on_next', i + 1)}}                      // Callback when playback finishes
+                                // onError={this.videoError}               // Callback when video cannot be loaded
+                                // onBuffer={this.onBuffer}                // Callback when remote video is buffering
+                                // onTimedMetadata={this.onTimedMetadata}  // Callback when the stream receive some metadata
+                                style={styles.backgroundVideo}/>
+                        </View>
+                    )
+                    break
             }
-        } else {
-            return (
-                <View style={styles.container}>
-                    <ActivityIndicator
-                        animating={this.state.loading}
-                        style={[styles.centering, {height: 80}]}
-                        size={80}/>
-                </View>
-            )
         }
+        let holder = null
+        if (this.state.advs.length > 0) {
+            holder =
+                <ViewPagerAndroid
+                    key={this.state.key}
+                    ref={(ref) => {
+                        this.viewPager = ref
+                    }}
+                    style={styles.viewPager}
+                    onPageSelected={this.onPageSelected.bind(this)}
+                    initialPage={0}>
+                    {this.state.advs.map(advList)}
+                </ViewPagerAndroid>
+        } else if (this.state.selfAds.length == 0) {
+            holder =
+                <Image
+                    style={styles.adBackground}
+                    resizeMode={'contain'}
+                    source={require('../resources/noAdBackground.jpg')}
+                />
+        } else {
+            <view/>
+        }
+        let buyButtonHolder = null
+        if (this.state.isOrder) {
+            buyButtonHolder =
+                <View style={styles.trolleyContainer}>
+                    <TouchableNativeFeedback
+                        onPress={this.showBuyModal.bind(this)}>
+                        <Text style={styles.trolleyText}>下单</Text>
+                    </TouchableNativeFeedback>
+                    <TouchableNativeFeedback
+                        onPress={this.showBuyModal.bind(this)}>
+                        <View style={styles.trolleyImageContainer}>
+                            <Image
+                                style={styles.trolleyImage}
+                                source={require('../resources/trolley.png')}/>
+                        </View>
+                    </TouchableNativeFeedback>
+                </View>
+        } else {
+            buyButtonHolder =
+                <View/>
+        }
+        return (
+            <View style={styles.container}>
+                <ActivityIndicator
+                    animating={this.state.loading}
+                    style={[styles.centering, {height: 80}]}
+                    size={80}/>
+                {holder}
+                {buyButtonHolder}
+                <TouchableWithoutFeedback
+                    onPressIn={this.startCount.bind(this)}
+                    onPressOut={this.stopCount.bind(this)}>
+                    <View style={styles.backStyle}>
+                    </View>
+                </TouchableWithoutFeedback>
+
+                <TouchableNativeFeedback
+                    onPress={this.launchAllowance.bind(this)}>
+                    <View style={styles.allowanceContainer}>
+                        <Image
+                            style={styles.allowanceImage}
+                            source={require('../resources/allowance.png')}/>
+                    </View>
+                </TouchableNativeFeedback>
+                <TouchableNativeFeedback
+                    onPress={this.launchGame.bind(this)}>
+                    {/*onPress={() => this.judgeIsFirst('game', this.state.gameIsFirst)}>*/}
+                    <View style={styles.gameContainer}>
+                        <Image
+                            style={styles.gameImage}
+                            source={require('../resources/game.png')}/>
+                    </View>
+                </TouchableNativeFeedback>
+                <TouchableNativeFeedback
+                    onPress={this.launchPlaylist.bind(this)}>
+                    {/*onPress={() => this.judgeIsFirst('playlist', this.state.listIsFirst)}>*/}
+                    <View style={styles.billContainer}>
+                        <Image
+                            style={styles.billImage}
+                            source={require('../resources/bill.png')}/>
+                    </View>
+                </TouchableNativeFeedback>
+                <BuyModal parent={this} adTitle={this.state.adTitle} adDescription={this.state.adDesc}
+                          adPrice={this.state.adPrice}/>
+                <OrderSuccessModal parent={this}/>
+            </View>
+        )
 
 
     }
