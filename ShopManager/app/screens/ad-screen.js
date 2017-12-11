@@ -99,8 +99,6 @@ class AdScreen extends React.Component {
 
         this.getAdList.bind(this)
         this.downloadAds.bind(this)
-
-
     }
 
     envGetDetailsByMac() {
@@ -124,6 +122,7 @@ class AdScreen extends React.Component {
                             RCTDeviceEventEmitter.emit('all_load', this.state.adminAdvs)
                         } else {
                             this.setState({isSelf: !this.state.isSelf, key: (this.state.key + 1)})
+                            RCTDeviceEventEmitter.emit('all_load', this.state.selfAds)
                         }
                     } else {
                         console.log("userAdvs")
@@ -388,6 +387,39 @@ class AdScreen extends React.Component {
         console.log("广告数组")
         console.log(advs)
         console.log(advsAdmin)
+        //当用户广告没有的时候，添加一个假广告，来提示没有广告
+        var defaultNoAdvs = {
+            advertisement: {
+                content: "222",
+                fileName: "NoAdv",
+                imageSrc: require('../resources/noAdBackground.jpg'),
+                fileSrc: "http://oqhy88nu6.bkt.clouddn.com/FqhIj2i2PAFBBzQgApTZDJKKFp1v",
+                fileType: 0,
+                id: 180,
+                imgName: null,
+                imgSrc: null,
+                industryId: 1,
+                name: "后台广告",
+                price: null,
+                realName: "管理员(新)",
+                time: 10,
+                userId: 1
+            },
+            id: 205,
+            isDelete: 0,
+            isOrder: 1,
+            playAdvShowName: "后台广告",
+            realName: "管理员(新)",
+            type: 1,
+            userId: 1
+        }
+        console.log(defaultNoAdvs)
+        if (advs.length < 1) {
+            advs[0] = defaultNoAdvs
+        }
+        if (advsAdmin == null) {
+            advsAdmin[0] = defaultNoAdvs
+        }
         this.setState({selfAds: advs, adminAdvs: advsAdmin})
         console.log(this.state.adminAdvs)
         storage.save({key: IOConstant.ADV_LIST, data: advs})
@@ -650,7 +682,7 @@ class AdScreen extends React.Component {
                                 }}
                                 style={styles.adBackground}
                                 resizeMode={'contain'}
-                                source={{uri: imageSource}}/>
+                                source={object.advertisement.imageSrc == null ? {uri: imageSource} : object.advertisement.imageSrc}/>
                         </View>
                     )
                     break
