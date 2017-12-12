@@ -89,8 +89,7 @@ class AdScreen extends React.Component {
             adminAdvs: [],
             key: 0,
             deviceData: this.props.deviceData,
-            //初始化完成
-            initOk: false
+            noAdv: false
         }
 
         this._timer = null;
@@ -407,7 +406,7 @@ class AdScreen extends React.Component {
             },
             id: 205,
             isDelete: 0,
-            isOrder: 1,
+            isOrder: 0,
             playAdvShowName: "后台广告",
             realName: "管理员(新)",
             type: 1,
@@ -416,6 +415,7 @@ class AdScreen extends React.Component {
         console.log(defaultNoAdvs)
         if (advs.length < 1) {
             advs[0] = defaultNoAdvs
+            this.setState({noAdv: true})
         }
         if (advsAdmin == null) {
             advsAdmin[0] = defaultNoAdvs
@@ -556,7 +556,11 @@ class AdScreen extends React.Component {
     }
 
     launchPlaylist() {
-        this.props.navigation.dispatch({type: 'Playlist', advs: this.state.selfAds})
+        if (this.state.noAdv) {
+            ToastAndroid.show("没有广告，请服务端添加广告并重启", ToastAndroid.LONG)
+        } else {
+            this.props.navigation.dispatch({type: 'Playlist', advs: this.state.selfAds})
+        }
     }
 
     showBuyModal() {
@@ -733,14 +737,7 @@ class AdScreen extends React.Component {
                     initialPage={0}>
                     {this.state.advs.map(advList)}
                 </ViewPagerAndroid>
-        } else if (this.state.selfAds.length == 0) {
-            holder =
-                <Image
-                    style={styles.adBackground}
-                    resizeMode={'contain'}
-                    source={require('../resources/noAdBackground.jpg')}
-                />
-        } else {
+        }else {
             <view/>
         }
         let buyButtonHolder = null

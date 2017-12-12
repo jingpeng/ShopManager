@@ -7,6 +7,7 @@ import ApiInterface from '../api/api-interface'
 import ApiConstant from '../api/api-constant'
 import IOConstant from '../io/io-constant'
 import * as BackAndroid from "react-native/Libraries/Utilities/BackAndroid";
+import * as ToastAndroid from "react-native/Libraries/Components/ToastAndroid/ToastAndroid.android";
 
 
 export default class WelcomeScreen extends React.Component {
@@ -60,13 +61,14 @@ export default class WelcomeScreen extends React.Component {
             .catch((error) => {
                 // Alert.alert(
                 //         '警告：',
-                //         '获取数据失败，请检查网络链接',
+                //         '获取数据失败，请检查网络链接，长按退出返回桌面',
                 //         [
                 //             {text: '确定', onPress: () => BackAndroid.exitApp()}
                 //         ],
                 //         {cancelable: false})
-                    console.log(error)
-                })
+                ToastAndroid.show("获取数据失败，请检查网络链接", ToastAndroid.LONG)
+                console.log(error)
+            })
     }
 
     startCount() {

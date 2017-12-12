@@ -1,5 +1,6 @@
 package com.shopmanager;
 
+import android.app.Dialog;
 import android.app.KeyguardManager;
 import android.app.admin.DevicePolicyManager;
 import android.content.BroadcastReceiver;
@@ -29,6 +30,7 @@ import com.vortex.pin.Pin;
 public class MainActivity extends ReactActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    private Context mContext = this;
 
     private PowerManager.WakeLock mWakeLock;
     private KeyguardManager.KeyguardLock mKeyguardLock;
@@ -103,10 +105,11 @@ public class MainActivity extends ReactActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("网络连接失败");
             builder.setMessage("网络连接失败，请联网重新打开软件");
+            Dialog dialog;
             builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    finish();
+                    dialog.dismiss();
                 }
             });
             builder.setPositiveButton("打开wifi", new DialogInterface.OnClickListener() {
@@ -117,7 +120,7 @@ public class MainActivity extends ReactActivity {
                     finish();
                 }
             });
-            builder.show();
+            dialog = builder.show();
         } else {
             internetOk = true;
         }
@@ -160,10 +163,10 @@ public class MainActivity extends ReactActivity {
     public void initReceiver() {
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.intent.action.BATTERY_CHANGED");
-        registerReceiver(receiver, filter);
+        mContext.registerReceiver(mBatteryReceiver, filter);
     }
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
+    private BroadcastReceiver mBatteryReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Bundle bundle = intent.getExtras();
@@ -190,8 +193,8 @@ public class MainActivity extends ReactActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (receiver != null) {
-            unregisterReceiver(receiver);
+        if (mBatteryReceiver != null) {
+            mContext.unregisterReceiver(mBatteryReceiver);
         }
     }
 }
