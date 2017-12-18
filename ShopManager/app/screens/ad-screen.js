@@ -253,7 +253,6 @@ class AdScreen extends React.Component {
                         storage.save({key: IOConstant.PLAY_RECORD, data: advs})
                     })
             }
-
             var adv = copy.state.advs[page]
             if (adv.advertisement.fileType == 0) {
                 var callback = () => {
@@ -416,6 +415,9 @@ class AdScreen extends React.Component {
         if (advs.length < 1) {
             advs[0] = defaultNoAdvs
             this.setState({noAdv: true})
+        }
+        if (advsAdmin.length < 1) {
+            advsAdmin[0] = defaultNoAdvs
         }
         if (advsAdmin == null) {
             advsAdmin[0] = defaultNoAdvs
@@ -737,7 +739,7 @@ class AdScreen extends React.Component {
                     initialPage={0}>
                     {this.state.advs.map(advList)}
                 </ViewPagerAndroid>
-        }else {
+        } else {
             <view/>
         }
         let buyButtonHolder = null

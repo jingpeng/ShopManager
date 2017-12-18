@@ -157,7 +157,7 @@ export default class GameScreen extends React.Component {
             } else {
                 qrCodeStr = 'http://wap.tabread.com/game/' + (this.state.currentData.id) + '?mac=' + DeviceInfo.getUniqueID()
             }
-            // console.log('qrCode' + qrCodeStr)
+            console.log('qrCode' + qrCodeStr)
         }
         return (
             <View style={styles.container}>
@@ -181,12 +181,23 @@ export default class GameScreen extends React.Component {
                     {/*) : ( null )*/}
                     {/*}*/}
                     {/*添加二维码*/}
-                    <View style={styles.qrCode}>
-                        <QRCode
-                            value={qrCodeStr}
-                            size={Dimensions.get('window').height / 4}
-                            bgColor='black'
-                            fgColor='white'/>
+                    {/*<View style={styles.qrCode}>*/}
+                    {/*<QRCode*/}
+                    {/*value={qrCodeStr}*/}
+                    {/*size={Dimensions.get('window').height / 4}*/}
+                    {/*bgColor='black'*/}
+                    {/*fgColor='white'/>*/}
+                    {/*</View>*/}
+                    <View style={styles.qrCodeBackGround}>
+                        <Text style={styles.qrCodeText}>扫 码 玩 游 戏 ▼</Text>
+                        <View style={styles.qrCode}>
+                            <QRCode
+                                value={qrCodeStr}
+                                // size={Dimensions.get('window').height / 4}
+                                size={100}
+                                bgColor='black'
+                                fgColor='white'/>
+                        </View>
                     </View>
                 </Image>
                 <View>
@@ -286,10 +297,31 @@ const styles = StyleSheet.create({
         height: Dimensions.get('window').height,
         justifyContent: 'center'
     },
-    qrCode: {
+    // qrCode: {
+    //     position: 'absolute',
+    //     right: (Dimensions.get('window').width * 2 / 3 - Dimensions.get('window').height) / 2,
+    //     bottom: 0
+    // },
+    qrCodeBackGround: {
         position: 'absolute',
+        borderColor: 'black',
+        backgroundColor: 'rgba(255,255,255,1)',
+        borderWidth: 1,
+        borderStyle: 'dashed',
         right: (Dimensions.get('window').width * 2 / 3 - Dimensions.get('window').height) / 2,
-        bottom: 0
+        bottom: 0,
+        padding: 5,
+        margin: 10,
+    },
+    qrCodeText: {
+        fontSize: 15,
+        // width: 18,
+        fontWeight: ('bold', '200'),
+        color: 'black',
+    },
+    qrCode: {
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     startContainer: {
         width: 180,
@@ -342,7 +374,7 @@ const styles = StyleSheet.create({
     },
     gameDescText: {
         color: '#333',
-        fontSize: 14,
+        fontSize: 12,
         width: 50
     },
     gamePlayerNumText: {

@@ -97,8 +97,6 @@ class AllowanceScreen extends React.Component {
             }
         }
         var qrCodeStr = ''
-        var allowanceCopy = this
-
         try {
             if (this.state.index >= 0) {
                 if (this.state.currentData.isDraw && this.state.index == 0 && this.state.currentData.userId) {
@@ -109,10 +107,8 @@ class AllowanceScreen extends React.Component {
                 } else {
                     // console.log('currentData' + this.state.currentData)
                     qrCodeStr = 'http://wap.tabread.com/discount/' + (this.state.currentData.id) + '?mac=' + DeviceInfo.getUniqueID()
-                    console.log("其他")
-                    console.log(qrCodeStr)
-                    // console.log('新添加Url = ' + qrCodeStr)
                 }
+                console.log('福利二维码  ' + qrCodeStr)
             }
         } catch (e) {
             storage.load({
@@ -131,13 +127,19 @@ class AllowanceScreen extends React.Component {
                     <Image
                         style={styles.leftPanel}
                         source={coverSource}
-                        resizeMode={'contain'}>
-                        <View style={styles.qrCode}>
-                            <QRCode
-                                value={qrCodeStr}
-                                size={Dimensions.get('window').height / 4}
-                                bgColor='black'
-                                fgColor='white'/>
+                        // resizeMode={'cover'}
+                        resizeMode={'contain'}
+                    >
+                        <View style={styles.qrCodeBackGround}>
+                            <Text style={styles.qrCodeText}>扫 码 有 惊 喜 ▼</Text>
+                            <View style={styles.qrCode}>
+                                <QRCode
+                                    value={qrCodeStr}
+                                    // size={Dimensions.get('window').height / 4}
+                                    size={100}
+                                    bgColor='black'
+                                    fgColor='white'/>
+                            </View>
                         </View>
                     </Image>
                 </TouchableWithoutFeedback>
@@ -225,10 +227,28 @@ const styles = StyleSheet.create({
         height: Dimensions.get('window').height,
         justifyContent: 'center'
     },
-    qrCode: {
+    qrCodeBackGround: {
         position: 'absolute',
-        right: (Dimensions.get('window').width * 2 / 3 - Dimensions.get('window').height) / 2,
-        bottom: 0
+        borderColor: 'black',
+        backgroundColor: 'rgba(255,255,255,1)',
+        borderWidth: 1,
+        borderStyle: 'dashed',
+        // right: Dimensions.get('window').height / 2,
+        right: (Dimensions.get('window').width * 2 / 3 - Dimensions.get('window').height) / 2 + 8,
+        // right: (Dimensions.get('window').width * 2 / 3 - Dimensions.get('window').height) / 2,
+        bottom: 0,
+        padding: 5,
+        margin: 10,
+    },
+    qrCodeText: {
+        fontSize: 15,
+        // width: 18,
+        fontWeight: ('bold', '200'),
+        color: 'black',
+    },
+    qrCode: {
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     backgroundVideo: {
         height: Dimensions.get('window').height * 0.5625,
